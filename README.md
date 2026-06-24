@@ -82,41 +82,41 @@ Below are the rough UI sketches mapping out the user flow, Match Modes, Lobby, a
   <tr>
     <td valign="top" width="50%">
       <b>Dashboard & Navigation:</b><br><br>
-      <img src="/assets/design_sketches/IMG_9956.HEIC" width="100%" alt="Dashboard"/>
+      <img src="design_sketches/IMG_9956.HEIC" width="100%" alt="Dashboard"/>
     </td>
     <td valign="top" width="50%">
       <b>Other Details:</b><br><br>
-      <img src="/assets/design_sketches/IMG_9959.HEIC" width="100%" alt="Other Details"/>
+      <img src="design_sketches/IMG_9959.HEIC" width="100%" alt="Other Details"/>
     </td>
   </tr>
   <tr>
     <td valign="top" width="50%">
       <b>Messaging Hub:</b><br><br>
-      <img src="/assets/design_sketches/IMG_9957.HEIC" width="100%" alt="Messages Flow"/>
+      <img src="design_sketches/IMG_9957.HEIC" width="100%" alt="Messages Flow"/>
     </td>
     <td valign="top" width="50%">
       <b>Global Profile View (Super Brief Modal):</b><br><br>
-      <img src="/assets/design_sketches/IMG_9955.HEIC" width="100%" alt="Profile Click"/>
+      <img src="design_sketches/IMG_9955.HEIC" width="100%" alt="Profile Click"/>
     </td>
   </tr>
   <tr>
     <td valign="top" width="50%">
       <b>Onboarding, Progressive Login, & Tutorial Idea:</b><br><br>
-      <img src="/assets/design_sketches/IMG_9958.HEIC" width="100%" alt="Onboarding Flow"/>
+      <img src="design_sketches/IMG_9958.HEIC" width="100%" alt="Onboarding Flow"/>
     </td>
     <td valign="top" width="50%">
       <b>Match Mode 1 (Target Pairs):</b><br><br>
-      <img src="/assets/design_sketches/IMG_9952.HEIC" width="100%" alt="Match Mode 1"/>
+      <img src="design_sketches/IMG_9952.HEIC" width="100%" alt="Match Mode 1"/>
     </td>
   </tr>
   <tr>
     <td valign="top" width="50%">
       <b>Match Mode 2 (Hero Profile):</b><br><br>
-      <img src="/assets/design_sketches/IMG_9953.HEIC" width="100%" alt="Match Mode 2"/>
+      <img src="design_sketches/IMG_9953.HEIC" width="100%" alt="Match Mode 2"/>
     </td>
     <td valign="top" width="50%">
       <b>Match Mode 3 (Line Connections):</b><br><br>
-      <img src="/assets/design_sketches/IMG_9954.HEIC" width="100%" alt="Match Mode 3"/>
+      <img src="design_sketches/IMG_9954.HEIC" width="100%" alt="Match Mode 3"/>
     </td>
   </tr>
 </table>
