@@ -1,5 +1,17 @@
 # Proxy 💘
 
+## 📝 Specification Deliverable
+
+Here is the checklist of rubric requirements completed for this deliverable:
+
+- [x] **Proper use of Markdown:** Utilized headers, lists, bold text, and HTML tables for clean formatting.
+- [x] **Elevator Pitch:** A concise and compelling paragraph explaining the app's gamified matchmaking concept.
+- [x] **Key Features:** Clear outline of core functionalities like Match Modes, consensus logic, and the coin economy.
+- [x] **Technology Usage:** Detailed explanations of how HTML, CSS, React, Web Services (including a 3rd party API), Database, and WebSockets will be utilized.
+- [x] **Design Sketches:** Embedded images of the application's layout and user flow.
+
+---
+
 ## 🚀 Elevator Pitch
 
 Dating apps are exhausting, so we gamified the process. **Proxy** is a revolutionary dating platform where you play Cupid for the community. Instead of endlessly swiping for yourself, you participate in daily "Match Modes" to pair other users together. If the community reaches a consensus on your pair, they match, and you earn in-app coins! You can spend these coins to boost your own profile's visibility or bypass the consensus engine to handpick a guaranteed match for yourself. Proxy solves dating app burnout by making the search fun, communal, and highly rewarding.
