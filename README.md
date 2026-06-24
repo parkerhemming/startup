@@ -1,143 +1,89 @@
-# Your startup name here
+# Proxy 💘
 
-[My Notes](notes.md)
+## 🚀 Elevator Pitch
 
-A brief description of the application here. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Dating apps are exhausting, so we gamified the process. **Proxy** is a revolutionary dating platform where you play Cupid for the community. Instead of endlessly swiping for yourself, you participate in daily "Match Modes" to pair other users together. If the community reaches a consensus on your pair, they match, and you earn in-app coins! You can spend these coins to boost your own profile's visibility or bypass the consensus engine to handpick a guaranteed match for yourself. Proxy solves dating app burnout by making the search fun, communal, and highly rewarding.
 
-> [!NOTE]
-> This is a template for your startup application. You must modify this `README.md` file for each phase of your development. You only need to fill in the section for each deliverable when that deliverable is submitted in Canvas. Without completing the section for a deliverable, the TA will not know what to look for when grading your submission. Feel free to add additional information to each deliverable description, but make sure you at least have the list of rubric items and a description of what you did for each item.
+## ✨ Key Features
 
-> [!NOTE]
-> If you are not familiar with Markdown then you should review the [documentation](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) before continuing.
+- **Progressive Onboarding:** A clean, one-question-at-a-time registration flow, followed by an immersive, cinematic "Windows-OS style" tutorial that fades text in and out to explain the ecosystem.
+- **Gamified Match Modes:** Three distinct daily mini-games with limited attempts:
+    - _Mode 1:_ Drag and drop matching from a list of users.
+    - _Mode 2:_ Find the perfect partner for one featured "Hero" profile from a grid of options.
+    - _Mode 3:_ Draw lines to connect 4 profiles on the left to 4 on the right.
+- **Consensus Engine:** A match only occurs when a specific percentage of matchmakers pair the same two people (scales dynamically based on active users in the area).
+- **Dynamic Coin Economy:**
+    - **Earn:** Coins are awarded when your pair reaches consensus, when they message each other, and when they submit a verified "date selfie."
+    - **Spend:** Buy profile boosts (e.g., "Show to 3x more matchmakers") or purchase a direct, un-blockable match.
+- **Economy Edge-Case Protections:**
+    - _Anti-Spam:_ Earn +1 coin per message your pair sends, capped at 10 coins per day.
+    - _Anti-Griefing:_ If your pair unmatches within 48 hours, you lose coins. After 48 hours, no penalty is applied.
 
-### Elevator pitch
+## 🛠️ Technology Usage
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+### HTML
 
-### Design
+- Uses semantic HTML structure for the application layout.
+- Forms and inputs for the progressive login and profile creation sequence.
+- Structural elements for the matchmaking grids, the user lobby/store, and the real-time chat interface.
 
-![Design image](placeholder.png)
+### CSS
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+- Custom CSS styling for a modern, minimalist UI (to avoid looking "super store-y").
+- Keyframe animations for the "Windows-style" tutorial text fade-ins and fade-outs.
+- Drag-and-drop visual states (hover, active, snap-to-target) and flexbox/grid layouts for the varying Match Modes.
 
-```mermaid
-sequenceDiagram
-    actor You
-    actor Website
-    You->>Website: Replace this with your design
-```
+### React
 
-### Key features
+- Single Page Application (SPA) architecture utilizing React Router to transition between the Onboarding, Lobby, Match Modes, and Chat.
+- Reusable functional components for UI elements (e.g., `ProfileCard`, `CoinBalance`, `InterestPill`).
+- State management (e.g., `useState`, `useEffect`) to track the user's daily Match Mode limits, current coin balance, and active drag-and-drop pairing selections.
 
-- Describe your key feature
-- Describe your key feature
-- Describe your key feature
+### Web Service
 
-### Technologies
+- Backend RESTful APIs built with Node.js/Express.
+- **Authentication:** Endpoints to register, login, and securely store/validate user credentials.
+- **Application Endpoints:**
+    - `POST /api/pair` (Submit a matchmaking guess)
+    - `POST /api/store/boost` (Spend coins to boost profile)
+    - `GET /api/matches/daily` (Retrieve the profiles for the daily Match Modes)
+- **3rd Party API:** Integration with the [Sightengine API](https://sightengine.com/docs/reference) (or a similar Computer Vision API) to analyze "Date Selfies." This verifies that the photo contains two actual human faces before awarding the massive coin bounty to the matchmakers, preventing users from uploading photos of their TV or pets to farm coins.
 
-I am going to use the required technologies in the following ways.
+### Database
 
-- **HTML** - Description here
-- **CSS** - Description here
-- **React** - Description here
-- **Service** - Description here
-- **DB/Login** - Description here
-- **WebSocket** - Description here
+- A NoSQL (e.g., MongoDB) or relational database to persistently store:
+    - User profiles (Name, Bio, Interests, hashed passwords).
+    - Economy data (Current coin balances, ledger of transactions).
+    - Relationship graphs (Pending pairs, consensus vote tallies, active matches).
 
-## 🚀 Specification Deliverable
+### WebSocket
 
-> [!NOTE]
-> Fill in this sections as the submission artifact for this deliverable. You can refer to this [example](https://github.com/webprogramming260/startup-example/blob/main/README.md) for inspiration.
+- Real-time bidirectional communication pushed from the backend to the frontend.
+- **Live Chat:** Powers the messaging system between matched users so messages appear instantly.
+- **Push Notifications:** Immediately alerts a matchmaker with a live UI pop-up (and coin balance update) the exact second one of their suggested pairs reaches consensus and officially matches.
 
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+## 🎨 Design Sketches
 
-- [ ] I completed the prerequisites for this deliverable (Git commit requirement)
-- [ ] Proper use of Markdown
-- [ ] A concise and compelling elevator pitch
-- [ ] Description of key features
-- [ ] Description of how you will use each technology
-- [ ] One or more rough sketches of your application. Images must be embedded in this file using Markdown image references.
+Below are the rough UI sketches mapping out the user flow, Match Modes, Lobby, and logic.
 
-## 🚀 AWS deliverable
+_Lobby/Store Dashboard & Navigation:_
+![Lobby Dashboard](/assets/images/readme/IMG_9956.HEIC)
+![Lobby Design 2](/assets/images/readme/IMG_9958.HEIC)
 
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+_Messaging Hub:_
+![Messages Flow](/assets/images/readme/IMG_9957.HEIC)
 
-- [ ] **Rented EC2 server** - I did not complete this part of the deliverable.
-- [ ] **Leased domain name** - I did not complete this part of the deliverable.
-- [ ] **Server accessible** from my domain: [https://yourdomainnamehere.click](https://yourdomainnamehere.click) - I did not complete this part of the deliverable.
+_Global Profile View (Super Brief Modal):_
+![Profile Click](/assets/images/readme/IMG_9959.HEIC)
 
-## 🚀 HTML deliverable
+_Onboarding, Progressive Login, & Tutorial Idea:_
+![Onboarding Flow](/assets/images/readme/IMG_9954.HEIC)
 
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
+_Match Mode 1 (Target Pairs):_
+![Match Mode 1](/assets/images/readme/IMG_9955.HEIC)
 
-- [ ] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits)
-- [ ] **HTML pages** - I did not complete this part of the deliverable.
-- [ ] **Proper HTML element usage** - I did not complete this part of the deliverable.
-- [ ] **Links** - I did not complete this part of the deliverable.
-- [ ] **Text** - I did not complete this part of the deliverable.
-- [ ] **3rd party API placeholder** - I did not complete this part of the deliverable.
-- [ ] **Images** - I did not complete this part of the deliverable.
-- [ ] **Login placeholder** - I did not complete this part of the deliverable.
-- [ ] **DB data placeholder** - I did not complete this part of the deliverable.
-- [ ] **WebSocket placeholder** - I did not complete this part of the deliverable.
+_Match Mode 2 (Hero Profile):_
+![Match Mode 2](/assets/images/readme/IMG_9952.HEIC)
 
-## 🚀 CSS deliverable
-
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
-
-- [ ] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits)
-- [ ] **Visually appealing colors and layout. No overflowing elements.** - I did not complete this part of the deliverable.
-- [ ] **Use of a CSS framework** - I did not complete this part of the deliverable.
-- [ ] **All visual elements styled using CSS** - I did not complete this part of the deliverable.
-- [ ] **Responsive to window resizing using flexbox and/or grid display** - I did not complete this part of the deliverable.
-- [ ] **Use of a imported font** - I did not complete this part of the deliverable.
-- [ ] **Use of different types of selectors including element, class, ID, and pseudo selectors** - I did not complete this part of the deliverable.
-
-## 🚀 React part 1: Routing deliverable
-
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
-
-- [ ] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits)
-- [ ] **Bundled using Vite** - I did not complete this part of the deliverable.
-- [ ] **Components** - I did not complete this part of the deliverable.
-- [ ] **Router** - I did not complete this part of the deliverable.
-
-## 🚀 React part 2: Reactivity deliverable
-
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
-
-- [ ] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits)
-- [ ] **All functionality implemented or mocked out** - I did not complete this part of the deliverable.
-- [ ] **Hooks** - I did not complete this part of the deliverable.
-
-## 🚀 Service deliverable
-
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
-
-- [ ] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits)
-- [ ] **Node.js/Express HTTP service** - I did not complete this part of the deliverable.
-- [ ] **Static middleware for frontend** - I did not complete this part of the deliverable.
-- [ ] **Calls to third party endpoints** - I did not complete this part of the deliverable.
-- [ ] **Backend service endpoints** - I did not complete this part of the deliverable.
-- [ ] **Frontend calls service endpoints** - I did not complete this part of the deliverable.
-- [ ] **Supports registration, login, logout, and restricted endpoint** - I did not complete this part of the deliverable.
-- [ ] **Uses BCrypt to hash passwords** - I did not complete this part of the deliverable.
-
-## 🚀 DB deliverable
-
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
-
-- [ ] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits)
-- [ ] **Stores data in MongoDB** - I did not complete this part of the deliverable.
-- [ ] **Stores credentials in MongoDB** - I did not complete this part of the deliverable.
-
-## 🚀 WebSocket deliverable
-
-For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
-
-- [ ] I completed the prerequisites for this deliverable (Simon deployed, GitHub link, Git commits)
-- [ ] **Backend listens for WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **Frontend makes WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **Data sent over WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **WebSocket data displayed** - I did not complete this part of the deliverable.
-- [ ] **Application is fully functional** - I did not complete this part of the deliverable.
+_Match Mode 3 (Line Connections):_
+![Match Mode 3](/assets/images/readme/IMG_9953.HEIC)
