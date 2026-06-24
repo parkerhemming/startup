@@ -66,24 +66,45 @@ Dating apps are exhausting, so we gamified the process. **Proxy** is a revolutio
 
 Below are the rough UI sketches mapping out the user flow, Match Modes, Lobby, and logic.
 
-_Lobby/Store Dashboard & Navigation:_
-![Lobby Dashboard](/assets/images/readme/IMG_9956.HEIC)
-![Lobby Design 2](/assets/images/readme/IMG_9958.HEIC)
-
-_Messaging Hub:_
-![Messages Flow](/assets/images/readme/IMG_9957.HEIC)
-
-_Global Profile View (Super Brief Modal):_
-![Profile Click](/assets/images/readme/IMG_9959.HEIC)
-
-_Onboarding, Progressive Login, & Tutorial Idea:_
-![Onboarding Flow](/assets/images/readme/IMG_9954.HEIC)
-
-_Match Mode 1 (Target Pairs):_
-![Match Mode 1](/assets/images/readme/IMG_9955.HEIC)
-
-_Match Mode 2 (Hero Profile):_
-![Match Mode 2](/assets/images/readme/IMG_9952.HEIC)
-
-_Match Mode 3 (Line Connections):_
-![Match Mode 3](/assets/images/readme/IMG_9953.HEIC)
+<table style="width:100%; border-spacing:15px;">
+  <tr>
+    <td valign="top" width="50%">
+      <b>Dashboard & Navigation:</b><br><br>
+      <img src="/assets/images/readme/IMG_9956.HEIC" width="100%" alt="Dashboard"/>
+    </td>
+    <td valign="top" width="50%">
+      <b>Other Details:</b><br><br>
+      <img src="/assets/images/readme/IMG_9959.HEIC" width="100%" alt="Other Details"/>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" width="50%">
+      <b>Messaging Hub:</b><br><br>
+      <img src="/assets/images/readme/IMG_9957.HEIC" width="100%" alt="Messages Flow"/>
+    </td>
+    <td valign="top" width="50%">
+      <b>Global Profile View (Super Brief Modal):</b><br><br>
+      <img src="/assets/images/readme/IMG_9955.HEIC" width="100%" alt="Profile Click"/>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" width="50%">
+      <b>Onboarding, Progressive Login, & Tutorial Idea:</b><br><br>
+      <img src="/assets/images/readme/IMG_9958.HEIC" width="100%" alt="Onboarding Flow"/>
+    </td>
+    <td valign="top" width="50%">
+      <b>Match Mode 1 (Target Pairs):</b><br><br>
+      <img src="/assets/images/readme/IMG_9952.HEIC" width="100%" alt="Match Mode 1"/>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" width="50%">
+      <b>Match Mode 2 (Hero Profile):</b><br><br>
+      <img src="/assets/images/readme/IMG_9953.HEIC" width="100%" alt="Match Mode 2"/>
+    </td>
+    <td valign="top" width="50%">
+      <b>Match Mode 3 (Line Connections):</b><br><br>
+      <img src="/assets/images/readme/IMG_9954.HEIC" width="100%" alt="Match Mode 3"/>
+    </td>
+  </tr>
+</table>
