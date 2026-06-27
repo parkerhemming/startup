@@ -10,12 +10,15 @@
 
 ## 📝 HTML Deliverable
 
-- [x] **Login/Signup**
-- [x] **Dashboard**
-- [x] **Messeges**
-- [x] **Other Profile**
-- [x] **Messeges**
-- [x] **Match Modes 1-3**
+- [x] **Login/Signup** Located in "index.html"
+- [x] **Dashboard** Located in "src/app/pages/dashboard/dashboard.html"
+- [] **External Facing Profile View** Located in "src/app/pages/other-profile/other-profile.html"
+- [] **Messages** Located in "src/app/pages/messages/messages.html"
+- [x] **Match Modes 1** Located in "src/app/pages/match-modes/match-mode-1/match-mode-1.html"
+- [] **Match Modes 2** Located in "src/app/pages/match-modes/match-mode-2/match-mode-2.html"
+- [] **Match Modes 3** Located in "src/app/pages/match-modes/match-mode-3/match-mode-3.html"
+- [] **Choose My Match** Located in "src/app/pages/choose-my-match/choose-my-match.html"
+- [] **Notifications** Located in "src/app/pages/notificaitons/notifications.html"
 
 ---
 
@@ -98,11 +101,11 @@ Below are the rough UI sketches mapping out the user flow, Match Modes, Lobby, a
   </tr>
   <tr>
     <td valign="top" width="50%">
-      <b>Messaging Hub:</b><br><br>
+      <b>Messaging:</b><br><br>
       <img src="design_sketches/IMG_9957.HEIC" width="100%" alt="Messages Flow"/>
     </td>
     <td valign="top" width="50%">
-      <b>Global Profile View (Super Brief Modal):</b><br><br>
+      <b>External Facing Profile View (Super Brief Modal):</b><br><br>
       <img src="design_sketches/IMG_9955.HEIC" width="100%" alt="Profile Click"/>
     </td>
   </tr>
