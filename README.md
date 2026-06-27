@@ -2,13 +2,20 @@
 
 ## 📝 Specification Deliverable
 
-Here is the checklist of rubric requirements completed for this deliverable:
-
 - [x] **Proper use of Markdown:** Utilized headers, lists, bold text, and HTML tables for clean formatting.
 - [x] **Elevator Pitch:** A concise and compelling paragraph explaining the app's gamified matchmaking concept.
 - [x] **Key Features:** Clear outline of core functionalities like Match Modes, consensus logic, and the coin economy.
 - [x] **Technology Usage:** Detailed explanations of how HTML, CSS, React, Web Services (including a 3rd party API), Database, and WebSockets will be utilized.
 - [x] **Design Sketches:** Embedded images of the application's layout and user flow.
+
+## 📝 HTML Deliverable
+
+- [x] **Login/Signup**
+- [x] **Dashboard**
+- [x] **Messeges**
+- [x] **Other Profile**
+- [x] **Messeges**
+- [x] **Match Modes 1-3**
 
 ---
 

@@ -5,8 +5,8 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-		<link src="/startup/src/app/styles/reset.css" rel="stylesheet" />
-		<link src="/startup/src/app/styles/global.css" rel="stylesheet" />
+		<link href="/startup/src/app/styles/reset.css" rel="stylesheet" />
+		<link href="/startup/src/app/styles/global.css" rel="stylesheet" />
 	</head>
 	<body>
 		<header>
@@ -33,10 +33,10 @@
 					id="login"
 					action="src/app/pages/dashboard/dashboard.html"
 				>
-					<label for="email">Email</label>
-					<input id="email" name="email" type="email" />
-					<label for="password">Password</label>
-					<input id="password" name="password" type="password" />
+					<label for="loginEmail">Email</label>
+					<input id="loginEmail" name="email" type="email" />
+					<label for="loginPassword">Password</label>
+					<input id="loginPassword" name="password" type="password" />
 
 					<input type="submit" value="Login" />
 				</form>
@@ -55,10 +55,14 @@
 						<option>Boy</option>
 						<option>Girl</option>
 					</select>
-					<label for="email">Email</label>
-					<input id="email" name="email" type="email" />
-					<label for="password">Password</label>
-					<input id="password" name="password" type="password" />
+					<label for="signupEmail">Email</label>
+					<input id="signupEmail" name="email" type="email" />
+					<label for="signupPassword">Password</label>
+					<input
+						id="signupPassword"
+						name="password"
+						type="password"
+					/>
 					<label for="bio">Bio</label>
 					<input id="bio" name="bio" type="text" />
 					<label for="interests">Interests</label>
