@@ -15,8 +15,8 @@
 - [] **External Facing Profile View** Located in "src/app/pages/other-profile/other-profile.html"
 - [] **Messages** Located in "src/app/pages/messages/messages.html"
 - [x] **Match Modes 1** Located in "src/app/pages/match-modes/match-mode-1/match-mode-1.html"
-- [] **Match Modes 2** Located in "src/app/pages/match-modes/match-mode-2/match-mode-2.html"
-- [] **Match Modes 3** Located in "src/app/pages/match-modes/match-mode-3/match-mode-3.html"
+- [x] **Match Modes 2** Located in "src/app/pages/match-modes/match-mode-2/match-mode-2.html"
+- [x] **Match Modes 3** Located in "src/app/pages/match-modes/match-mode-3/match-mode-3.html"
 - [] **Choose My Match** Located in "src/app/pages/choose-my-match/choose-my-match.html"
 - [] **Notifications** Located in "src/app/pages/notificaitons/notifications.html"
 
