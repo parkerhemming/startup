@@ -10,7 +10,7 @@
 	</head>
 	<body>
 		<header>
-			<a class="logo" href="/src/app/pages/dashboard/dashboard.html">
+			<div class="logo">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 24 24"
@@ -25,7 +25,7 @@
 
 				<h1>Proxy</h1>
 				<h1>Dating</h1>
-			</a>
+			</div>
 			<h2>
 				<span>500</span>
 
@@ -122,11 +122,12 @@
 			</a>
 		</header>
 		<main>
+			<h1>STORE</h1>
 			<section id="store">
 				<div>
-					<h2>Your profile will be shown to +1 more user.</h2>
+					<h2>Your profile will be shown to others. 10 remaining</h2>
 					<button>
-						<span>Show My Profile To Others</span>
+						<span>Show My Profile</span>
 						<span>15</span>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -190,7 +191,7 @@
 					<a
 						href="/src/app/pages/match-modes/match-mode-3/match-mode-3.html?mode=me"
 					>
-						<span>Choose A Match</span>
+						<span>Pick My Match</span>
 						<span>30</span>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -253,6 +254,7 @@
 				</div>
 				<div></div>
 			</section>
+			<h1>HOW DOES IT WORK?</h1>
 			<section id="instructions">
 				<div>
 					<h2>Pair others</h2>
@@ -316,7 +318,7 @@
 					</svg>
 				</div>
 				<div>
-					<h2>If your pair messages eachother</h2>
+					<h2>If a pair you made messages eachother</h2>
 					<h2>+1</h2>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -375,10 +377,10 @@
 							stroke-width="2"
 						/>
 					</svg>
-					<h2>/msg (25 max/day)</h2>
+					<h2>/msg (25 max/day/pair)</h2>
 				</div>
 				<div>
-					<h2>If your pair unmatches eachother</h2>
+					<h2>If a pair you made unmatches eachother</h2>
 					<h2>-10</h2>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -441,18 +443,6 @@
 			</section>
 		</main>
 		<footer>
-			<a
-				href="/src/app/pages/external-facing-profile-view/external-facing-profile-view.html"
-			>
-				<img
-					src="/src/public/system/pfp-male.png"
-					width="50"
-					alt="Default male profile photo."
-				/>
-			</a>
-			<a href="/src/app/pages/match-modes/match-mode-1/match-mode-1.html"
-				>START PAIRING</a
-			>
 			<a href="/src/app/pages/messages/messages.html">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -466,6 +456,19 @@
 						d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z M8 8.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 1 0 0-3z M12 8.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 1 0 0-3z M16 8.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 1 0 0-3z"
 					/>
 				</svg>
+			</a>
+
+			<a href="/src/app/pages/match-modes/match-mode-1/match-mode-1.html"
+				>START PAIRING</a
+			>
+			<a
+				href="/src/app/pages/external-facing-profile-view/external-facing-profile-view.html"
+			>
+				<img
+					src="/src/public/system/pfp-male.png"
+					width="50"
+					alt="Default male profile photo."
+				/>
 			</a>
 		</footer>
 	</body>
