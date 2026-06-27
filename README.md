@@ -12,12 +12,13 @@
 
 - [x] **Login/Signup** Located in "/index.html"
 - [x] **Dashboard** Located in "/src/app/pages/dashboard/dashboard.html"
-- [] **External Facing Profile View** Located in "src/app/pages/other-profile/other-profile.html"
-- [] **Messages** Located in "/src/app/pages/messages/messages.html"
+- [x] **External Facing Profile View** Located in "src/app/pages/other-profile/other-profile.html"
+- [x] **Messages** Located in "/src/app/pages/messages/messages.html"
+- [x] **Message** Located in "/src/app/pages/messages/message/message.html"
 - [x] **Match Modes 1** Located in "/src/app/pages/match-modes/match-mode-1/match-mode-1.html"
 - [x] **Match Modes 2** Located in "/src/app/pages/match-modes/match-mode-2/match-mode-2.html"
 - [x] **Match Modes 3** Located in "/src/app/pages/match-modes/match-mode-3/match-mode-3.html"
-- [] **Notifications** Located in "/src/app/pages/notificaitons/notifications.html"
+- [x] **Notifications** Located in "/src/app/pages/notifications/notifications.html"
 
 ---
 
