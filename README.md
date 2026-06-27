@@ -10,14 +10,14 @@
 
 ## 📝 HTML Deliverable
 
-- [x] **Login/Signup** Located in "index.html"
-- [x] **Dashboard** Located in "src/app/pages/dashboard/dashboard.html"
+- [x] **Login/Signup** Located in "/index.html"
+- [x] **Dashboard** Located in "/src/app/pages/dashboard/dashboard.html"
 - [] **External Facing Profile View** Located in "src/app/pages/other-profile/other-profile.html"
-- [] **Messages** Located in "src/app/pages/messages/messages.html"
-- [x] **Match Modes 1** Located in "src/app/pages/match-modes/match-mode-1/match-mode-1.html"
-- [x] **Match Modes 2** Located in "src/app/pages/match-modes/match-mode-2/match-mode-2.html"
-- [x] **Match Modes 3** Located in "src/app/pages/match-modes/match-mode-3/match-mode-3.html"
-- [] **Notifications** Located in "src/app/pages/notificaitons/notifications.html"
+- [] **Messages** Located in "/src/app/pages/messages/messages.html"
+- [x] **Match Modes 1** Located in "/src/app/pages/match-modes/match-mode-1/match-mode-1.html"
+- [x] **Match Modes 2** Located in "/src/app/pages/match-modes/match-mode-2/match-mode-2.html"
+- [x] **Match Modes 3** Located in "/src/app/pages/match-modes/match-mode-3/match-mode-3.html"
+- [] **Notifications** Located in "/src/app/pages/notificaitons/notifications.html"
 
 ---
 
@@ -91,41 +91,41 @@ Below are the rough UI sketches mapping out the user flow, Match Modes, Lobby, a
   <tr>
     <td valign="top" width="50%">
       <b>Dashboard & Navigation:</b><br><br>
-      <img src="design_sketches/IMG_9956.HEIC" width="100%" alt="Dashboard"/>
+      <img src="/design_sketches/IMG_9956.HEIC" width="100%" alt="Dashboard"/>
     </td>
     <td valign="top" width="50%">
       <b>Other Details:</b><br><br>
-      <img src="design_sketches/IMG_9959.HEIC" width="100%" alt="Other Details"/>
+      <img src="/design_sketches/IMG_9959.HEIC" width="100%" alt="Other Details"/>
     </td>
   </tr>
   <tr>
     <td valign="top" width="50%">
       <b>Messaging:</b><br><br>
-      <img src="design_sketches/IMG_9957.HEIC" width="100%" alt="Messages Flow"/>
+      <img src="/design_sketches/IMG_9957.HEIC" width="100%" alt="Messages Flow"/>
     </td>
     <td valign="top" width="50%">
       <b>External Facing Profile View (Super Brief Modal):</b><br><br>
-      <img src="design_sketches/IMG_9955.HEIC" width="100%" alt="Profile Click"/>
+      <img src="/design_sketches/IMG_9955.HEIC" width="100%" alt="Profile Click"/>
     </td>
   </tr>
   <tr>
     <td valign="top" width="50%">
       <b>Onboarding, Progressive Login, & Tutorial Idea:</b><br><br>
-      <img src="design_sketches/IMG_9958.HEIC" width="100%" alt="Onboarding Flow"/>
+      <img src="/design_sketches/IMG_9958.HEIC" width="100%" alt="Onboarding Flow"/>
     </td>
     <td valign="top" width="50%">
       <b>Match Mode 1 (Target Pairs):</b><br><br>
-      <img src="design_sketches/IMG_9952.HEIC" width="100%" alt="Match Mode 1"/>
+      <img src="/design_sketches/IMG_9952.HEIC" width="100%" alt="Match Mode 1"/>
     </td>
   </tr>
   <tr>
     <td valign="top" width="50%">
       <b>Match Mode 2 (Hero Profile):</b><br><br>
-      <img src="design_sketches/IMG_9953.HEIC" width="100%" alt="Match Mode 2"/>
+      <img src="/design_sketches/IMG_9953.HEIC" width="100%" alt="Match Mode 2"/>
     </td>
     <td valign="top" width="50%">
       <b>Match Mode 3 (Line Connections):</b><br><br>
-      <img src="design_sketches/IMG_9954.HEIC" width="100%" alt="Match Mode 3"/>
+      <img src="/design_sketches/IMG_9954.HEIC" width="100%" alt="Match Mode 3"/>
     </td>
   </tr>
 </table>
