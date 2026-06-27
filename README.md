@@ -1,6 +1,6 @@
 # Proxy 💘
 
-## 📝 Specification Deliverable
+## Specification Deliverable
 
 - [x] **Proper use of Markdown:** Utilized headers, lists, bold text, and HTML tables for clean formatting.
 - [x] **Elevator Pitch:** A concise and compelling paragraph explaining the app's gamified matchmaking concept.
@@ -8,7 +8,7 @@
 - [x] **Technology Usage:** Detailed explanations of how HTML, CSS, React, Web Services (including a 3rd party API), Database, and WebSockets will be utilized.
 - [x] **Design Sketches:** Embedded images of the application's layout and user flow.
 
-## 📝 HTML Deliverable
+## HTML Deliverable
 
 - [x] **Login/Signup**
 - [x] **Dashboard**
