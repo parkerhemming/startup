@@ -1,5 +1,11 @@
 # Proxy 💘
 
+# https://letsproxydating.com
+
+## TODO
+
+- [] Add error state texts on login page
+
 ## 📝 Specification Deliverable
 
 - [x] **Proper use of Markdown:** Utilized headers, lists, bold text, and HTML tables for clean formatting.
