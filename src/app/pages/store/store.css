@@ -26,7 +26,6 @@ main {
 	section {
 		max-width: 600px;
 		width: 100%;
-		font-size: 18px;
 		flex-direction: column;
 		gap: 50px;
 
@@ -38,7 +37,7 @@ main {
 		> div {
 			gap: 25px;
 			height: 100px;
-			font-size: 20px;
+			font-size: 16px;
 			padding-inline: 25px;
 			background-color: rgba(244, 244, 244, 0.622);
 			border-radius: 20px;

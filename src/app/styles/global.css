@@ -57,7 +57,7 @@ footer {
 
 	display: flex;
 	align-items: center;
-	justify-content: space-around;
+	justify-content: space-between;
 
 	i:hover {
 		color: rgb(100, 100, 100);
@@ -86,7 +86,7 @@ i {
 
 .btn {
 	flex-shrink: 0;
-	padding: 12px 24px;
+	padding: 10px 16px;
 
 	display: flex;
 	align-items: center;
@@ -94,7 +94,7 @@ i {
 	gap: 8px;
 
 	font-family: inherit;
-	font-size: 16px;
+	font-size: 14px;
 	font-weight: 600;
 	width: max-content;
 	height: max-content;
