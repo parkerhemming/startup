@@ -1,0 +1,55 @@
+header {
+	div {
+		display: flex;
+		gap: 10px;
+		font-weight: 600;
+
+		font-size: 14px;
+		> i {
+			font-size: 28px;
+			color: red;
+		}
+	}
+
+	a > i:hover {
+		color: rgb(100, 100, 100);
+	}
+}
+
+main {
+	flex-direction: column;
+	align-items: center;
+	gap: 100px;
+	padding-block: 100px;
+	padding-inline: 30px;
+
+	section {
+		max-width: 600px;
+		width: 100%;
+		font-size: 18px;
+		flex-direction: column;
+		gap: 50px;
+
+		h1 {
+			font-weight: 700;
+			font-size: 40px;
+		}
+
+		> div {
+			gap: 25px;
+			height: 100px;
+			font-size: 20px;
+			padding-inline: 25px;
+			background-color: rgba(244, 244, 244, 0.622);
+			border-radius: 20px;
+			justify-content: space-between;
+		}
+	}
+
+	div,
+	button,
+	a {
+		flex-direction: row;
+		align-items: center;
+	}
+}

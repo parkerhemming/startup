@@ -1,0 +1,6 @@
+main {
+	flex-direction: row;
+	div {
+		flex-direction: column;
+	}
+}
