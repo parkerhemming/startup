@@ -30,6 +30,10 @@ header {
 			gap: 5px;
 			width: 100%;
 			align-items: center;
+
+			i {
+				font-size: 15px;
+			}
 		}
 
 		:nth-child(1) {

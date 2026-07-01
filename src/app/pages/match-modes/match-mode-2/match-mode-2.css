@@ -1,5 +1,7 @@
 main {
 	flex-direction: row;
+	justify-content: center;
+
 	div {
 		flex-direction: column;
 	}

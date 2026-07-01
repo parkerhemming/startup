@@ -1,4 +1,5 @@
 main {
+	align-items: center;
 	div {
 		flex-direction: column;
 	}
