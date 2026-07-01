@@ -1,7 +1,35 @@
-section {
-	flex-direction: column;
+header {
+	div {
+		display: flex;
+		gap: 10px;
+		font-weight: 600;
+
+		font-size: 14px;
+		> i {
+			font-size: 28px;
+			color: red;
+		}
+	}
 }
 
-form {
+section {
 	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+
+	div {
+		flex-direction: column;
+
+		form {
+			flex-direction: column;
+			gap: 10px;
+		}
+
+		button {
+			background-color: transparent;
+			border: none;
+			width: max-content;
+		}
+	}
 }

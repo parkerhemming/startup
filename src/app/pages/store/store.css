@@ -46,6 +46,7 @@ main {
 
 			div {
 				gap: 10px;
+				flex-shrink: 0;
 			}
 		}
 	}

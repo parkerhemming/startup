@@ -8,94 +8,96 @@
 		<link href="src/app/styles/reset.css" rel="stylesheet" />
 		<link href="src/app/styles/global.css" rel="stylesheet" />
 		<link href="index.css" rel="stylesheet" />
+
+		<script
+			src="https://kit.fontawesome.com/fe83c3d710.js"
+			crossorigin="anonymous"
+		></script>
+		<script src="/index.js"></script>
 	</head>
 	<body>
 		<header>
-			<div class="logo">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 24 24"
-					width="50"
-					height="50"
-				>
-					<path
-						fill="#FF0000"
-						d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-					/>
-				</svg>
-
-				<h1>Proxy</h1>
-				<h1>Dating</h1>
+			<div>
+				<i class="fa-solid fa-heart"></i>
+				<h1>Proxy<br />Dating</h1>
 			</div>
 		</header>
 		<main>
 			<section>
-				<form
-					id="login"
-					action="src/app/pages/match-modes/match-mode-1/match-mode-1.html"
-				>
-					<label for="loginEmail">Email</label>
-					<input id="loginEmail" name="email" type="email" />
-					<label for="loginPassword">Password</label>
-					<input id="loginPassword" name="password" type="password" />
+				<div id="login" class="">
+					<form
+						action="src/app/pages/match-modes/match-mode-1/match-mode-1.html"
+					>
+						<label for="loginEmail">Email</label>
+						<input id="loginEmail" name="email" type="email" />
+						<label for="loginPassword">Password</label>
+						<input
+							id="loginPassword"
+							name="password"
+							type="password"
+						/>
 
-					<input type="submit" value="Login" />
-				</form>
-				<form
-					id="signup"
-					action="src/app/pages/match-modes/match-mode-1/match-mode-1.html"
-				>
-					<label for="firstName">First Name</label>
-					<input id="firstName" name="firstName" type="text" />
-					<label for="lastName">Last Name</label>
-					<input id="lastName" name="lastName" type="text" />
-					<label for="age">Age</label>
-					<input id="age" name="age" type="number" />
-					<label for="gender">Select: </label>
-					<select id="gender" name="gender">
-						<option>Boy</option>
-						<option>Girl</option>
-					</select>
-					<label for="signupEmail">Email</label>
-					<input id="signupEmail" name="email" type="email" />
-					<label for="signupPassword">Password</label>
-					<input
-						id="signupPassword"
-						name="password"
-						type="password"
-					/>
-					<label for="bio">Bio</label>
-					<input id="bio" name="bio" type="text" />
-					<label for="interests">Interests</label>
-					<input id="interests" name="interests" type="text" />
-					<label for="pfp-1">Photos</label>
-					<input
-						type="file"
-						id="pfp-1"
-						name="pfp-1"
-						accept="image/png, image/jpeg"
-					/>
-					<input
-						type="file"
-						id="pfp-2"
-						name="pfp-2"
-						accept="image/png, image/jpeg"
-					/>
-					<input
-						type="file"
-						id="pfp-3"
-						name="pfp-3"
-						accept="image/png, image/jpeg"
-					/>
-					<input
-						type="file"
-						id="pfp-4"
-						name="pfp-4"
-						accept="image/png, image/jpeg"
-					/>
+						<input type="submit" value="Login" />
+					</form>
+					<button>Signup</button>
+				</div>
+				<div id="signup" class="hidden">
+					<form
+						action="src/app/pages/match-modes/match-mode-1/match-mode-1.html"
+					>
+						<label for="firstName">First Name</label>
+						<input id="firstName" name="firstName" type="text" />
+						<label for="lastName">Last Name</label>
+						<input id="lastName" name="lastName" type="text" />
+						<label for="age">Age</label>
+						<input id="age" name="age" type="number" />
+						<label for="gender">Select: </label>
+						<select id="gender" name="gender">
+							<option>Boy</option>
+							<option>Girl</option>
+						</select>
+						<label for="signupEmail">Email</label>
+						<input id="signupEmail" name="email" type="email" />
+						<label for="signupPassword">Password</label>
+						<input
+							id="signupPassword"
+							name="password"
+							type="password"
+						/>
+						<label for="bio">Bio</label>
+						<input id="bio" name="bio" type="text" />
+						<label for="interests">Interests</label>
+						<input id="interests" name="interests" type="text" />
+						<label for="pfp-1">Photos</label>
+						<input
+							type="file"
+							id="pfp-1"
+							name="pfp-1"
+							accept="image/png, image/jpeg"
+						/>
+						<input
+							type="file"
+							id="pfp-2"
+							name="pfp-2"
+							accept="image/png, image/jpeg"
+						/>
+						<input
+							type="file"
+							id="pfp-3"
+							name="pfp-3"
+							accept="image/png, image/jpeg"
+						/>
+						<input
+							type="file"
+							id="pfp-4"
+							name="pfp-4"
+							accept="image/png, image/jpeg"
+						/>
 
-					<input type="submit" value="Signup" />
-				</form>
+						<input type="submit" value="Signup" />
+					</form>
+					<button>Login</button>
+				</div>
 			</section>
 		</main>
 	</body>
