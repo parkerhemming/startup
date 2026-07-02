@@ -5,6 +5,7 @@
 ## TODO
 
 - [] Add error state texts on login page
+- Note: Maybe matchmaking mode 3 can just be match me mode and loop modes 1-2. Accidentally made match mode 1 rotated 90deg but it lowkey looks better so might pivot a bit...
 
 ## 📝 Specification Deliverable
 

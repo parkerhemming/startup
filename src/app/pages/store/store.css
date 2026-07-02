@@ -1,5 +1,5 @@
 header {
-	div {
+	#logo {
 		display: flex;
 		gap: 10px;
 		font-weight: 600;
@@ -9,10 +9,6 @@ header {
 			font-size: 28px;
 			color: red;
 		}
-	}
-
-	a > i:hover {
-		color: rgb(100, 100, 100);
 	}
 }
 
