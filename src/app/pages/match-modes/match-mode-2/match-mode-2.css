@@ -22,8 +22,8 @@ main {
 
 	section {
 		--line-width: 50px;
-		--row-gap: 5px;
-		--pad: 5px;
+		--row-gap: 10px;
+		--pad: 10px;
 
 		flex: 1;
 		min-height: 0;
