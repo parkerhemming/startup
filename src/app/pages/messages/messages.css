@@ -42,12 +42,18 @@ header::-webkit-scrollbar {
 			align-items: center;
 
 			i {
-				font-size: 15px;
+				font-size: 12px;
 			}
 		}
 
 		:nth-child(1) {
 			margin-right: auto;
+			:nth-child(1) {
+				font-weight: 550;
+			}
+			:nth-child(2) {
+				font-size: 14px;
+			}
 		}
 
 		h3 {
