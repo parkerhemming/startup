@@ -21,7 +21,7 @@ header::-webkit-scrollbar {
 	box-sizing: border-box;
 	align-items: center;
 	gap: 20px;
-	padding-inline: 30px;
+	padding-inline: 25px;
 	height: 100px;
 	flex-shrink: 0;
 
