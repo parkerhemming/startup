@@ -20,63 +20,99 @@
 				<i class="fa-solid fa-heart"></i>
 				<h1>Proxy<br />Dating</h1>
 			</a>
-			<h2>
-				<span>500</span>
-				<i class="fa-solid fa-coins"></i>
-			</h2>
+
 			<a href="../notifications/notifications.html">
 				<i class="fa-solid fa-bell"></i>
 			</a>
 		</header>
 		<main>
-			<section id="store">
-				<h1>STORE</h1>
-
-				<div>
-					<h2>Your profile will be shown to others.</h2>
-					<h2>10 more times</h2>
+			<section id="dashboard-summary">
+				<div class="stats-row">
+					<div class="stat-box">
+						<h3>My Balance</h3>
+						<h2>500 <i class="fa-solid fa-coins"></i></h2>
+					</div>
+					<div class="stat-box">
+						<h3>Active Pairs</h3>
+						<h2>14 <i class="fa-solid fa-user-group"></i></h2>
+					</div>
 				</div>
-				<button class="btn">
-					<span>Show My Profile</span>
-					<span>15</span>
-					<i class="fa-solid fa-coins"></i>
-				</button>
-				<div>
-					<h2>Choose your own match.</h2>
-					<h2>2 / day</h2>
+				<div class="summary-note">
+					<i class="fa-solid fa-circle-info"></i>
+					<p>
+						Active Pairs are couples you have matched together. You
+						earn passive income (+1 coin) every time they message,
+						but you take a hit (-10 coins) if they unmatch!
+					</p>
 				</div>
-				<a
-					class="btn"
-					href="../match-modes/match-mode-3/match-mode-3.html?mode=me"
-				>
-					<span>Pick My Match</span>
-					<span>30</span>
-					<i class="fa-solid fa-coins"></i>
-				</a>
 			</section>
-			<section id="instructions">
-				<h1>HOW DOES IT WORK?</h1>
 
-				<div>
-					<h2>Pair others</h2>
-					<div>
-						<h2>+5</h2>
-						<i class="fa-solid fa-coins"></i>
-					</div>
+			<section id="store">
+				<div class="section-header">
+					<h1>STORE</h1>
+					<p>Spend coins to upgrade your matchmaking experience.</p>
 				</div>
-				<div>
-					<h2>If a pair you made messages eachother</h2>
-					<div>
-						<h2>+1</h2>
-						<i class="fa-solid fa-coins"></i>
-						<h2>/ msg</h2>
+
+				<div class="store-item">
+					<div class="icon-wrap"><i class="fa-solid fa-eye"></i></div>
+					<div class="text-wrap">
+						<h2>Profile Boost</h2>
+						<p>
+							Your profile will be shown to others 10 more times.
+						</p>
 					</div>
-				</div>
-				<div>
-					<h2>If a pair you made unmatches eachother</h2>
-					<div>
-						<h2>-10</h2>
+					<button class="btn">
+						<span>15</span>
 						<i class="fa-solid fa-coins"></i>
+					</button>
+				</div>
+
+				<div class="store-item">
+					<div class="icon-wrap">
+						<i class="fa-solid fa-hand-pointer"></i>
+					</div>
+					<div class="text-wrap">
+						<h2>Manual Match</h2>
+						<p>Choose your own match from the pool. (2 / day)</p>
+					</div>
+					<a
+						class="btn"
+						href="../match-modes/match-mode-3/match-mode-3.html?mode=me"
+					>
+						<span>30</span>
+						<i class="fa-solid fa-coins"></i>
+					</a>
+				</div>
+			</section>
+
+			<section id="instructions">
+				<div class="section-header">
+					<h1>ECONOMY GUIDE</h1>
+					<p>How the dynamic coin economy works</p>
+				</div>
+
+				<div class="rules-grid">
+					<div class="rule-card">
+						<i class="fa-solid fa-handshake-angle"></i>
+						<h2>Pair Others</h2>
+						<div class="reward positive">
+							+5 <i class="fa-solid fa-coins"></i>
+						</div>
+					</div>
+					<div class="rule-card">
+						<i class="fa-solid fa-comments"></i>
+						<h2>Pairs Message</h2>
+						<div class="reward positive">
+							+1 <i class="fa-solid fa-coins"></i
+							><span>/msg</span>
+						</div>
+					</div>
+					<div class="rule-card">
+						<i class="fa-solid fa-heart-crack"></i>
+						<h2>Pairs Unmatch</h2>
+						<div class="reward negative">
+							-10 <i class="fa-solid fa-coins"></i>
+						</div>
 					</div>
 				</div>
 			</section>
@@ -85,15 +121,13 @@
 			<a href="../match-modes/match-mode-1/match-mode-1.html"
 				><i class="fa-solid fa-home"></i
 			></a>
-
 			<a href="../messages/messages.html"
 				><i class="fa-solid fa-message"></i
 			></a>
 			<a href="../store/store.html"><i class="fa-solid fa-store"></i> </a>
-
-			<a href="../profile-view/profile-view.html?mode=me">
-				<i class="fa-solid fa-circle-user"></i>
-			</a>
+			<a href="../profile-view/profile-view.html?mode=me"
+				><i class="fa-solid fa-circle-user"></i
+			></a>
 		</footer>
 	</body>
 </html>
