@@ -27,6 +27,7 @@ header {
 	background-color: white;
 	font-weight: 500;
 	padding-inline: 25px;
+	border-bottom: 1px solid #eaeaea;
 
 	display: grid;
 	grid-template-columns: 1fr auto 1fr;
@@ -58,6 +59,7 @@ footer {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	border-top: 1px solid #eaeaea;
 }
 
 i:not(.fa-coins, .fa-heart):hover {
