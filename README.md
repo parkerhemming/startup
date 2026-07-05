@@ -30,6 +30,9 @@
 
 ## 📝 CSS Deliverable
 
+- [x] **Reset Styles** Located in "src/app/styles/reset.css"
+- [x] **Global Styles** Located in "src/app/styles/global.css"
+
 - [x] **Login/Signup** Located in "index.css"
 - [x] **Store** Located in "src/app/pages/store/store.css"
 - [x] **Profile View** Located in "src/app/pages/profile-view/profile-view.css"
