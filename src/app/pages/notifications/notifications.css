@@ -5,15 +5,20 @@ header {
 }
 
 main {
+	display: flex;
 	flex-direction: column;
 	align-items: center;
 
 	section {
+		display: flex;
+
 		flex-direction: column;
 		gap: 20px;
 		padding: 20px;
 
 		.row {
+			display: flex;
+
 			justify-content: space-between;
 			flex-direction: row;
 			align-items: center;

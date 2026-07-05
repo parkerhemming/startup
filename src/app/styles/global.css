@@ -13,10 +13,10 @@ body {
 	flex-direction: column;
 	height: 100svh;
 	margin: 0;
+	display: flex;
 
 	&,
 	*:not(script, header, footer) {
-		display: flex;
 		color: rgb(80, 80, 80);
 	}
 }

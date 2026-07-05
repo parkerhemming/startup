@@ -104,12 +104,6 @@ main {
 			border-radius: 15px;
 			border: 1px solid #eaeaea;
 
-			i {
-				color: #888;
-				font-size: 16px;
-				margin-top: 2px;
-			}
-
 			p {
 				font-size: 13px;
 				line-height: 1.5;
@@ -195,7 +189,6 @@ main {
 
 				i:first-child {
 					font-size: 18px;
-					color: #888;
 					width: 24px;
 					text-align: center;
 				}
