@@ -5,7 +5,6 @@
 ## TODO
 
 - [] Add error state texts on login page
-- Note: Maybe matchmaking mode 3 can just be match me mode and loop modes 1-2. Accidentally made match mode 1 rotated 90deg but it lowkey looks better so might pivot a bit...
 
 ## 📝 Specification Deliverable
 
@@ -18,7 +17,7 @@
 ## 📝 HTML Deliverable
 
 - [x] **Login/Signup** Located in "index.html"
-- [x] **Dashboard** Located in "src/app/pages/dashboard/dashboard.html"
+- [x] **Store** Located in "src/app/pages/store/store.html"
 - [x] **Profile View** Located in "src/app/pages/profile-view/profile-view.html"
 - [x] **Messages** Located in "src/app/pages/messages/messages.html"
 - [x] **Message** Located in "src/app/pages/messages/message/message.html"
@@ -28,6 +27,18 @@
 - [x] **Notifications** Located in "src/app/pages/notifications/notifications.html"
 
 ---
+
+## 📝 CSS Deliverable
+
+- [x] **Login/Signup** Located in "index.css"
+- [x] **Store** Located in "src/app/pages/store/store.css"
+- [x] **Profile View** Located in "src/app/pages/profile-view/profile-view.css"
+- [x] **Messages** Located in "src/app/pages/messages/messages.css"
+- [x] **Message** Located in "src/app/pages/messages/message/message.css"
+- [x] **Match Modes 1** Located in "src/app/pages/match-modes/match-mode-1/match-mode-1.css"
+- [x] **Match Modes 2** Located in "src/app/pages/match-modes/match-mode-2/match-mode-2.css"
+- [x] **Match Modes 3** Located in "src/app/pages/match-modes/match-mode-3/match-mode-3.css"
+- [x] **Notifications** Located in "src/app/pages/notifications/notifications.css"
 
 ## 🚀 Elevator Pitch
 
