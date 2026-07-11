@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import styles from "./match-mode-3.module.css";
+import styles from "./pair-mode-2.module.css";
 import { polyfill } from "mobile-drag-drop";
 import { scrollBehaviourDragImageTranslateOverride } from "mobile-drag-drop/scroll-behaviour";
 import "mobile-drag-drop/default.css";
@@ -16,85 +16,98 @@ if (typeof window !== "undefined") {
 	window.addEventListener("touchmove", function () {}, { passive: false });
 }
 
-export function MatchMode3() {
+export function PairMode2() {
 	const [draggingData, setDraggingData] = useState(null);
+
+	const [maleUsers, setMaleUsers] = useState([
+		{ id: "m1", name: "MICHAEL SMITH", image: "/pfp-male.png" },
+		{ id: "m2", name: "CHRIS EVANS", image: "/pfp-male.png" },
+		{ id: "m3", name: "DAVID JONES", image: "/pfp-male.png" },
+		{ id: "m4", name: "DANIEL BROWN", image: "/pfp-male.png" },
+	]);
 
 	const [femaleUsers, setFemaleUsers] = useState([
 		{ id: "f1", name: "SARAH ADAMS", image: "/pfp-female.png" },
 		{ id: "f2", name: "JESSICA MILLER", image: "/pfp-female.png" },
 		{ id: "f3", name: "EMILY DAVIS", image: "/pfp-female.png" },
 		{ id: "f4", name: "ASHLEY CLARK", image: "/pfp-female.png" },
-		{ id: "f5", name: "BRITTANY WRIGHT", image: "/pfp-female.png" },
-		{ id: "f6", name: "AMANDA HALL", image: "/pfp-female.png" },
-		{ id: "f7", name: "MEGAN YOUNG", image: "/pfp-female.png" },
-		{ id: "f8", name: "TAYLOR KING", image: "/pfp-female.png" },
-		{ id: "f9", name: "RACHEL SCOTT", image: "/pfp-female.png" },
 	]);
 
-	function handleSwap(draggedId, targetId) {
-		setFemaleUsers((prev) => {
-			const newArray = [...prev];
+	function handleSwap(draggedId, targetId, gender) {
+		const setUsers = gender === "male" ? setMaleUsers : setFemaleUsers;
+
+		setUsers((prevUsers) => {
+			const newArray = [...prevUsers];
 			const dragIndex = newArray.findIndex((u) => u.id === draggedId);
 			const dropIndex = newArray.findIndex((u) => u.id === targetId);
 
-			if (dragIndex === -1 || dropIndex === -1) return prev;
+			if (dragIndex === -1 || dropIndex === -1) return prevUsers;
 
-			const temp = newArray[dragIndex];
-			newArray[dragIndex] = newArray[dropIndex];
-			newArray[dropIndex] = temp;
+			const draggedUser = { ...newArray[dragIndex] };
+			const targetUser = { ...newArray[dropIndex] };
+
+			newArray[dragIndex] = targetUser;
+			newArray[dropIndex] = draggedUser;
 
 			return newArray;
 		});
 	}
 
+	useEffect(() => {
+		document.title = `Pair | Proxy Dating`;
+	}, []);
+
 	return (
 		<main className={styles.matchMain} data-dragging={!!draggingData}>
 			{draggingData && <div className={styles.overlay}></div>}
 
-			<section className={styles.maleSection}>
-				<div className={`${styles.square} ${styles.big}`}>
-					<img
-						src="/pfp-male.png"
-						alt="RYAN CARTER"
-						draggable={false}
-					/>
-					<h3>RYAN CARTER</h3>
-				</div>
-			</section>
-
-			<section className={styles.gridSection}>
-				{femaleUsers.map((user, index) => (
-					<ProfileSquare
-						key={index}
-						user={user}
-						isBig={index === 1}
-						onSwap={handleSwap}
-						draggingData={draggingData}
-						setDraggingData={setDraggingData}
-					/>
+			<section className={styles.containerSection}>
+				{[0, 1, 2, 3].map((i) => (
+					<div className={styles.row} key={i}>
+						<ProfileSquare
+							user={maleUsers[i]}
+							gender="male"
+							onSwap={handleSwap}
+							draggingData={draggingData}
+							setDraggingData={setDraggingData}
+						/>
+						<hr />
+						<ProfileSquare
+							user={femaleUsers[i]}
+							gender="female"
+							onSwap={handleSwap}
+							draggingData={draggingData}
+							setDraggingData={setDraggingData}
+						/>
+					</div>
 				))}
 			</section>
 		</main>
 	);
 }
 
-function ProfileSquare({ user, isBig, onSwap, draggingData, setDraggingData }) {
+function ProfileSquare({
+	user,
+	gender,
+	onSwap,
+	draggingData,
+	setDraggingData,
+}) {
 	const [isDragOver, setIsDragOver] = useState(false);
 
 	const isCurrentlyDragging = draggingData?.id === user.id;
 
-	const isValidTarget = draggingData && isBig && draggingData.id !== user.id;
-
-	const displayName = isBig ? user.name : user.name.split(" ")[0];
+	const isValidTarget =
+		draggingData &&
+		draggingData.gender === gender &&
+		draggingData.id !== user.id;
 
 	function handleDragStart(e) {
-		if (isBig) {
-			e.preventDefault();
-			return;
-		}
 		e.dataTransfer.setData("draggedId", user.id);
+		e.dataTransfer.setData("gender", gender);
+
 		setTimeout(() => {
-			setDraggingData({ id: user.id });
+			setDraggingData({ id: user.id, gender });
 		}, 0);
 	}
 
@@ -106,7 +119,7 @@ function ProfileSquare({ user, isBig, onSwap, draggingData, setDraggingData }) {
 	function handleDragOver(e) {
 		if (isValidTarget) {
 			e.preventDefault();
-			if (!isDragOver) setIsDragOver(true);
+			setIsDragOver(true);
 		}
 	}
 
@@ -120,14 +133,15 @@ function ProfileSquare({ user, isBig, onSwap, draggingData, setDraggingData }) {
 		setDraggingData(null);
 
 		const draggedId = e.dataTransfer.getData("draggedId");
-		if (isValidTarget && draggedId !== user.id) {
-			onSwap(draggedId, user.id);
+		const draggedGender = e.dataTransfer.getData("gender");
+
+		if (draggedGender === gender && draggedId !== user.id) {
+			onSwap(draggedId, user.id, gender);
 		}
 	}
 
 	const classNames = [
 		styles.square,
-		isBig ? styles.big : "",
 		isCurrentlyDragging ? styles.isDragging : "",
 		isValidTarget ? styles.highlightTarget : "",
 		isDragOver ? styles.dragOver : "",
@@ -136,9 +150,10 @@ function ProfileSquare({ user, isBig, onSwap, draggingData, setDraggingData }) {
 		.join(" ");
 
 	return (
-		<div
+		<Link
+			to="/profile-view"
 			className={classNames}
-			draggable={!isBig}
+			draggable={true}
 			onDragStart={handleDragStart}
 			onDragEnd={handleDragEnd}
 			onDragOver={handleDragOver}
@@ -147,7 +162,7 @@ function ProfileSquare({ user, isBig, onSwap, draggingData, setDraggingData }) {
 			onDrop={handleDrop}
 		>
 			<img src={user.image} alt={user.name} draggable={false} />
-			<h3>{displayName}</h3>
-		</div>
+			<h3>{user.name}</h3>
+		</Link>
 	);
 }

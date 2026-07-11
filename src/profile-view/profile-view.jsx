@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./profile-view.module.css";
 
 export function ProfileView() {
 	const navigate = useNavigate();
 
-	// Mock data based on your HTML
 	const profileData = {
 		name: "John Doe",
 		bio: "Grinding out summer sales so I can spend the off-season traveling and actually enjoying my weekends. Always looking for ways to stay involved and busy when I'm not working on the doors. Big fan of hitting the gym, finding the best local food spots, and spontaneous road trips. Looking for someone who can match my energy and doesn't take life too seriously.",
@@ -18,6 +17,10 @@ export function ProfileView() {
 			"/pfp-male.png",
 		],
 	};
+
+	useEffect(() => {
+		document.title = `${profileData.name} | Proxy Dating`;
+	}, []);
 
 	return (
 		<>

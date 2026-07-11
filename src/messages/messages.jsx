@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import styles from "./messages.module.css";
 
@@ -118,13 +118,17 @@ export function Messages() {
 		},
 	];
 
+	useEffect(() => {
+		document.title = "Messages | Proxy Dating";
+	}, []);
+
 	return (
 		<div className={styles.messagesContainer}>
 			<header className={styles.header}>
 				{conversations.map((user) => (
 					<Link
 						key={`story-${user.id}`}
-						to="/message"
+						to={`/message?id=${user.id}&name=${user.name}`}
 						draggable={false}
 					>
 						<img
@@ -141,7 +145,7 @@ export function Messages() {
 					<Link
 						key={`msg-${user.id}`}
 						className={styles.row}
-						to="/message"
+						to={`/message?id=${user.id}&name=${user.name}`}
 						draggable={false}
 					>
 						<img

@@ -1,9 +1,13 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import styles from "./message.module.css";
+import { toProperCase } from "../../utils";
 
 export function Message() {
-	// State to hold the chat history
+	const [searchParams] = useSearchParams();
+	const id = searchParams.get("id");
+	const name = searchParams.get("name");
+
 	const [messages, setMessages] = useState([
 		{ id: 1, sender: "me", text: "Hi" },
 		{ id: 2, sender: "them", text: "Hello!" },
@@ -11,23 +15,23 @@ export function Message() {
 		{ id: 4, sender: "them", text: "Thx" },
 	]);
 
-	// State for the text input
 	const [inputText, setInputText] = useState("");
 
-	// Handle sending a new message
 	const handleSend = (e) => {
 		e.preventDefault();
 		if (!inputText.trim()) return;
-
 		const newMessage = {
 			id: Date.now(),
 			sender: "me",
 			text: inputText,
 		};
-
 		setMessages((prev) => [...prev, newMessage]);
-		setInputText(""); // Clear the input
+		setInputText("");
 	};
+
+	useEffect(() => {
+		document.title = `Message ${toProperCase(name)} | Proxy Dating`;
+	}, []);
 
 	return (
 		<div className={styles.container}>
@@ -41,9 +45,9 @@ export function Message() {
 						src="/pfp-female.png"
 						width="42"
 						height="42"
-						alt="ASHLEY"
+						alt={name}
 					/>
-					<h2>ASHLEY</h2>
+					<h2>{name}</h2>
 				</Link>
 
 				<button className={styles.unmatchBtn}>

@@ -11,9 +11,9 @@ import {
 } from "react-router-dom";
 import { Login } from "./login/login.jsx";
 import { Signup } from "./signup/signup.jsx";
-import { MatchMode1 } from "./match-modes/match-mode-1/match-mode-1.jsx";
-import { MatchMode2 } from "./match-modes/match-mode-2/match-mode-2.jsx";
-import { MatchMode3 } from "./match-modes/match-mode-3/match-mode-3.jsx";
+import { PairMode1 } from "./pair-modes/pair-mode-1/pair-mode-1.jsx";
+import { PairMode2 } from "./pair-modes/pair-mode-2/pair-mode-2.jsx";
+import { PairMode3 } from "./pair-modes/pair-mode-3/pair-mode-3.jsx";
 import { Store } from "./store/store.jsx";
 import { Messages } from "./messages/messages.jsx";
 import { Message } from "./messages/message/message.jsx";
@@ -42,14 +42,14 @@ export default function App() {
 		if (!user && !publicRoutes.includes(location.pathname)) {
 			navigate("/login");
 		} else if (location.pathname === "/") {
-			navigate("/match-mode-1");
+			navigate("/pair-mode-1");
 		}
 	}, [user, navigate, location.pathname]);
 
 	const nextModeMap = {
-		"/match-mode-1": "/match-mode-2",
-		"/match-mode-2": "/match-mode-3",
-		"/match-mode-3": "/match-mode-1",
+		"/pair-mode-1": "/pair-mode-2",
+		"/pair-mode-2": "/pair-mode-3",
+		"/pair-mode-3": "/pair-mode-1",
 	};
 
 	const showGlobalHeader =
@@ -76,7 +76,7 @@ export default function App() {
 						</button>
 					)}
 
-					<Link to="/match-mode-1" id="logo">
+					<Link to="/pair-mode-1" id="logo">
 						<i className="fa-solid fa-heart"></i>
 						<h1>
 							Proxy
@@ -96,9 +96,9 @@ export default function App() {
 			<Routes>
 				<Route path="/login" element={<Login setUser={setUser} />} />
 				<Route path="/signup" element={<Signup setUser={setUser} />} />
-				<Route path="/match-mode-1" element={<MatchMode1 />} />
-				<Route path="/match-mode-2" element={<MatchMode2 />} />
-				<Route path="/match-mode-3" element={<MatchMode3 />} />
+				<Route path="/pair-mode-1" element={<PairMode1 />} />
+				<Route path="/pair-mode-2" element={<PairMode2 />} />
+				<Route path="/pair-mode-3" element={<PairMode3 />} />
 				<Route path="/messages" element={<Messages />} />
 				<Route path="/message" element={<Message />} />
 				<Route path="/store" element={<Store />} />
@@ -109,7 +109,7 @@ export default function App() {
 
 			{user && showGlobalFooter && (
 				<footer>
-					<NavLink to="/match-mode-1">
+					<NavLink to="/pair-mode-1">
 						<i className="fa-solid fa-home"></i>
 					</NavLink>
 
@@ -117,7 +117,7 @@ export default function App() {
 						<i className="fa-solid fa-message"></i>
 					</NavLink>
 
-					{location.pathname.includes("match-mode") && (
+					{location.pathname.includes("pair-mode") && (
 						<NavLink
 							className="btn"
 							to={nextModeMap[location.pathname]}

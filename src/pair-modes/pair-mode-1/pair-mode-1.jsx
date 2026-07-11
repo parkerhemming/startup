@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import styles from "./match-mode-1.module.css";
+import styles from "./pair-mode-1.module.css";
 import { polyfill } from "mobile-drag-drop";
 import { scrollBehaviourDragImageTranslateOverride } from "mobile-drag-drop/scroll-behaviour";
 import "mobile-drag-drop/default.css";
@@ -16,7 +16,7 @@ if (typeof window !== "undefined") {
 	window.addEventListener("touchmove", function () {}, { passive: false });
 }
 
-export function MatchMode1() {
+export function PairMode1() {
 	const [draggingData, setDraggingData] = useState(null);
 
 	const [maleUsers, setMaleUsers] = useState([
@@ -126,6 +126,10 @@ export function MatchMode1() {
 			return newArray;
 		});
 	}
+
+	useEffect(() => {
+		document.title = `Pair | Proxy Dating`;
+	}, []);
 
 	return (
 		<main className={styles.matchMain} data-dragging={!!draggingData}>

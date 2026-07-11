@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import styles from "./store.module.css";
 
 export function Store() {
+	useEffect(() => {
+		document.title = "Store | Proxy Dating";
+	}, []);
+
 	return (
 		<main className={styles.main}>
 			<section className={`${styles.section} ${styles.dashboardSummary}`}>
@@ -60,7 +64,7 @@ export function Store() {
 						<h2>Manual Match</h2>
 						<p>Choose your own match from the pool. (2 / day)</p>
 					</div>
-					<Link className="btn" to="/match-mode-3">
+					<Link className="btn" to="/pair-mode-3">
 						<span>30</span>
 						<i className="fa-solid fa-coins"></i>
 					</Link>

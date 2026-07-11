@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "./login.module.css";
 
@@ -14,13 +14,17 @@ export function Login({ setUser }) {
 		};
 		setUser(userData);
 		localStorage.setItem("user", JSON.stringify(userData));
-		navigate("/match-mode-1");
+		navigate("/pair-mode-1");
 	}
+
+	useEffect(() => {
+		document.title = "Login | Proxy Dating";
+	}, []);
 
 	return (
 		<div className={styles.wrapper}>
 			<header className={styles.header}>
-				<Link to="/match-mode-1" id="logo">
+				<Link to="/pair-mode-1" id="logo">
 					<i className="fa-solid fa-heart"></i>
 					<h1>
 						Proxy

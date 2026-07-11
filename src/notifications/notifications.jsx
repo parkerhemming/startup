@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./notifications.module.css";
 
@@ -77,6 +77,10 @@ export function Notifications() {
 			time: "4 days ago",
 		},
 	];
+
+	useEffect(() => {
+		document.title = `${notificationsData.length} Notifications | Proxy Dating`;
+	}, []);
 
 	return (
 		<>
