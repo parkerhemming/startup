@@ -4,7 +4,7 @@
 
 ## TODO
 
-- [] Add error state texts on login page
+- [ ] Add error state texts on login page
 
 ## 📝 Specification Deliverable
 
@@ -44,12 +44,12 @@
 
 ---
 
-## 📝 React part 1: Routing & Components Deliverable
+## React part1
 
-- [x] **Bundled and Transpiled:** Successfully set up production build tools using Vite to transpile JSX/modern Javascript and bundle application source assets.
-- [x] **Components:** Created structured functional components for main application flows, dynamically mapping user cards, item stores, notifications, and interactive chat strings.
-- [x] **Router:** Integrated declarative SPA routing through `react-router-dom` with strict route configurations matching specified main dashboard views.
-- [x] **State Management:** Handled interactive single-page app state, including drag-and-drop structural updates, localized user sessions via localStorage integration, conditional UI shell rendering, and real-time form bindings.
+- [x] **Vite:** Bundled, compiled, and deployed single-page assets using Vite configuration pipelines.
+- [x] **Components:** Refactored static views into functional React structures, breaking items down into reusable fragments and layout templates.
+- [x] **Router:** Declared distinct app routes using browser navigation objects to transition cleanly between game mechanics, individual conversation logs, and setup forms.
+- [x] **Hooks:** Managed active UI updates, dynamic array swapping, and profile session configurations natively with standard `useState` and `useEffect` rendering loops.
 
 ---
 
