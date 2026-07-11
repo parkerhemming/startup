@@ -1,0 +1,34 @@
+{
+	"name": "startup",
+	"version": "1.0.0",
+	"description": "- [] Add error state texts on login page",
+	"main": "index.js",
+	"scripts": {
+		"dev": "vite --host",
+		"build": "vite build",
+		"preview": "vite preview"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/parkerhemming/startup.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"type": "commonjs",
+	"bugs": {
+		"url": "https://github.com/parkerhemming/startup/issues"
+	},
+	"homepage": "https://github.com/parkerhemming/startup#readme",
+	"devDependencies": {
+		"vite": "^8.1.3"
+	},
+	"dependencies": {
+		"bootstrap": "^5.3.8",
+		"mobile-drag-drop": "^3.0.0-rc.0",
+		"react": "^19.2.7",
+		"react-bootstrap": "^2.10.10",
+		"react-dom": "^19.2.7",
+		"react-router-dom": "^7.18.1"
+	}
+}

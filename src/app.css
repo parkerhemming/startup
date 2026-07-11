@@ -1,0 +1,50 @@
+header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background-color: white;
+	border-bottom: 1px solid #eaeaea;
+	height: 80px;
+	padding-inline: 25px;
+	position: relative;
+
+	#logo {
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+		display: flex;
+		align-items: center;
+		gap: 10px;
+
+		h1 {
+			font-weight: 800;
+			font-size: 14px;
+		}
+
+		i {
+			font-size: 28px;
+			color: red;
+		}
+	}
+
+	i:not(.fa-heart):hover {
+		color: rgb(100, 100, 100);
+	}
+}
+
+footer {
+	height: 80px;
+	width: 100%;
+	background-color: white;
+	font-weight: 500;
+	padding-inline: 25px;
+
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-top: 1px solid #eaeaea;
+
+	i:not(.fa-heart, .fa-coins):hover {
+		color: rgb(100, 100, 100);
+	}
+}

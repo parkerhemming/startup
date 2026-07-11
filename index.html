@@ -1,148 +1,20 @@
 <!doctype html>
 <html lang="en">
 	<head>
-		<title>Login/Signup | Proxy Dating</title>
+		<title>Proxy Dating</title>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-		<link href="src/app/styles/reset.css" rel="stylesheet" />
-		<link href="src/app/styles/global.css" rel="stylesheet" />
-		<link href="index.css" rel="stylesheet" />
+		<link href="./reset.css" rel="stylesheet" />
+		<link href="./global.css" rel="stylesheet" />
 		<script
 			src="https://kit.fontawesome.com/fe83c3d710.js"
 			crossorigin="anonymous"
 		></script>
-		<script src="/index.js"></script>
 	</head>
 	<body>
-		<header class="landing-header">
-			<div id="logo">
-				<i class="fa-solid fa-heart"></i>
-				<h1>Proxy<br />Dating</h1>
-			</div>
-		</header>
-		<main>
-			<section class="auth-container">
-				<div id="login" class="">
-					<form
-						action="src/app/pages/match-modes/match-mode-1/match-mode-1.html"
-					>
-						<label for="loginEmail">Email</label>
-						<input
-							id="loginEmail"
-							name="email"
-							type="email"
-							placeholder="Enter your email"
-						/>
-
-						<label for="loginPassword">Password</label>
-						<input
-							id="loginPassword"
-							name="password"
-							type="password"
-							placeholder="Enter your password"
-						/>
-
-						<input type="submit" value="Login" />
-					</form>
-					<button class="toggle-btn">
-						Don't have an account? Signup
-					</button>
-				</div>
-
-				<div id="signup" class="hidden">
-					<form
-						action="src/app/pages/match-modes/match-mode-1/match-mode-1.html"
-					>
-						<div class="input-row">
-							<div class="input-group">
-								<label for="firstName">First Name</label>
-								<input
-									id="firstName"
-									name="firstName"
-									type="text"
-								/>
-							</div>
-							<div class="input-group">
-								<label for="lastName">Last Name</label>
-								<input
-									id="lastName"
-									name="lastName"
-									type="text"
-								/>
-							</div>
-						</div>
-
-						<div class="input-row">
-							<div class="input-group">
-								<label for="age">Age</label>
-								<input id="age" name="age" type="number" />
-							</div>
-							<div class="input-group">
-								<label for="gender">Select</label>
-								<select id="gender" name="gender">
-									<option>Boy</option>
-									<option>Girl</option>
-								</select>
-							</div>
-						</div>
-
-						<label for="signupEmail">Email</label>
-						<input id="signupEmail" name="email" type="email" />
-
-						<label for="signupPassword">Password</label>
-						<input
-							id="signupPassword"
-							name="password"
-							type="password"
-						/>
-
-						<label for="bio">Bio</label>
-						<input id="bio" name="bio" type="text" />
-
-						<label for="interests">Interests</label>
-						<input
-							id="interests"
-							name="interests"
-							type="text"
-							placeholder="e.g. Hiking, Movies"
-						/>
-
-						<label>Photos</label>
-						<div class="file-uploads">
-							<input
-								type="file"
-								id="pfp-1"
-								name="pfp-1"
-								accept="image/png, image/jpeg"
-							/>
-							<input
-								type="file"
-								id="pfp-2"
-								name="pfp-2"
-								accept="image/png, image/jpeg"
-							/>
-							<input
-								type="file"
-								id="pfp-3"
-								name="pfp-3"
-								accept="image/png, image/jpeg"
-							/>
-							<input
-								type="file"
-								id="pfp-4"
-								name="pfp-4"
-								accept="image/png, image/jpeg"
-							/>
-						</div>
-
-						<input type="submit" value="Signup" />
-					</form>
-					<button class="toggle-btn">
-						Already have an account? Login
-					</button>
-				</div>
-			</section>
-		</main>
+		<noscript>You need to enable JavaScript to run this app.</noscript>
+		<div id="root"></div>
+		<script type="module" src="index.jsx"></script>
 	</body>
 </html>
