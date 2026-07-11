@@ -32,7 +32,6 @@
 
 - [x] **Reset Styles** Located in "src/app/styles/reset.css"
 - [x] **Global Styles** Located in "src/app/styles/global.css"
-
 - [x] **Login/Signup** Located in "index.css"
 - [x] **Store** Located in "src/app/pages/store/store.css"
 - [x] **Profile View** Located in "src/app/pages/profile-view/profile-view.css"
@@ -42,6 +41,17 @@
 - [x] **Match Modes 2** Located in "src/app/pages/match-modes/match-mode-2/match-mode-2.css"
 - [x] **Match Modes 3** Located in "src/app/pages/match-modes/match-mode-3/match-mode-3.css"
 - [x] **Notifications** Located in "src/app/pages/notifications/notifications.css"
+
+---
+
+## 📝 React part 1: Routing & Components Deliverable
+
+- [x] **Bundled and Transpiled:** Successfully set up production build tools using Vite to transpile JSX/modern Javascript and bundle application source assets.
+- [x] **Components:** Created structured functional components for main application flows, dynamically mapping user cards, item stores, notifications, and interactive chat strings.
+- [x] **Router:** Integrated declarative SPA routing through `react-router-dom` with strict route configurations matching specified main dashboard views.
+- [x] **State Management:** Handled interactive single-page app state, including drag-and-drop structural updates, localized user sessions via localStorage integration, conditional UI shell rendering, and real-time form bindings.
+
+---
 
 ## 🚀 Elevator Pitch
 
