@@ -41,6 +41,8 @@ export default function App() {
 	useEffect(() => {
 		if (!user && !publicRoutes.includes(location.pathname)) {
 			navigate("/login");
+		} else {
+			navigate("/match-mode-1");
 		}
 	}, [user, navigate, location.pathname]);
 
