@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./app.css";
+import "../global.css";
 
 import {
 	NavLink,

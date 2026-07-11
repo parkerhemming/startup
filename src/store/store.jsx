@@ -64,7 +64,8 @@ export function Store() {
 						<h2>Manual Match</h2>
 						<p>Choose your own match from the pool. (2 / day)</p>
 					</div>
-					<Link className="btn" to="/pair-mode-3">
+					<Link draggable={false} className="btn" to="/pair-mode-3">
+						{" "}
 						<span>30</span>
 						<i className="fa-solid fa-coins"></i>
 					</Link>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import styles from "./message.module.css";
 import { toProperCase } from "../../utils";
@@ -16,6 +16,11 @@ export function Message() {
 	]);
 
 	const [inputText, setInputText] = useState("");
+	const messagesEndRef = useRef(null);
+
+	useEffect(() => {
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	}, [messages]);
 
 	const handleSend = (e) => {
 		e.preventDefault();
@@ -69,6 +74,7 @@ export function Message() {
 						<p>{msg.text}</p>
 					</div>
 				))}
+				<div ref={messagesEndRef} />
 			</main>
 
 			<footer className={styles.footer}>

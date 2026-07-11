@@ -71,7 +71,6 @@
 	padding-left: 4px;
 }
 
-/* 1. FORCE ALL STANDARD INPUTS TO BE EXACTLY 50PX TALL */
 .signupBox form input[type="text"],
 .signupBox form input[type="email"],
 .signupBox form input[type="password"],
@@ -79,9 +78,9 @@
 .signupBox form select {
 	display: block;
 	width: 100%;
-	height: 50px; /* Set fixed height */
+	height: 50px;
 	box-sizing: border-box;
-	padding: 0 16px; /* 0 top/bottom padding centers text vertically with fixed height */
+	padding: 0 16px;
 	border-radius: 8px;
 	border: 1px solid rgba(255, 255, 255, 0.6);
 	background-color: rgba(255, 255, 255, 0.6);
@@ -92,7 +91,6 @@
 	color: #111;
 }
 
-/* Fix default select styling to look like a normal input */
 .signupBox form select {
 	appearance: none;
 	-webkit-appearance: none;
@@ -137,28 +135,26 @@
 	gap: 8px;
 }
 
-/* 2. MAKE FILE INPUT MATCH THE 50PX HEIGHT & RADIUS */
 .fileUploads input[type="file"] {
 	display: block;
 	width: 100%;
-	height: 50px; /* Match height */
+	height: 50px;
 	box-sizing: border-box;
 	font-size: 13px;
 	color: #555;
 	background: rgba(255, 255, 255, 0.5);
-	padding: 14px 16px; /* Adjust padding to visually center file text */
-	border-radius: 8px; /* Match standard 8px radius */
+	padding: 14px 16px;
+	border-radius: 8px;
 	border: 1px dashed rgba(255, 255, 255, 0.8);
 	font-family: inherit;
 	cursor: pointer;
 }
 
-/* 3. MAKE SUBMIT BUTTON MATCH THE 50PX HEIGHT */
 .signupBox form input[type="submit"] {
 	display: block;
 	margin-top: 10px;
 	width: 100%;
-	height: 50px; /* Match height */
+	height: 50px;
 	box-sizing: border-box;
 	background-color: #111;
 	color: white;

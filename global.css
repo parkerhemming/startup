@@ -67,3 +67,7 @@ i {
 	background-color: #e8e8e8;
 	border-color: #aaaaaa;
 }
+
+input {
+	font-size: 16px !important;
+}
