@@ -7,6 +7,7 @@
 - [ ] Add error state texts on login page
 - [ ] pair mode 3 needs to be clickable for profiles
 - [ ] dragging is still weird...
+- [ ] change drag and drop to this https://dndkit.com/react/hooks/use-droppable/
 
 ## 📝 Specification Deliverable
 
