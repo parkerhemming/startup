@@ -5,6 +5,8 @@
 ## TODO
 
 - [ ] Add error state texts on login page
+- [ ] pair mode 3 needs to be clickable for profiles
+- [ ] dragging is still weird...
 
 ## 📝 Specification Deliverable
 
