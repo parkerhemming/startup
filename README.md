@@ -10,26 +10,6 @@
 - [ ] change drag and drop to this https://dndkit.com/react/hooks/use-droppable/
 - [ ] change age to birthday
 
-Profile = {
-show: number,
-firstName: string,
-lastName: string,
-birthday: string,
-gender: "Male" | "Female",
-bio: string,
-interests: string,
-photos: string[],
-matches: Profile[],
-}
-
-User = {
-email: string,
-password: string,
-profile: Profile,
-pairs: Profile[],
-coins: number
-}
-
 ## 📝 Specification Deliverable
 
 - [x] **Proper use of Markdown:** Utilized headers, lists, bold text, and HTML tables for clean formatting.
