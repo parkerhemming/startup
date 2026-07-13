@@ -123,8 +123,6 @@ html body :global(.dnd-poly-drag-image) {
 	pointer-events: none;
 }
 
-/* --- DRAG STATES (High Specificity) --- */
-
 .matchMain .square.isDragging,
 .matchMain .square.isDragging:hover {
 	opacity: 0.001;

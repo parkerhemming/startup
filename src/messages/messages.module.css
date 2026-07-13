@@ -7,7 +7,6 @@
 	min-height: 0;
 }
 
-/* Force links and images inside this container to never drag */
 .messagesContainer a,
 .messagesContainer img {
 	-webkit-user-drag: none;
@@ -26,13 +25,11 @@
 	white-space: nowrap;
 	width: 100%;
 	gap: 30px;
-	padding: 15px 25px; /* Added padding back so images don't hug the edge */
+	padding: 15px 25px;
 	scrollbar-width: none;
 	-ms-overflow-style: none;
 	flex-shrink: 0;
 	border-bottom: 1px solid rgb(230, 230, 230);
-
-	/* Force touch devices to treat swipes here as horizontal scrolls, not drags */
 	touch-action: pan-x;
 }
 
@@ -53,8 +50,6 @@
 	overflow-y: auto;
 	display: flex;
 	flex-direction: column;
-
-	/* Force touch devices to treat swipes here as vertical scrolls, not drags */
 	touch-action: pan-y;
 }
 
