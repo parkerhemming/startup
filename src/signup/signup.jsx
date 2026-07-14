@@ -12,8 +12,12 @@ export function Signup({ setUser }) {
 			email: formData.get("email"),
 			password: formData.get("password"),
 		};
-		setUser(userData);
-		localStorage.setItem("user", JSON.stringify(userData));
+
+		// Some sort of DB call to get user id
+
+		const user = { id: "u_m1" };
+		setUser(user);
+		localStorage.setItem("user", JSON.stringify(user));
 		navigate("/pair-mode-1");
 	}
 
@@ -59,8 +63,12 @@ export function Signup({ setUser }) {
 							</div>
 							<div className={styles.inputRow}>
 								<div className={styles.inputGroup}>
-									<label htmlFor="age">Age</label>
-									<input id="age" name="age" type="number" />
+									<label htmlFor="birthday">Birthday</label>
+									<input
+										id="birthday"
+										name="birthday"
+										type="date"
+									/>
 								</div>
 								<div className={styles.inputGroup}>
 									<label htmlFor="gender">Select</label>

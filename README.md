@@ -9,6 +9,7 @@
 - [ ] dragging is still weird...
 - [ ] change drag and drop to this https://dndkit.com/react/hooks/use-droppable/
 - [ ] change age to birthday
+- [ ] On message page "12 people paired you togehter"
 
 ## 📝 Specification Deliverable
 
@@ -54,6 +55,40 @@
 - [x] **Components:** Refactored static views into functional React structures, breaking items down into reusable fragments and layout templates.
 - [x] **Router:** Declared distinct app routes using browser navigation objects to transition cleanly between game mechanics, individual conversation logs, and setup forms.
 - [x] **Hooks:** Managed active UI updates, dynamic array swapping, and profile session configurations natively with standard `useState` and `useEffect` rendering loops.
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
+
+---
 
 ---
 

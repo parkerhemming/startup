@@ -1,8 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./store.module.css";
+import { getCoins, getBoost, updateBoost, updateCoins } from "../utils";
 
 export function Store() {
+	const [coins, setCoins] = useState(getCoins());
+	const [boost, setBoost] = useState(getBoost());
+
 	useEffect(() => {
 		document.title = "Store | Proxy Dating";
 	}, []);
@@ -14,7 +18,7 @@ export function Store() {
 					<div className={styles.statBox}>
 						<h3>My Balance</h3>
 						<h2>
-							500 <i className="fa-solid fa-coins"></i>
+							{coins} <i className="fa-solid fa-coins"></i>
 						</h2>
 					</div>
 					<div className={styles.statBox}>
@@ -47,10 +51,18 @@ export function Store() {
 					<div className={styles.textWrap}>
 						<h2>Profile Boost</h2>
 						<p>
-							Your profile will be shown to others 10 more times.
+							Your profile will be shown to others {boost} more
+							times.
 						</p>
 					</div>
-					<button className="btn">
+					<button
+						className="btn"
+						onClick={() => {
+							updateBoost(1);
+							setCoins(getCoins());
+							setBoost(getBoost());
+						}}
+					>
 						<span>15</span>
 						<i className="fa-solid fa-coins"></i>
 					</button>

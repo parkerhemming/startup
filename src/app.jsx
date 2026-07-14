@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./app.css";
 import "../global.css";
+import { updateCoins } from "./utils";
 
 import {
 	NavLink,
@@ -121,6 +122,7 @@ export default function App() {
 					{location.pathname.includes("pair-mode") && (
 						<NavLink
 							className="btn"
+							onClick={() => updateCoins(5)}
 							to={nextModeMap[location.pathname]}
 						>
 							<span>Pair</span>

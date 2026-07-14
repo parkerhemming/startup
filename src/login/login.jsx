@@ -12,8 +12,12 @@ export function Login({ setUser }) {
 			email: formData.get("email"),
 			password: formData.get("password"),
 		};
-		setUser(userData);
-		localStorage.setItem("user", JSON.stringify(userData));
+
+		// Some sort of DB call to get user id
+
+		const user = { id: "u_m1" };
+		setUser(user);
+		localStorage.setItem("user", JSON.stringify(user));
 		navigate("/pair-mode-1");
 	}
 
