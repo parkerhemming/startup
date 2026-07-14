@@ -68,6 +68,15 @@ i {
 	border-color: #aaaaaa;
 }
 
+.btn:disabled,
+.btn:disabled:hover {
+	opacity: 0.5;
+	cursor: not-allowed;
+	background-color: transparent;
+	border-color: #cccccc;
+	color: inherit;
+}
+
 input {
 	font-size: 16px !important;
 }

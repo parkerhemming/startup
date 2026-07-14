@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./app.css";
 import "../global.css";
-import { updateCoins } from "./utils";
+import { getCoins, updateCoins } from "./utils";
 
 import {
 	NavLink,
@@ -10,6 +10,7 @@ import {
 	Routes,
 	useNavigate,
 	useLocation,
+	useSearchParams,
 } from "react-router-dom";
 import { Login } from "./login/login.jsx";
 import { Signup } from "./signup/signup.jsx";
@@ -26,6 +27,8 @@ export default function App() {
 	const [user, setUser] = useState(localStorage.getItem("user") || "");
 	const navigate = useNavigate();
 	const location = useLocation();
+	const [searchParams] = useSearchParams();
+	const mode = searchParams.get("mode");
 
 	const publicRoutes = ["/login", "/signup"];
 	const hideGlobalHeaderRoutes = [
@@ -122,11 +125,31 @@ export default function App() {
 					{location.pathname.includes("pair-mode") && (
 						<NavLink
 							className="btn"
-							onClick={() => updateCoins(5)}
-							to={nextModeMap[location.pathname]}
+							onClick={() => {
+								if (mode === "me" && getCoins() >= 30) {
+									updateCoins(-30);
+								} else {
+									updateCoins(5);
+								}
+							}}
+							to={
+								mode === "me" && getCoins() >= 30
+									? "/store"
+									: nextModeMap[location.pathname]
+							}
 						>
-							<span>Pair</span>
-							<span>+5</span>
+							{mode === "me" && getCoins() >= 30 ? (
+								<>
+									<span>Match Me</span>
+									<span style={{ color: "red" }}>-30</span>
+								</>
+							) : (
+								<>
+									<span>Pair</span>
+									<span>+5</span>
+								</>
+							)}
+
 							<i className="fa-solid fa-coins"></i>
 						</NavLink>
 					)}

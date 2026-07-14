@@ -155,7 +155,6 @@
 
 .storeItem :global(.btn) {
 	flex-shrink: 0;
-	background-color: white;
 }
 
 .rulesGrid {

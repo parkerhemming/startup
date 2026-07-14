@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import styles from "./message.module.css";
-import { toProperCase } from "../../utils";
+import { toProperCase, updateCoins } from "../../utils";
 
 export function Message() {
 	const [searchParams] = useSearchParams();
@@ -55,12 +55,16 @@ export function Message() {
 					<h2>{name}</h2>
 				</Link>
 
-				<button className={styles.unmatchBtn}>
+				<Link
+					className={styles.unmatchBtn}
+					onClick={() => updateCoins(-10)}
+					to="/messages"
+				>
 					<span>Unmatch</span>
 					<span className={styles.cost}>
 						-10 <i className="fa-solid fa-coins"></i>
 					</span>
-				</button>
+				</Link>
 			</header>
 
 			<main className={styles.main}>

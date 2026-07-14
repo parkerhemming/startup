@@ -9,6 +9,8 @@ export function getCoins() {
 }
 
 export function updateCoins(num) {
+	// Dont check for > 0 becuase unmatch we can go negative
+	// Checks in other helper functions..
 	const coins = getCoins() || 0;
 	localStorage.setItem("coins", Number(coins) + num);
 }

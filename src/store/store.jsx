@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./store.module.css";
 import { getCoins, getBoost, updateBoost, updateCoins } from "../utils";
 
 export function Store() {
+	const navigate = useNavigate();
 	const [coins, setCoins] = useState(getCoins());
 	const [boost, setBoost] = useState(getBoost());
 
@@ -17,8 +18,8 @@ export function Store() {
 				<div className={styles.statsRow}>
 					<div className={styles.statBox}>
 						<h3>My Balance</h3>
-						<h2>
-							{coins} <i className="fa-solid fa-coins"></i>
+						<h2 style={{ color: coins < 0 ? "red" : "inherit" }}>
+							{coins ?? 0} <i className="fa-solid fa-coins"></i>
 						</h2>
 					</div>
 					<div className={styles.statBox}>
@@ -51,11 +52,12 @@ export function Store() {
 					<div className={styles.textWrap}>
 						<h2>Profile Boost</h2>
 						<p>
-							Your profile will be shown to others {boost} more
-							times.
+							Your profile will be shown to others {boost ?? 0}{" "}
+							more times.
 						</p>
 					</div>
 					<button
+						disabled={coins < 15}
 						className="btn"
 						onClick={() => {
 							updateBoost(1);
@@ -74,13 +76,20 @@ export function Store() {
 					</div>
 					<div className={styles.textWrap}>
 						<h2>Manual Match</h2>
-						<p>Choose your own match from the pool. (2 / day)</p>
+						<p>Choose your own match.</p>
 					</div>
-					<Link draggable={false} className="btn" to="/pair-mode-3">
+					<button
+						disabled={coins < 30}
+						draggable={false}
+						className="btn"
+						onClick={() => {
+							navigate("/pair-mode-3?mode=me");
+						}}
+					>
 						{" "}
 						<span>30</span>
 						<i className="fa-solid fa-coins"></i>
-					</Link>
+					</button>
 				</div>
 			</section>
 
