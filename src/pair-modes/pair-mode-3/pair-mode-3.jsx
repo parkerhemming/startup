@@ -140,7 +140,8 @@ function ProfileSquare({ user, isBig, onSwap, draggingData, setDraggingData }) {
 		.join(" ");
 
 	return (
-		<div
+		<Link
+			to="/profile-view"
 			className={classNames}
 			draggable={!isBig}
 			onDragStart={handleDragStart}
@@ -152,6 +153,6 @@ function ProfileSquare({ user, isBig, onSwap, draggingData, setDraggingData }) {
 		>
 			<img src={user.image} alt={user.name} draggable={false} />
 			<h3>{displayName}</h3>
-		</div>
+		</Link>
 	);
 }
