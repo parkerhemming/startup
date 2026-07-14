@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styles from "./pair-mode-1.module.css";
-import { polyfill } from "mobile-drag-drop";
-import { scrollBehaviourDragImageTranslateOverride } from "mobile-drag-drop/scroll-behaviour";
-import "mobile-drag-drop/default.css";
-
-polyfill({
-	forceApply: true,
-	holdToDrag: 0,
-	dragImageCenterOnTouch: true,
-	dragImageTranslateOverride: scrollBehaviourDragImageTranslateOverride,
-});
-
-if (typeof window !== "undefined") {
-	window.addEventListener("touchmove", function () {}, { passive: false });
-}
+import {
+	DndContext,
+	PointerSensor,
+	useSensor,
+	useSensors,
+	DragOverlay,
+	useDraggable,
+	useDroppable,
+	pointerWithin,
+} from "@dnd-kit/core";
 
 export function PairMode1() {
 	const [draggingData, setDraggingData] = useState(null);
@@ -103,6 +99,40 @@ export function PairMode1() {
 		},
 	]);
 
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 5,
+			},
+		}),
+	);
+
+	function handleDragStart(event) {
+		const { active } = event;
+		setDraggingData(active.data.current);
+	}
+
+	function handleDragEnd(event) {
+		const { active, over } = event;
+		setDraggingData(null);
+
+		if (over) {
+			const draggedId = active.id;
+			const targetId = over.id;
+			const draggedGender = active.data.current?.gender;
+			const targetGender = over.data.current?.gender;
+			const targetIsBig = over.data.current?.user?.isBig;
+
+			if (
+				draggedGender === targetGender &&
+				targetIsBig &&
+				draggedId !== targetId
+			) {
+				handleSwap(draggedId, targetId, draggedGender);
+			}
+		}
+	}
+
 	function handleSwap(draggedId, targetId, gender) {
 		const setUsers = gender === "male" ? setMaleUsers : setFemaleUsers;
 
@@ -132,111 +162,86 @@ export function PairMode1() {
 	}, []);
 
 	return (
-		<main className={styles.matchMain} data-dragging={!!draggingData}>
-			{draggingData && <div className={styles.overlay}></div>}
+		<DndContext
+			sensors={sensors}
+			collisionDetection={pointerWithin}
+			onDragStart={handleDragStart}
+			onDragEnd={handleDragEnd}
+		>
+			<main className={styles.matchMain} data-dragging={!!draggingData}>
+				{draggingData && <div className={styles.overlay}></div>}
 
-			<section className={styles.gridSection} id="male">
-				{maleUsers.map((user) => (
-					<ProfileSquare
-						key={user.id}
-						user={user}
-						gender="male"
-						onSwap={handleSwap}
-						draggingData={draggingData}
-						setDraggingData={setDraggingData}
-					/>
-				))}
-			</section>
+				<section className={styles.gridSection} id="male">
+					{maleUsers.map((user) => (
+						<ProfileSquare
+							key={user.id}
+							user={user}
+							gender="male"
+							draggingData={draggingData}
+						/>
+					))}
+				</section>
 
-			<section className={styles.gridSection} id="female">
-				{femaleUsers.map((user) => (
-					<ProfileSquare
-						key={user.id}
-						user={user}
-						gender="female"
-						onSwap={handleSwap}
-						draggingData={draggingData}
-						setDraggingData={setDraggingData}
-					/>
-				))}
-			</section>
-		</main>
+				<section className={styles.gridSection} id="female">
+					{femaleUsers.map((user) => (
+						<ProfileSquare
+							key={user.id}
+							user={user}
+							gender="female"
+							draggingData={draggingData}
+						/>
+					))}
+				</section>
+			</main>
+
+			<DragOverlay dropAnimation={null}>
+				{draggingData ? (
+					<div className={styles.square}>
+						<img
+							src={draggingData.user.image}
+							alt={draggingData.user.name}
+							draggable={false}
+						/>
+						<h3>{draggingData.user.name.split(" ")[0]}</h3>
+					</div>
+				) : null}
+			</DragOverlay>
+		</DndContext>
 	);
 }
 
-function ProfileSquare({
-	user,
-	gender,
-	onSwap,
-	draggingData,
-	setDraggingData,
-}) {
-	const [isDragOver, setIsDragOver] = useState(false);
+function ProfileSquare({ user, gender, draggingData }) {
+	const {
+		attributes,
+		listeners,
+		setNodeRef: setDraggableRef,
+		isDragging,
+	} = useDraggable({
+		id: user.id,
+		data: { user, gender },
+		disabled: user.isBig,
+	});
 
-	const isCurrentlyDragging = draggingData?.id === user.id;
+	const { setNodeRef: setDroppableRef, isOver } = useDroppable({
+		id: user.id,
+		data: { user, gender },
+		disabled: !user.isBig,
+	});
 
-	const isValidTarget =
-		draggingData &&
-		draggingData.gender === gender &&
-		draggingData.id !== user.id &&
-		(draggingData.isBig || user.isBig);
+	const setNodeRef = (node) => {
+		setDraggableRef(node);
+		setDroppableRef(node);
+	};
 
-	const isTargetBigSquare =
-		draggingData &&
-		draggingData.gender === gender &&
-		user.isBig &&
-		!isCurrentlyDragging;
-
-	function handleDragStart(e) {
-		e.dataTransfer.setData("draggedId", user.id);
-		e.dataTransfer.setData("gender", gender);
-		e.dataTransfer.setData("isBig", user.isBig.toString());
-
-		setTimeout(() => {
-			setDraggingData({ id: user.id, gender, isBig: user.isBig });
-		}, 0);
-	}
-
-	function handleDragEnd() {
-		setDraggingData(null);
-		setIsDragOver(false);
-	}
-
-	function handleDragOver(e) {
-		if (isValidTarget) {
-			e.preventDefault();
-			setIsDragOver(true);
-		}
-	}
-
-	function handleDragLeave() {
-		setIsDragOver(false);
-	}
-
-	function handleDrop(e) {
-		e.preventDefault();
-		setIsDragOver(false);
-		setDraggingData(null);
-
-		const draggedId = e.dataTransfer.getData("draggedId");
-		const draggedGender = e.dataTransfer.getData("gender");
-		const draggedIsBig = e.dataTransfer.getData("isBig") === "true";
-
-		if (
-			draggedGender === gender &&
-			draggedId !== user.id &&
-			(draggedIsBig || user.isBig)
-		) {
-			onSwap(draggedId, user.id, gender);
-		}
-	}
+	const isTargetBigSquare = draggingData?.gender === gender && user.isBig;
+	const validIsOver = isOver && draggingData?.gender === gender;
 
 	const classNames = [
 		styles.square,
 		user.isBig ? styles.big : "",
-		isCurrentlyDragging ? styles.isDragging : "",
+		isDragging ? styles.isDragging : "",
 		isTargetBigSquare ? styles.highlightBig : "",
-		isDragOver ? styles.dragOver : "",
+		validIsOver ? styles.dragOver : "",
 	]
 		.filter(Boolean)
 		.join(" ");
@@ -244,14 +249,11 @@ function ProfileSquare({
 	return (
 		<Link
 			to="/profile-view"
+			ref={setNodeRef}
 			className={classNames}
-			draggable={!user.isBig}
-			onDragStart={!user.isBig ? handleDragStart : undefined}
-			onDragEnd={!user.isBig ? handleDragEnd : undefined}
-			onDragOver={handleDragOver}
-			onDragEnter={handleDragOver}
-			onDragLeave={handleDragLeave}
-			onDrop={handleDrop}
+			draggable={false}
+			{...listeners}
+			{...attributes}
 		>
 			<img src={user.image} alt={user.name} draggable={false} />
 			<h3>{user.isBig ? user.name : user.name.split(" ")[0]}</h3>

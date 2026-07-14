@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import styles from "./pair-mode-2.module.css";
-import { polyfill } from "mobile-drag-drop";
-import { scrollBehaviourDragImageTranslateOverride } from "mobile-drag-drop/scroll-behaviour";
-import "mobile-drag-drop/default.css";
-
-polyfill({
-	forceApply: true,
-	holdToDrag: 0,
-	dragImageCenterOnTouch: true,
-	dragImageTranslateOverride: scrollBehaviourDragImageTranslateOverride,
-});
-
-if (typeof window !== "undefined") {
-	window.addEventListener("touchmove", function () {}, { passive: false });
-}
+import {
+	DndContext,
+	PointerSensor,
+	useSensor,
+	useSensors,
+	DragOverlay,
+	useDraggable,
+	useDroppable,
+	pointerWithin,
+} from "@dnd-kit/core";
 
 export function PairMode2() {
 	const [draggingData, setDraggingData] = useState(null);
@@ -32,6 +28,42 @@ export function PairMode2() {
 		{ id: "f3", name: "EMILY DAVIS", image: "/pfp-female.png" },
 		{ id: "f4", name: "ASHLEY CLARK", image: "/pfp-female.png" },
 	]);
+
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: {
+				distance: 5,
+			},
+		}),
+	);
+
+	function handleDragStart(event) {
+		const { active } = event;
+		const rect = active.rect.current?.initial;
+
+		setDraggingData({
+			user: active.data.current.user,
+			gender: active.data.current.gender,
+			width: rect?.width,
+			height: rect?.height,
+		});
+	}
+
+	function handleDragEnd(event) {
+		const { active, over } = event;
+		setDraggingData(null);
+
+		if (over) {
+			const draggedId = active.id;
+			const targetId = over.id;
+			const draggedGender = active.data.current?.gender;
+			const targetGender = over.data.current?.gender;
+
+			if (draggedGender === targetGender && draggedId !== targetId) {
+				handleSwap(draggedId, targetId, draggedGender);
+			}
+		}
+	}
 
 	function handleSwap(draggedId, targetId, gender) {
 		const setUsers = gender === "male" ? setMaleUsers : setFemaleUsers;
@@ -58,93 +90,91 @@ export function PairMode2() {
 	}, []);
 
 	return (
-		<main className={styles.matchMain} data-dragging={!!draggingData}>
-			{draggingData && <div className={styles.overlay}></div>}
+		<DndContext
+			sensors={sensors}
+			collisionDetection={pointerWithin}
+			onDragStart={handleDragStart}
+			onDragEnd={handleDragEnd}
+		>
+			<main className={styles.matchMain} data-dragging={!!draggingData}>
+				{draggingData && <div className={styles.overlay}></div>}
 
-			<section className={styles.containerSection}>
-				{[0, 1, 2, 3].map((i) => (
-					<div className={styles.row} key={i}>
-						<ProfileSquare
-							user={maleUsers[i]}
-							gender="male"
-							onSwap={handleSwap}
-							draggingData={draggingData}
-							setDraggingData={setDraggingData}
+				<section className={styles.containerSection}>
+					{[0, 1, 2, 3].map((i) => (
+						<div className={styles.row} key={i}>
+							<ProfileSquare
+								user={maleUsers[i]}
+								gender="male"
+								draggingData={draggingData}
+							/>
+							<hr />
+							<ProfileSquare
+								user={femaleUsers[i]}
+								gender="female"
+								draggingData={draggingData}
+							/>
+						</div>
+					))}
+				</section>
+			</main>
+			<DragOverlay dropAnimation={null}>
+				{draggingData ? (
+					<div
+						className={styles.square}
+						style={{
+							width: draggingData.width
+								? `${draggingData.width}px`
+								: "120px",
+							height: draggingData.height
+								? `${draggingData.height}px`
+								: "120px",
+							margin: 0,
+							opacity: 0.9,
+						}}
+					>
+						<img
+							src={draggingData.user.image}
+							alt={draggingData.user.name}
+							draggable={false}
 						/>
-						<hr />
-						<ProfileSquare
-							user={femaleUsers[i]}
-							gender="female"
-							onSwap={handleSwap}
-							draggingData={draggingData}
-							setDraggingData={setDraggingData}
-						/>
+						<h3>{draggingData.user.name}</h3>
 					</div>
-				))}
-			</section>
-		</main>
+				) : null}
+			</DragOverlay>
+		</DndContext>
 	);
 }
 
-function ProfileSquare({
-	user,
-	gender,
-	onSwap,
-	draggingData,
-	setDraggingData,
-}) {
-	const [isDragOver, setIsDragOver] = useState(false);
-
-	const isCurrentlyDragging = draggingData?.id === user.id;
-
+function ProfileSquare({ user, gender, draggingData }) {
+	const {
+		attributes,
+		listeners,
+		setNodeRef: setDraggableRef,
+		isDragging,
+	} = useDraggable({
+		id: user.id,
+		data: { user, gender },
+	});
+	const { setNodeRef: setDroppableRef, isOver } = useDroppable({
+		id: user.id,
+		data: { user, gender },
+	});
+	const setNodeRef = (node) => {
+		setDraggableRef(node);
+		setDroppableRef(node);
+	};
 	const isValidTarget =
 		draggingData &&
 		draggingData.gender === gender &&
-		draggingData.id !== user.id;
+		draggingData.user.id !== user.id;
 
-	function handleDragStart(e) {
-		e.dataTransfer.setData("draggedId", user.id);
-		e.dataTransfer.setData("gender", gender);
-
-		setTimeout(() => {
-			setDraggingData({ id: user.id, gender });
-		}, 0);
-	}
-
-	function handleDragEnd() {
-		setDraggingData(null);
-		setIsDragOver(false);
-	}
-
-	function handleDragOver(e) {
-		if (isValidTarget) {
-			e.preventDefault();
-			setIsDragOver(true);
-		}
-	}
-
-	function handleDragLeave() {
-		setIsDragOver(false);
-	}
-
-	function handleDrop(e) {
-		e.preventDefault();
-		setIsDragOver(false);
-		setDraggingData(null);
-
-		const draggedId = e.dataTransfer.getData("draggedId");
-		const draggedGender = e.dataTransfer.getData("gender");
-
-		if (draggedGender === gender && draggedId !== user.id) {
-			onSwap(draggedId, user.id, gender);
-		}
-	}
+	const validIsOver = isOver && isValidTarget;
 
 	const classNames = [
 		styles.square,
-		isCurrentlyDragging ? styles.isDragging : "",
-		isValidTarget ? styles.highlightTarget : "",
-		isDragOver ? styles.dragOver : "",
+		isDragging ? styles.isDragging : "",
+		isValidTarget && !isDragging ? styles.highlightTarget : "",
+		validIsOver ? styles.dragOver : "",
 	]
 		.filter(Boolean)
 		.join(" ");
@@ -152,14 +182,11 @@ function ProfileSquare({
 	return (
 		<Link
 			to="/profile-view"
+			ref={setNodeRef}
 			className={classNames}
-			draggable={true}
-			onDragStart={handleDragStart}
-			onDragEnd={handleDragEnd}
-			onDragOver={handleDragOver}
-			onDragEnter={handleDragOver}
-			onDragLeave={handleDragLeave}
-			onDrop={handleDrop}
+			draggable={false}
+			{...listeners}
+			{...attributes}
 		>
 			<img src={user.image} alt={user.name} draggable={false} />
 			<h3>{user.name}</h3>
