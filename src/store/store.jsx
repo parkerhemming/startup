@@ -30,8 +30,8 @@ export function Store() {
 					</div>
 				</div>
 				<div className={styles.summaryNote}>
-					<i className="fa-solid fa-circle-info"></i>
 					<p>
+						<i className="fa-solid fa-circle-info"></i>
 						Active Pairs are couples you have matched together. You
 						earn passive income (+1 coin) every time they message,
 						but you take a hit (-10 coins) if they unmatch!
@@ -95,7 +95,7 @@ export function Store() {
 
 			<section className={styles.section}>
 				<div className={styles.sectionHeader}>
-					<h1>ECONOMY GUIDE</h1>
+					<h1>GUIDE</h1>
 					<p>How the dynamic coin economy works</p>
 				</div>
 

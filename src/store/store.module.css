@@ -91,7 +91,8 @@
 
 .summaryNote i {
 	font-size: 12px;
-	margin-top: 2px;
+	margin-right: 6px;
+	display: inline;
 	color: #555;
 }
 
