@@ -124,10 +124,10 @@ export function PairMode3() {
 						style={{
 							width: draggingData.width
 								? `${draggingData.width}px`
-								: "120px",
+								: "110px",
 							height: draggingData.height
 								? `${draggingData.height}px`
-								: "120px",
+								: "110px",
 							margin: 0,
 							opacity: 0.9,
 						}}
