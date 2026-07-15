@@ -46,7 +46,7 @@
 
 ---
 
-## React part1
+## 📝 React Part 1 Deliverable
 
 - [x] **Vite:** Bundled, compiled, and deployed single-page assets using Vite configuration pipelines.
 - [x] **Components:** Refactored static views into functional React structures, breaking items down into reusable fragments and layout templates.
@@ -55,9 +55,13 @@
 
 ---
 
-## React part2
+## 📝 React Part 2 Deliverable
 
-- [x] **Title:** Comment.
+- [x] **All functionality implemented or mocked:** The application is now fully interactive. Match Modes 1, 2, and 3 feature complete, cross-platform drag-and-drop matching mechanics using `@dnd-kit/core`. The Store is fully functional, validating balances and updating the UI when purchasing boosts or matches.
+- [x] **Authentication & Route Blocking:** Started the Login and Signup flow. Implemented frontend route guards that check authentication status and block unauthenticated users from accessing the main application pages, safely redirecting them back to the login screen. _(Note: The actual secure validation and session management will be shifted to the backend)._
+- [x] **Cross-Page State Management:** Set up a global utility/local storage system to persist and sync the user's coin balance and active boosts across different pages (e.g., spending coins in the Store updates the balance globally for when they navigate back to Match Modes).
+- [x] **React Hooks (`useState`):** Extensively utilized `useState` across multiple components to manage complex data flow. This includes managing dynamic arrays of user objects during drag-and-drop swaps, tracking the exact pixel dimensions of actively dragged elements, and managing active chat logs.
+- [x] **React Hooks (`useEffect`):** Implemented `useEffect` for component lifecycle events, such as dynamically updating the browser's document title to match the current active view (e.g., "Store | Proxy", "Pair | Proxy") and handling initial layout renders.
 
 ---
 
