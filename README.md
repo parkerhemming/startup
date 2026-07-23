@@ -140,11 +140,6 @@ Dating apps are exhausting, so we gamified the process. **Proxy** is a revolutio
 
 - Backend RESTful APIs built with Node.js/Express.
 - **Authentication:** Endpoints to register, login, and securely store/validate user credentials.
-- **Application Endpoints:**
-    - `POST /api/pair` (Submit a matchmaking guess)
-    - `POST /api/store/boost` (Spend coins to boost profile)
-    - `GET /api/matches/daily` (Retrieve the profiles for the daily Match Modes)
-- **3rd Party API:** Integration with the [Sightengine API](https://sightengine.com/docs/reference) (or a similar Computer Vision API) to analyze "Date Selfies." This verifies that the photo contains two actual human faces before awarding the massive coin bounty to the matchmakers, preventing users from uploading photos of their TV or pets to farm coins.
 
 ### Database
 
