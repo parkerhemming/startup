@@ -1,24 +1,49 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./signup.module.css";
 import { Link, useNavigate } from "react-router-dom";
 
 export function Signup({ setUser }) {
+	const [showError, setShowError] = useState(false);
 	const navigate = useNavigate();
 
-	function signup(event) {
+	async function handleSignup(event) {
 		event.preventDefault();
 		const formData = new FormData(event.target);
 		const userData = {
+			firstName: formData.get("firstName"),
+			lastName: formData.get("lastName"),
+			birthday: formData.get("birthday"),
+			gender: formData.get("gender"),
 			email: formData.get("email"),
 			password: formData.get("password"),
+			bio: formData.get("bio"),
+			interests: formData.get("interests"),
+			pfp1: formData.get("pfp1"),
+			pfp2: formData.get("pfp2"),
+			pfp3: formData.get("pfp3"),
+			pfp4: formData.get("pfp4"),
 		};
 
-		// Some sort of DB call to get user id
+		const response = await fetch("/api/auth/signup", {
+			method: "post",
+			body: JSON.stringify(userData),
+			headers: {
+				"Content-type": "application/json; charset=UTF-8",
+			},
+		});
 
-		const user = { id: "u_m1" };
-		setUser(user);
-		localStorage.setItem("user", JSON.stringify(user));
-		navigate("/pair-mode-1");
+		if (response?.status === 200) {
+			const data = await response.json();
+			setUser(data.email);
+			localStorage.setItem("user", JSON.stringify(data));
+			navigate("/pair-mode-1");
+		} else {
+			setShowError(true);
+
+			setTimeout(() => {
+				setShowError(false);
+			}, 2000);
+		}
 	}
 
 	useEffect(() => {
@@ -40,7 +65,7 @@ export function Signup({ setUser }) {
 			<main className={styles.signupMain}>
 				<section className={styles.authContainer}>
 					<div className={styles.signupBox}>
-						<form onSubmit={signup}>
+						<form onSubmit={handleSignup}>
 							<div className={styles.inputRow}>
 								<div className={styles.inputGroup}>
 									<label htmlFor="firstName">
@@ -99,30 +124,35 @@ export function Signup({ setUser }) {
 							<div className={styles.fileUploads}>
 								<input
 									type="file"
-									id="pfp-1"
-									name="pfp-1"
+									id="pfp1"
+									name="pfp1"
 									accept="image/png, image/jpeg"
 								/>
 								<input
 									type="file"
-									id="pfp-2"
-									name="pfp-2"
+									id="pfp2"
+									name="pfp2"
 									accept="image/png, image/jpeg"
 								/>
 								<input
 									type="file"
-									id="pfp-3"
-									name="pfp-3"
+									id="pfp3"
+									name="pfp3"
 									accept="image/png, image/jpeg"
 								/>
 								<input
 									type="file"
-									id="pfp-4"
-									name="pfp-4"
+									id="pfp4"
+									name="pfp4"
 									accept="image/png, image/jpeg"
 								/>
 							</div>
 							<input type="submit" value="Signup" />
+							{showError && (
+								<p className="error-text">
+									Login failed, please try again.
+								</p>
+							)}
 						</form>
 						<Link className={styles.toggleBtn} to="/login">
 							Already have an account? Login

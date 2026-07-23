@@ -1,24 +1,40 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "./login.module.css";
 
 export function Login({ setUser }) {
+	const [showError, setShowError] = useState(false);
 	const navigate = useNavigate();
 
-	function login(event) {
+	async function handleLogin(event) {
 		event.preventDefault();
 		const formData = new FormData(event.target);
+
 		const userData = {
 			email: formData.get("email"),
 			password: formData.get("password"),
 		};
 
-		// Some sort of DB call to get user id
+		const response = await fetch("/api/auth/login", {
+			method: "post",
+			body: JSON.stringify(userData),
+			headers: {
+				"Content-type": "application/json; charset=UTF-8",
+			},
+		});
 
-		const user = { id: "u_m1" };
-		setUser(user);
-		localStorage.setItem("user", JSON.stringify(user));
-		navigate("/pair-mode-1");
+		if (response?.status === 200) {
+			const data = await response.json();
+			setUser(data.email);
+			localStorage.setItem("user", JSON.stringify(data));
+			navigate("/pair-mode-1");
+		} else {
+			setShowError(true);
+
+			setTimeout(() => {
+				setShowError(false);
+			}, 2000);
+		}
 	}
 
 	useEffect(() => {
@@ -41,7 +57,7 @@ export function Login({ setUser }) {
 			<main className={styles.loginMain}>
 				<section className={styles.authContainer}>
 					<div className={styles.loginBox}>
-						<form onSubmit={login}>
+						<form onSubmit={handleLogin}>
 							<label htmlFor="email">Email</label>
 							<input
 								id="email"
@@ -57,6 +73,11 @@ export function Login({ setUser }) {
 								placeholder="Enter your password"
 							/>
 							<input type="submit" value="Login" />
+							{showError && (
+								<p className="error-text">
+									Login failed, please try again.
+								</p>
+							)}
 						</form>
 						<Link className={styles.toggleBtn} to="/signup">
 							Don't have an account? Signup

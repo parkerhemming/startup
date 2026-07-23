@@ -4,19 +4,27 @@ export function toProperCase(str) {
 	return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+function getUser() {
+	return JSON.parse(localStorage.getItem("user"));
+}
+
+function updateUser(user) {
+	localStorage.setItem("user", JSON.stringify(user));
+}
+
 export function getCoins() {
-	return localStorage.getItem("coins");
+	return getUser().coins;
 }
 
 export function updateCoins(num) {
-	// Dont check for > 0 becuase unmatch we can go negative
-	// Checks in other helper functions..
 	const coins = getCoins() || 0;
-	localStorage.setItem("coins", Number(coins) + num);
+	const user = getUser();
+	user.coins += num;
+	updateUser(user);
 }
 
 export function getBoost() {
-	return localStorage.getItem("boost");
+	return getUser().boost;
 }
 
 export function updateBoost(num) {
@@ -24,6 +32,8 @@ export function updateBoost(num) {
 	if (coins < boost_cost * num) return false;
 	const boost = getBoost();
 	updateCoins(-(boost_cost * num));
-	localStorage.setItem("boost", Number(boost) + num);
+	const user = getUser();
+	user.boost += num;
+	updateUser(user);
 	return true;
 }

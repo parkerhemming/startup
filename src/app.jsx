@@ -65,18 +65,22 @@ export default function App() {
 		!hideGlobalFooterRoutes.includes(location.pathname) &&
 		!publicRoutes.includes(location.pathname);
 
+	async function handleLogout() {
+		await fetch("/api/auth/logout", {
+			method: "delete",
+		});
+
+		setUser("");
+		localStorage.removeItem("user");
+		navigate("/login");
+	}
+
 	return (
 		<div className="body">
 			{showGlobalHeader && (
 				<header>
 					{user && (
-						<button
-							className="btn"
-							onClick={() => {
-								localStorage.removeItem("user");
-								setUser("");
-							}}
-						>
+						<button className="btn" onClick={handleLogout}>
 							Logout
 						</button>
 					)}
