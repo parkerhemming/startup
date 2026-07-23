@@ -24,7 +24,6 @@ let users = [
 	},
 ];
 
-const authCookieName = "token";
 const port = 4000;
 const apiRouter = express.Router();
 
@@ -34,44 +33,48 @@ app.use(express.static("public"));
 app.use(`/api`, apiRouter);
 
 apiRouter.post("/auth/login", async (req, res) => {
-	const user = await findUser("email", req.body.email);
+	try {
+		const user = await findUser("email", req.body.email);
 
-	if (user) {
-		if (await bcrypt.compare(req.body.password, user.password)) {
-			user.token = uuid.v4();
-			setAuthCookie(res, user.token);
-			return res.status(200).send(user);
+		if (user) {
+			if (await bcrypt.compare(req.body.password, user.password)) {
+				user.token = uuid.v4();
+				setAuthCookie(res, user.token);
+				return res.status(200).send(user);
+			}
 		}
-	}
 
-	res.sendStatus(401);
+		res.sendStatus(401);
+	} catch {
+		res.sendStatus(500);
+	}
 });
 
 apiRouter.post("/auth/signup", async (req, res) => {
-	if (await findUser("email", req.body.email)) {
-		res.status(409).send({ msg: "Existing user" });
-	} else {
-		const user = await createUser(req.body);
-		setAuthCookie(res, user.token);
-		res.send({ email: user.email });
+	try {
+		if (await findUser("email", req.body.email)) {
+			res.status(409).send({ msg: "Existing user" });
+		} else {
+			const user = await createUser(req.body);
+			setAuthCookie(res, user.token);
+			res.send({ email: user.email });
+		}
+	} catch {
+		res.sendStatus(500);
 	}
 });
 
 apiRouter.delete("/auth/logout", async (req, res) => {
-	const user = await findUser("token", req.cookies[authCookieName]);
-	if (user) {
-		delete user.token;
+	try {
+		const user = await findUser("token", req.cookies["token"]);
+		if (user) {
+			delete user.token;
+		}
+		res.clearCookie("token");
+		res.status(204).end();
+	} catch {
+		res.sendStatus(500);
 	}
-	res.clearCookie(authCookieName);
-	res.status(204).end();
-});
-
-apiRouter.get("/profile", async (req, res) => {
-	res.send({
-		name: "John Doe",
-		birthday: new Date(),
-		gender: "Male",
-	});
 });
 
 function findUser(field, value) {
@@ -93,7 +96,7 @@ async function createUser(data) {
 }
 
 function setAuthCookie(res, authToken) {
-	res.cookie(authCookieName, authToken, {
+	res.cookie("token", authToken, {
 		maxAge: 1000 * 60 * 60 * 24 * 365,
 		secure: true,
 		httpOnly: true,
