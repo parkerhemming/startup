@@ -24,14 +24,12 @@ export function Store() {
 	const fetchJoke = async () => {
 		setLoadingJoke(true);
 		try {
-			const response = await fetch(
-				"https://official-joke-api.appspot.com/random_joke",
-			);
+			const response = await fetch("/api/joke");
 			if (!response.ok) throw new Error("Failed to fetch joke");
 			const data = await response.json();
 			setJoke(data);
 		} catch (error) {
-			console.error(error);
+			console.error("Failed to fetch joke:", error);
 			setJoke({
 				setup: "Could not load a joke right now.",
 				punchline: "Check your connection!",

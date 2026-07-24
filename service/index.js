@@ -80,6 +80,23 @@ apiRouter.delete("/auth/logout", async (req, res) => {
 	}
 });
 
+apiRouter.get("/joke", async (req, res) => {
+	try {
+		const response = await fetch(
+			"https://official-joke-api.appspot.com/random_joke",
+		);
+		if (!response.ok) throw new Error("Failed to fetch from external API");
+		const data = await response.json();
+		res.json(data);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({
+			setup: "Could not load a joke right now.",
+			punchline: "Server error!",
+		});
+	}
+});
+
 function findUser(field, value) {
 	if (!value) return null;
 	return users.find((user) => user[field] === value);
