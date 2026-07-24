@@ -12,7 +12,7 @@ let users = [
 		gender: "Male",
 		email: "parker@hemm.ing",
 		password:
-			"$2b$10$lBUjhBngP4qs.Km6T/X1seUDQmv/2TluCCF4/xgpUKTyj11o4qSse",
+			"$2b$10$BnAx6pRiaz28g/6dQxchO.bwCiBMwFo5Ttzn0Odn7xeloFD/brrJ.",
 		bio: "This is my bio!",
 		interests: "Hiking, movies, gym",
 		pfp1: {},
@@ -83,8 +83,7 @@ apiRouter.post("/auth/signup", async (req, res) => {
 		} else {
 			const user = await createUser(req.body);
 			const { token, password, ...data } = user;
-
-			setAuthCookie(res, token);
+			setAuthCookie(res, user.token);
 			res.status(200).send(data);
 		}
 	} catch (error) {
@@ -106,7 +105,16 @@ apiRouter.delete("/auth/logout", async (req, res) => {
 	}
 });
 
-apiRouter.get("/joke", async (req, res) => {
+const verifyAuth = async (req, res, next) => {
+	const user = await findUser("token", req.cookies["token"]);
+	if (user) {
+		next();
+	} else {
+		res.status(401).send({ msg: "Unauthorized" });
+	}
+};
+
+apiRouter.get("/joke", verifyAuth, async (req, res) => {
 	try {
 		const response = await fetch(
 			"https://official-joke-api.appspot.com/random_joke",
@@ -152,7 +160,7 @@ async function createUser(data) {
 function setAuthCookie(res, authToken) {
 	res.cookie("token", authToken, {
 		maxAge: 1000 * 60 * 60 * 24 * 365,
-		secure: true,
+		secure: false,
 		httpOnly: true,
 		sameSite: "strict",
 	});
