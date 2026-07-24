@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styles from "./pair-mode-3.module.css";
 import {
 	DndContext,
@@ -13,9 +13,29 @@ import {
 } from "@dnd-kit/core";
 
 export function PairMode3() {
+	const location = useLocation();
+	const passedUser = location.state?.user;
+
 	const [draggingData, setDraggingData] = useState(null);
 
-	const [maleUsers, setMaleUsers] = useState([
+	const defaultTopUser = {
+		id: "m1",
+		firstName: "Michael",
+		lastName: "Smith",
+		birthday: "1990-04-12",
+		gender: "Male",
+		bio: "Just a regular guy enjoying life.",
+		interests: "Sports, Grilling, Music",
+		pfp1: {},
+		pfp2: {},
+		pfp3: {},
+		pfp4: {},
+		isBig: false,
+	};
+
+	const topUser = passedUser || defaultTopUser;
+
+	const allMaleUsers = [
 		{
 			id: "m1",
 			firstName: "Michael",
@@ -30,9 +50,121 @@ export function PairMode3() {
 			pfp4: {},
 			isBig: false,
 		},
-	]);
+		{
+			id: "m2",
+			firstName: "Chris",
+			lastName: "Evans",
+			birthday: "1981-06-13",
+			gender: "Male",
+			bio: "Just a guy who loves movies.",
+			interests: "Acting, Fitness, Dogs",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
+		{
+			id: "m3",
+			firstName: "David",
+			lastName: "Jones",
+			birthday: "1995-03-21",
+			gender: "Male",
+			bio: "Always looking for the next adventure.",
+			interests: "Camping, Photography",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
+		{
+			id: "m4",
+			firstName: "Daniel",
+			lastName: "Brown",
+			birthday: "1998-11-05",
+			gender: "Male",
+			bio: "Coffee enthusiast and coder.",
+			interests: "Programming, Coffee, Sci-Fi",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
+		{
+			id: "m5",
+			firstName: "James",
+			lastName: "Wilson",
+			birthday: "1992-07-30",
+			gender: "Male",
+			bio: "Outdoor enthusiast.",
+			interests: "Hiking, Biking, Outdoors",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
+		{
+			id: "m6",
+			firstName: "Matthew",
+			lastName: "Taylor",
+			birthday: "1994-09-14",
+			gender: "Male",
+			bio: "Musician and foodie.",
+			interests: "Guitar, Cooking, Live Music",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
+		{
+			id: "m7",
+			firstName: "Joshua",
+			lastName: "Anderson",
+			birthday: "1997-02-19",
+			gender: "Male",
+			bio: "Tech lover.",
+			interests: "Gadgets, AI, Gaming",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
+		{
+			id: "m8",
+			firstName: "Andrew",
+			lastName: "Thomas",
+			birthday: "1991-12-05",
+			gender: "Male",
+			bio: "Fitness and health.",
+			interests: "Gym, Nutrition, Wellness",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
+		{
+			id: "m9",
+			firstName: "Kevin",
+			lastName: "Jackson",
+			birthday: "1996-08-22",
+			gender: "Male",
+			bio: "Bookworm.",
+			interests: "Reading, History, Writing",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
+	];
 
-	const [femaleUsers, setFemaleUsers] = useState([
+	const allFemaleUsers = [
 		{
 			id: "f1",
 			firstName: "Sarah",
@@ -159,7 +291,13 @@ export function PairMode3() {
 			pfp4: {},
 			isBig: false,
 		},
-	]);
+	];
+
+	const [gridUsers, setGridUsers] = useState(
+		topUser.gender.toLowerCase() === "female"
+			? allMaleUsers
+			: allFemaleUsers,
+	);
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
@@ -196,7 +334,7 @@ export function PairMode3() {
 	}
 
 	function handleSwap(draggedId, targetId) {
-		setFemaleUsers((prev) => {
+		setGridUsers((prev) => {
 			const newArray = [...prev];
 			const dragIndex = newArray.findIndex((u) => u.id === draggedId);
 			const dropIndex = newArray.findIndex((u) => u.id === targetId);
@@ -228,23 +366,23 @@ export function PairMode3() {
 				<section className={styles.maleSection}>
 					<Link
 						to="/profile-view"
-						state={{ user: maleUsers[0] }}
+						state={{ user: topUser }}
 						className={`${styles.square} ${styles.big}`}
 						draggable={false}
 					>
 						<img
-							src={`/pfp-${maleUsers[0].gender.toLowerCase()}.png`}
-							alt={`${maleUsers[0].firstName} ${maleUsers[0].lastName}`}
+							src={`/pfp-${topUser.gender.toLowerCase()}.png`}
+							alt={`${topUser.firstName} ${topUser.lastName}`}
 							draggable={false}
 						/>
 						<h3>
-							{`${maleUsers[0].firstName} ${maleUsers[0].lastName}`.toUpperCase()}
+							{`${topUser.firstName} ${topUser.lastName}`.toUpperCase()}
 						</h3>
 					</Link>
 				</section>
 
 				<section className={styles.gridSection}>
-					{femaleUsers.map((user, index) => (
+					{gridUsers.map((user, index) => (
 						<ProfileSquare
 							key={user.id}
 							user={user}

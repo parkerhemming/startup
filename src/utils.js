@@ -4,7 +4,7 @@ export function toProperCase(str) {
 	return str.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-function getUser() {
+export function getUser() {
 	return JSON.parse(localStorage.getItem("user"));
 }
 

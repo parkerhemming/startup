@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./store.module.css";
-import { getCoins, getBoost, updateBoost, updateCoins } from "../utils";
+import {
+	getUser,
+	getCoins,
+	getBoost,
+	updateBoost,
+	updateCoins,
+} from "../utils";
 
 export function Store() {
 	const navigate = useNavigate();
 	const [coins, setCoins] = useState(getCoins());
 	const [boost, setBoost] = useState(getBoost());
+	const user = getUser();
 
 	useEffect(() => {
 		document.title = "Store | Proxy Dating";
@@ -78,18 +85,17 @@ export function Store() {
 						<h2>Manual Match</h2>
 						<p>Choose your own match.</p>
 					</div>
-					<button
+					<Link
 						disabled={coins < 30}
 						draggable={false}
 						className="btn"
-						onClick={() => {
-							navigate("/pair-mode-3?mode=me");
-						}}
+						to={"/pair-mode-3?mode=me"}
+						state={{ user }}
 					>
 						{" "}
 						<span>30</span>
 						<i className="fa-solid fa-coins"></i>
-					</button>
+					</Link>
 				</div>
 			</section>
 
