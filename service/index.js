@@ -160,7 +160,7 @@ async function createUser(data) {
 function setAuthCookie(res, authToken) {
 	res.cookie("token", authToken, {
 		maxAge: 1000 * 60 * 60 * 24 * 365,
-		secure: false,
+		secure: true,
 		httpOnly: true,
 		sameSite: "strict",
 	});
