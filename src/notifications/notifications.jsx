@@ -17,6 +17,38 @@ export function Notifications() {
 			id: 2,
 			text: "You got a new match! Someone liked your profile in Match Mode 3.",
 			link: "/message",
+			state: {
+				id: 1,
+				firstName: "Sarah",
+				lastName: "Adams",
+				birthday: "1993-02-14",
+				gender: "Female",
+				bio: "Coffee lover and weekend hiker.",
+				interests: "Hiking, Coffee, Reading",
+				pfp1: {},
+				pfp2: {},
+				pfp3: {},
+				pfp4: {},
+				time: "1:00 PM",
+				text: "Hey! How's your week going so far?",
+				messages: [
+					{
+						sender: "Me",
+						text: "Hey Sarah! Love your hiking pics.",
+						time: "12:30 PM",
+					},
+					{
+						sender: "Sarah",
+						text: "Thank you! I go every weekend.",
+						time: "12:45 PM",
+					},
+					{
+						sender: "Sarah",
+						text: "Hey! How's your week going so far?",
+						time: "1:00 PM",
+					},
+				],
+			},
 			icon: "fa-message",
 			time: "10 mins ago",
 		},
@@ -101,7 +133,10 @@ export function Notifications() {
 								{note.text}{" "}
 								<span>
 									{note.link ? (
-										<Link to={note.link}>
+										<Link
+											to={note.link}
+											state={{ user: note.state }}
+										>
 											<i
 												className={`fa-solid ${note.icon}`}
 											></i>

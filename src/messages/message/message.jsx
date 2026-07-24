@@ -1,20 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styles from "./message.module.css";
 import { toProperCase, updateCoins } from "../../utils";
 
 export function Message() {
-	const [searchParams] = useSearchParams();
-	const id = searchParams.get("id");
-	const name = searchParams.get("name");
+	const location = useLocation();
+	const user = location.state?.user || {};
 
-	const [messages, setMessages] = useState([
-		{ id: 1, sender: "me", text: "Hi" },
-		{ id: 2, sender: "them", text: "Hello!" },
-		{ id: 3, sender: "me", text: "You're cool" },
-		{ id: 4, sender: "them", text: "Thx" },
-	]);
-
+	const [messages, setMessages] = useState(user.messages || []);
 	const [inputText, setInputText] = useState("");
 	const messagesEndRef = useRef(null);
 
@@ -26,17 +19,29 @@ export function Message() {
 		e.preventDefault();
 		if (!inputText.trim()) return;
 		const newMessage = {
-			id: Date.now(),
-			sender: "me",
+			sender: "Me",
 			text: inputText,
+			time: new Date().toLocaleTimeString([], {
+				hour: "2-digit",
+				minute: "2-digit",
+			}),
 		};
 		setMessages((prev) => [...prev, newMessage]);
 		setInputText("");
 	};
 
 	useEffect(() => {
-		document.title = `Message ${toProperCase(name)} | Proxy Dating`;
-	}, []);
+		if (user.firstName) {
+			document.title = `Message ${toProperCase(user.firstName)} | Proxy Dating`;
+		}
+	}, [user.firstName]);
+
+	const profilePic =
+		user.image ||
+		(user.gender
+			? `/pfp-${user.gender.toLowerCase()}.png`
+			: "/pfp-female.png");
+	const displayName = user.firstName ? user.firstName.toUpperCase() : "USER";
 
 	return (
 		<div className={styles.container}>
@@ -45,14 +50,18 @@ export function Message() {
 					<i className="fa-solid fa-angle-left"></i>
 				</Link>
 
-				<Link to="/profile-view" className={styles.profileLink}>
+				<Link
+					to="/profile-view"
+					state={{ user }}
+					className={styles.profileLink}
+				>
 					<img
-						src="/pfp-female.png"
+						src={profilePic}
 						width="42"
 						height="42"
-						alt={name}
+						alt={displayName}
 					/>
-					<h2>{name}</h2>
+					<h2>{displayName}</h2>
 				</Link>
 
 				<Link
@@ -68,11 +77,11 @@ export function Message() {
 			</header>
 
 			<main className={styles.main}>
-				{messages.map((msg) => (
+				{messages.map((msg, index) => (
 					<div
-						key={msg.id}
+						key={index}
 						className={`${styles.row} ${
-							msg.sender === "me" ? styles.me : styles.them
+							msg.sender === "Me" ? styles.me : styles.them
 						}`}
 					>
 						<p>{msg.text}</p>

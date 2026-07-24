@@ -82,7 +82,7 @@ export function Store() {
 						<i className="fa-solid fa-hand-pointer"></i>
 					</div>
 					<div className={styles.textWrap}>
-						<h2>Manual Match</h2>
+						<h2>Match Me</h2>
 						<p>Choose your own match.</p>
 					</div>
 					<Link
