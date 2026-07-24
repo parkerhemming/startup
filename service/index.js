@@ -45,9 +45,10 @@ apiRouter.post("/auth/login", async (req, res) => {
 			}
 		}
 
-		res.sendStatus(401);
-	} catch {
-		res.sendStatus(500);
+		res.status(401).send({ msg: "Invalid email or password" });
+	} catch (error) {
+		console.error(error);
+		res.status(500).send({ msg: "Server error" });
 	}
 });
 
@@ -62,8 +63,9 @@ apiRouter.post("/auth/signup", async (req, res) => {
 			setAuthCookie(res, token);
 			res.status(200).send(data);
 		}
-	} catch {
-		res.sendStatus(500);
+	} catch (error) {
+		console.error(error);
+		res.status(500).send({ msg: "Server error" });
 	}
 });
 
