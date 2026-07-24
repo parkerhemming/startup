@@ -34,7 +34,7 @@ export function Signup({ setUser }) {
 
 		if (response?.status === 200) {
 			const data = await response.json();
-			setUser(data.email);
+			setUser(data);
 			localStorage.setItem("user", JSON.stringify(data));
 			navigate("/pair-mode-1");
 		} else {
@@ -98,8 +98,8 @@ export function Signup({ setUser }) {
 								<div className={styles.inputGroup}>
 									<label htmlFor="gender">Select</label>
 									<select id="gender" name="gender">
-										<option>Boy</option>
-										<option>Girl</option>
+										<option>Male</option>
+										<option>Female</option>
 									</select>
 								</div>
 							</div>

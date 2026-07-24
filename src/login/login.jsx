@@ -25,7 +25,7 @@ export function Login({ setUser }) {
 
 		if (response?.status === 200) {
 			const data = await response.json();
-			setUser(data.email);
+			setUser(data);
 			localStorage.setItem("user", JSON.stringify(data));
 			navigate("/pair-mode-1");
 		} else {

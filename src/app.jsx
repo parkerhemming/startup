@@ -24,7 +24,15 @@ import { Notifications } from "./notifications/notifications.jsx";
 import { ProfileView } from "./profile-view/profile-view.jsx";
 
 export default function App() {
-	const [user, setUser] = useState(localStorage.getItem("user") || "");
+	const [user, setUser] = useState(() => {
+		try {
+			const saved = localStorage.getItem("user");
+			if (!saved || saved === "[object Object]") return null;
+			return JSON.parse(saved);
+		} catch (e) {
+			return null;
+		}
+	});
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [searchParams] = useSearchParams();
@@ -161,7 +169,7 @@ export default function App() {
 					<NavLink to="/store">
 						<i className="fa-solid fa-store"></i>
 					</NavLink>
-					<NavLink to="/profile-view">
+					<NavLink to={`/profile-view`} state={{ user }}>
 						<i className="fa-solid fa-circle-user"></i>
 					</NavLink>
 				</footer>

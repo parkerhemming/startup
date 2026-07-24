@@ -1,25 +1,17 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./profile-view.module.css";
 
 export function ProfileView() {
 	const navigate = useNavigate();
-
-	const profileData = {
-		name: "John Doe",
-		bio: "Grinding out summer sales so I can spend the off-season traveling and actually enjoying my weekends. Always looking for ways to stay involved and busy when I'm not working on the doors. Big fan of hitting the gym, finding the best local food spots, and spontaneous road trips. Looking for someone who can match my energy and doesn't take life too seriously.",
-		interests:
-			"Traveling, Working out, Live music, Trying new restaurants, Outdoors",
-		images: [
-			"/pfp-male.png",
-			"/pfp-male.png",
-			"/pfp-male.png",
-			"/pfp-male.png",
-		],
-	};
+	const location = useLocation();
+	const profileData = location.state?.user;
 
 	useEffect(() => {
-		document.title = `${profileData.name} | Proxy Dating`;
+		document.title =
+			(profileData
+				? `${profileData.firstName} ${profileData.lastName}`
+				: "Profile") + " | Proxy Dating";
 	}, []);
 
 	return (
@@ -36,24 +28,24 @@ export function ProfileView() {
 				<section className={styles.imageSection}>
 					<div className={styles.row}>
 						<img
-							src={profileData.images[0]}
+							src={`/pfp-${profileData ? profileData.gender.toLowerCase() : "male"}.png`}
 							alt="Profile 1"
 							className={styles.image}
 						/>
 						<img
-							src={profileData.images[1]}
+							src={`/pfp-${profileData ? profileData.gender.toLowerCase() : "male"}.png`}
 							alt="Profile 2"
 							className={styles.image}
 						/>
 					</div>
 					<div className={styles.row}>
 						<img
-							src={profileData.images[2]}
+							src={`/pfp-${profileData ? profileData.gender.toLowerCase() : "male"}.png`}
 							alt="Profile 3"
 							className={styles.image}
 						/>
 						<img
-							src={profileData.images[3]}
+							src={`/pfp-${profileData ? profileData.gender.toLowerCase() : "male"}.png`}
 							alt="Profile 4"
 							className={styles.image}
 						/>
@@ -61,9 +53,17 @@ export function ProfileView() {
 				</section>
 
 				<section className={styles.infoSection}>
-					<h2 className={styles.name}>{profileData.name}</h2>
-					<p className={styles.bio}>{profileData.bio}</p>
-					<h3 className={styles.tags}>{profileData.interests}</h3>
+					<h2 className={styles.name}>
+						{profileData
+							? `${profileData.firstName} ${profileData.lastName}`
+							: "Name"}
+					</h2>
+					<p className={styles.bio}>
+						{profileData ? profileData.bio : "Bio"}
+					</p>
+					<h3 className={styles.tags}>
+						{profileData ? profileData.interests : "Interests"}
+					</h3>
 				</section>
 			</main>
 		</>

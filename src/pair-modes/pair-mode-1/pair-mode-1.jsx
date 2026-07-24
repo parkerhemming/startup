@@ -18,84 +18,258 @@ export function PairMode1() {
 	const [maleUsers, setMaleUsers] = useState([
 		{
 			id: "m1",
-			name: "MICHAEL SMITH",
+			firstName: "Michael",
+			lastName: "Smith",
+			birthday: "1990-04-12",
+			gender: "Male",
+			bio: "Just a regular guy enjoying life.",
+			interests: "Sports, Grilling, Music",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
 			isBig: false,
-			image: "/pfp-male.png",
 		},
-		{ id: "m2", name: "CHRIS EVANS", isBig: false, image: "/pfp-male.png" },
-		{ id: "m3", name: "DAVID JONES", isBig: false, image: "/pfp-male.png" },
+		{
+			id: "m2",
+			firstName: "Chris",
+			lastName: "Evans",
+			birthday: "1981-06-13",
+			gender: "Male",
+			bio: "Just a guy who loves movies.",
+			interests: "Acting, Fitness, Dogs",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
+		{
+			id: "m3",
+			firstName: "David",
+			lastName: "Jones",
+			birthday: "1995-03-21",
+			gender: "Male",
+			bio: "Always looking for the next adventure.",
+			interests: "Camping, Photography",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
 		{
 			id: "m4",
-			name: "DANIEL BROWN",
+			firstName: "Daniel",
+			lastName: "Brown",
+			birthday: "1998-11-05",
+			gender: "Male",
+			bio: "Coffee enthusiast and coder.",
+			interests: "Programming, Coffee, Sci-Fi",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
 			isBig: false,
-			image: "/pfp-male.png",
 		},
 		{
 			id: "m5",
-			name: "JAMES WILSON",
+			firstName: "James",
+			lastName: "Wilson",
+			birthday: "1992-07-18",
+			gender: "Male",
+			bio: "Music and sports are life.",
+			interests: "Guitar, Basketball",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
 			isBig: false,
-			image: "/pfp-male.png",
 		},
-		{ id: "m6", name: "RYAN CARTER", isBig: true, image: "/pfp-male.png" },
-		{ id: "m7", name: "TYLER MOORE", isBig: false, image: "/pfp-male.png" },
-		{ id: "m8", name: "JOSH TAYLOR", isBig: false, image: "/pfp-male.png" },
-		{ id: "m9", name: "ALEX WHITE", isBig: false, image: "/pfp-male.png" },
+		{
+			id: "m6",
+			firstName: "Ryan",
+			lastName: "Carter",
+			birthday: "1997-09-30",
+			gender: "Male",
+			bio: "Living life one road trip at a time.",
+			interests: "Travel, Surfing",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: true,
+		},
+		{
+			id: "m7",
+			firstName: "Tyler",
+			lastName: "Moore",
+			birthday: "1999-01-14",
+			gender: "Male",
+			bio: "Foodie hunting for the best tacos.",
+			interests: "Cooking, Tacos, Gaming",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
+		{
+			id: "m8",
+			firstName: "Josh",
+			lastName: "Taylor",
+			birthday: "1994-12-02",
+			gender: "Male",
+			bio: "Fitness instructor and bookworm.",
+			interests: "Reading, Weightlifting",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
+		{
+			id: "m9",
+			firstName: "Alex",
+			lastName: "White",
+			birthday: "2000-05-11",
+			gender: "Male",
+			bio: "Art and design everywhere.",
+			interests: "Design, Sketching, Museums",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
 	]);
 
 	const [femaleUsers, setFemaleUsers] = useState([
 		{
 			id: "f1",
-			name: "SARAH ADAMS",
+			firstName: "Sarah",
+			lastName: "Adams",
+			birthday: "1993-02-14",
+			gender: "Female",
+			bio: "Coffee lover and weekend hiker.",
+			interests: "Hiking, Coffee, Reading",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
 			isBig: false,
-			image: "/pfp-female.png",
 		},
 		{
 			id: "f2",
-			name: "JESSICA MILLER",
+			firstName: "Jessica",
+			lastName: "Miller",
+			birthday: "1991-08-25",
+			gender: "Female",
+			bio: "Design enthusiast and plant mom.",
+			interests: "Plants, Art, Design",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
 			isBig: true,
-			image: "/pfp-female.png",
 		},
 		{
 			id: "f3",
-			name: "EMILY DAVIS",
+			firstName: "Emily",
+			lastName: "Davis",
+			birthday: "1996-11-03",
+			gender: "Female",
+			bio: "Always down for live music and tacos.",
+			interests: "Concerts, Tacos, Yoga",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
 			isBig: false,
-			image: "/pfp-female.png",
 		},
 		{
 			id: "f4",
-			name: "ASHLEY CLARK",
+			firstName: "Ashley",
+			lastName: "Clark",
+			birthday: "1994-05-19",
+			gender: "Female",
+			bio: "Aspiring writer and foodie.",
+			interests: "Writing, Baking, Travel",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
 			isBig: false,
-			image: "/pfp-female.png",
 		},
 		{
 			id: "f5",
-			name: "BRITTANY LEWIS",
+			firstName: "Brittany",
+			lastName: "Lewis",
+			birthday: "1998-01-30",
+			gender: "Female",
+			bio: "Fitness fanatic and beach lover.",
+			interests: "Fitness, Beach, Running",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
 			isBig: false,
-			image: "/pfp-female.png",
 		},
 		{
 			id: "f6",
-			name: "AMANDA HALL",
+			firstName: "Amanda",
+			lastName: "Hall",
+			birthday: "1995-07-11",
+			gender: "Female",
+			bio: "Tech nerd and board game addict.",
+			interests: "Board Games, Coding, Sci-Fi",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
 			isBig: false,
-			image: "/pfp-female.png",
 		},
 		{
 			id: "f7",
-			name: "MEGAN ALLEN",
+			firstName: "Megan",
+			lastName: "Allen",
+			birthday: "1999-09-04",
+			gender: "Female",
+			bio: "Capturing moments through a lens.",
+			interests: "Photography, Film, Camping",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
 			isBig: false,
-			image: "/pfp-female.png",
 		},
 		{
 			id: "f8",
-			name: "TAYLOR WRIGHT",
+			firstName: "Taylor",
+			lastName: "Wright",
+			birthday: "1992-12-18",
+			gender: "Female",
+			bio: "Always planning the next big trip.",
+			interests: "Travel, Languages, History",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
 			isBig: false,
-			image: "/pfp-female.png",
 		},
 		{
 			id: "f9",
-			name: "RACHEL SCOTT",
+			firstName: "Rachel",
+			lastName: "Scott",
+			birthday: "1997-03-27",
+			gender: "Female",
+			bio: "Dog person and thrift store hunter.",
+			interests: "Thrifting, Dogs, Painting",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
 			isBig: false,
-			image: "/pfp-female.png",
 		},
 	]);
 
@@ -198,11 +372,11 @@ export function PairMode1() {
 				{draggingData ? (
 					<div className={styles.square}>
 						<img
-							src={draggingData.user.image}
-							alt={draggingData.user.name}
+							src={`/pfp-${draggingData.user.gender.toLowerCase()}.png`}
+							alt={`${draggingData.user.firstName} ${draggingData.user.lastName}`}
 							draggable={false}
 						/>
-						<h3>{draggingData.user.name.split(" ")[0]}</h3>
+						<h3>{draggingData.user.firstName.toUpperCase()}</h3>
 					</div>
 				) : null}
 			</DragOverlay>
@@ -249,14 +423,23 @@ function ProfileSquare({ user, gender, draggingData }) {
 	return (
 		<Link
 			to="/profile-view"
+			state={{ user }}
 			ref={setNodeRef}
 			className={classNames}
 			draggable={false}
 			{...listeners}
 			{...attributes}
 		>
-			<img src={user.image} alt={user.name} draggable={false} />
-			<h3>{user.isBig ? user.name : user.name.split(" ")[0]}</h3>
+			<img
+				src={`/pfp-${user.gender.toLowerCase()}.png`}
+				alt={`${user.firstName} ${user.lastName}`}
+				draggable={false}
+			/>
+			<h3>
+				{user.isBig
+					? `${user.firstName.toUpperCase()} ${user.lastName.toUpperCase()}`
+					: user.firstName.toUpperCase()}
+			</h3>
 		</Link>
 	);
 }

@@ -9,7 +9,7 @@ let users = [
 		firstName: "Parker",
 		lastName: "Hemming",
 		birthday: "2001-12-09",
-		gender: "Boy",
+		gender: "Male",
 		email: "parker@hemm.ing",
 		password:
 			"$2b$10$lBUjhBngP4qs.Km6T/X1seUDQmv/2TluCCF4/xgpUKTyj11o4qSse",
@@ -24,7 +24,7 @@ let users = [
 	},
 ];
 
-const port = 4000;
+const port = process.argv.length > 2 ? process.argv[2] : 4000;
 const apiRouter = express.Router();
 
 app.use(express.json());

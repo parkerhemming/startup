@@ -16,17 +16,121 @@ export function PairMode2() {
 	const [draggingData, setDraggingData] = useState(null);
 
 	const [maleUsers, setMaleUsers] = useState([
-		{ id: "m1", name: "MICHAEL SMITH", image: "/pfp-male.png" },
-		{ id: "m2", name: "CHRIS EVANS", image: "/pfp-male.png" },
-		{ id: "m3", name: "DAVID JONES", image: "/pfp-male.png" },
-		{ id: "m4", name: "DANIEL BROWN", image: "/pfp-male.png" },
+		{
+			id: "m1",
+			firstName: "Michael",
+			lastName: "Smith",
+			birthday: "1990-04-12",
+			gender: "Male",
+			bio: "Just a regular guy enjoying life.",
+			interests: "Sports, Grilling, Music",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
+		{
+			id: "m2",
+			firstName: "Chris",
+			lastName: "Evans",
+			birthday: "1981-06-13",
+			gender: "Male",
+			bio: "Just a guy who loves movies.",
+			interests: "Acting, Fitness, Dogs",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
+		{
+			id: "m3",
+			firstName: "David",
+			lastName: "Jones",
+			birthday: "1995-03-21",
+			gender: "Male",
+			bio: "Always looking for the next adventure.",
+			interests: "Camping, Photography",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
+		{
+			id: "m4",
+			firstName: "Daniel",
+			lastName: "Brown",
+			birthday: "1998-11-05",
+			gender: "Male",
+			bio: "Coffee enthusiast and coder.",
+			interests: "Programming, Coffee, Sci-Fi",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
 	]);
 
 	const [femaleUsers, setFemaleUsers] = useState([
-		{ id: "f1", name: "SARAH ADAMS", image: "/pfp-female.png" },
-		{ id: "f2", name: "JESSICA MILLER", image: "/pfp-female.png" },
-		{ id: "f3", name: "EMILY DAVIS", image: "/pfp-female.png" },
-		{ id: "f4", name: "ASHLEY CLARK", image: "/pfp-female.png" },
+		{
+			id: "f1",
+			firstName: "Sarah",
+			lastName: "Adams",
+			birthday: "1993-02-14",
+			gender: "Female",
+			bio: "Coffee lover and weekend hiker.",
+			interests: "Hiking, Coffee, Reading",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
+		{
+			id: "f2",
+			firstName: "Jessica",
+			lastName: "Miller",
+			birthday: "1991-08-25",
+			gender: "Female",
+			bio: "Design enthusiast and plant mom.",
+			interests: "Plants, Art, Design",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: true,
+		},
+		{
+			id: "f3",
+			firstName: "Emily",
+			lastName: "Davis",
+			birthday: "1996-11-03",
+			gender: "Female",
+			bio: "Always down for live music and tacos.",
+			interests: "Concerts, Tacos, Yoga",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
+		{
+			id: "f4",
+			firstName: "Ashley",
+			lastName: "Clark",
+			birthday: "1994-05-19",
+			gender: "Female",
+			bio: "Aspiring writer and foodie.",
+			interests: "Writing, Baking, Travel",
+			pfp1: {},
+			pfp2: {},
+			pfp3: {},
+			pfp4: {},
+			isBig: false,
+		},
 	]);
 
 	const sensors = useSensors(
@@ -133,11 +237,11 @@ export function PairMode2() {
 						}}
 					>
 						<img
-							src={draggingData.user.image}
-							alt={draggingData.user.name}
+							src={`/pfp-${draggingData.user.gender.toLowerCase()}.png`}
+							alt={`${draggingData.user.firstName} ${draggingData.user.lastName}`}
 							draggable={false}
 						/>
-						<h3>{draggingData.user.name}</h3>
+						<h3>{draggingData.user.firstName.toUpperCase()}</h3>
 					</div>
 				) : null}
 			</DragOverlay>
@@ -155,14 +259,17 @@ function ProfileSquare({ user, gender, draggingData }) {
 		id: user.id,
 		data: { user, gender },
 	});
+
 	const { setNodeRef: setDroppableRef, isOver } = useDroppable({
 		id: user.id,
 		data: { user, gender },
 	});
+
 	const setNodeRef = (node) => {
 		setDraggableRef(node);
 		setDroppableRef(node);
 	};
+
 	const isValidTarget =
 		draggingData &&
 		draggingData.gender === gender &&
@@ -182,14 +289,19 @@ function ProfileSquare({ user, gender, draggingData }) {
 	return (
 		<Link
 			to="/profile-view"
+			state={{ user }}
 			ref={setNodeRef}
 			className={classNames}
 			draggable={false}
 			{...listeners}
 			{...attributes}
 		>
-			<img src={user.image} alt={user.name} draggable={false} />
-			<h3>{user.name}</h3>
+			<img
+				src={`/pfp-${user.gender.toLowerCase()}.png`}
+				alt={`${user.firstName} ${user.lastName}`}
+				draggable={false}
+			/>
+			<h3>{user.firstName.toUpperCase()}</h3>
 		</Link>
 	);
 }
