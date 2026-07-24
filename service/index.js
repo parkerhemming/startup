@@ -53,6 +53,30 @@ apiRouter.post("/auth/login", async (req, res) => {
 });
 
 apiRouter.post("/auth/signup", async (req, res) => {
+	const {
+		firstName,
+		lastName,
+		birthday,
+		gender,
+		email,
+		password,
+		bio,
+		interests,
+	} = req.body;
+
+	if (
+		!firstName ||
+		!lastName ||
+		!birthday ||
+		!gender ||
+		!email ||
+		!password ||
+		!bio ||
+		!interests
+	) {
+		return res.status(400).send({ msg: "All fields are required" });
+	}
+
 	try {
 		if (await findUser("email", req.body.email)) {
 			res.status(409).send({ msg: "Existing user" });
@@ -97,6 +121,14 @@ apiRouter.get("/joke", async (req, res) => {
 			punchline: "Server error!",
 		});
 	}
+});
+
+app.use(function (err, req, res, next) {
+	res.status(500).send({ type: err.name, message: err.message });
+});
+
+app.use((_req, res) => {
+	res.sendFile("index.html", { root: "public" });
 });
 
 function findUser(field, value) {
