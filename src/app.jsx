@@ -103,7 +103,8 @@ export default function App() {
 					</Link>
 
 					{user && (
-						<Link to="/notifications">
+						<Link to="/notifications" className="noti-wrapper">
+							<div className="circle"></div>
 							<i className="fa-solid fa-bell"></i>
 						</Link>
 					)}
