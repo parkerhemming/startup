@@ -15,8 +15,35 @@ export function Store() {
 	const [boost, setBoost] = useState(getBoost());
 	const user = getUser();
 
+	const [joke, setJoke] = useState({
+		setup: "Loading joke...",
+		punchline: "",
+	});
+	const [loadingJoke, setLoadingJoke] = useState(false);
+
+	const fetchJoke = async () => {
+		setLoadingJoke(true);
+		try {
+			const response = await fetch(
+				"https://official-joke-api.appspot.com/random_joke",
+			);
+			if (!response.ok) throw new Error("Failed to fetch joke");
+			const data = await response.json();
+			setJoke(data);
+		} catch (error) {
+			console.error(error);
+			setJoke({
+				setup: "Could not load a joke right now.",
+				punchline: "Check your connection!",
+			});
+		} finally {
+			setLoadingJoke(false);
+		}
+	};
+
 	useEffect(() => {
 		document.title = "Store | Proxy Dating";
+		fetchJoke();
 	}, []);
 
 	return (
@@ -128,6 +155,34 @@ export function Store() {
 							-10 <i className="fa-solid fa-coins"></i>
 						</div>
 					</div>
+				</div>
+			</section>
+
+			<section className={styles.section}>
+				<div className={styles.sectionHeader}>
+					<h1>JOKE BREAK</h1>
+					<p>Powered by a third-party Joke API</p>
+				</div>
+
+				<div className={styles.storeItem}>
+					<div className={styles.iconWrap}>
+						<i className="fa-solid fa-face-laugh-squint"></i>
+					</div>
+					<div className={styles.textWrap}>
+						<h2>Random Dad Joke</h2>
+						<p style={{ marginTop: "4px" }}>
+							{loadingJoke
+								? "Fetching joke..."
+								: `${joke.setup} ${joke.punchline}`}
+						</p>
+					</div>
+					<button
+						className="btn"
+						onClick={fetchJoke}
+						disabled={loadingJoke}
+					>
+						<span>New Joke</span>
+					</button>
 				</div>
 			</section>
 		</main>
