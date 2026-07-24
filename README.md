@@ -65,6 +65,14 @@
 
 ---
 
+## 📝 Startup Service
+
+[x] Express Web Server: Configured a production-ready Node.js and Express backend handling JSON payloads, cookie parsing, static asset routing, and API routing.
+[x] User Registration (POST /api/auth/signup): Securely validates email uniqueness, hashes user passwords using bcryptjs, generates unique session tokens with uuid, and sets an encrypted HTTP-only cookie.
+[x] User Authentication (POST /api/auth/login): Validates credentials, securely compares password hashes, and issues session tokens for automatic route guards and state tracking.
+[x] Session Destruction (DELETE /api/auth/logout): Clears user active session tokens and securely removes authentication cookies on logout.
+[x] Third-Party API Proxy (GET /api/joke): Integrated a backend endpoint that fetches fresh external data from the Official Joke API to supply dynamic content to the frontend interface.
+
 ---
 
 ---
