@@ -37,10 +37,11 @@ apiRouter.post("/auth/login", async (req, res) => {
 		const user = await findUser("email", req.body.email);
 
 		if (user) {
-			if (await bcrypt.compare(req.body.password, user.password)) {
+			const { password, ...data } = user;
+			if (await bcrypt.compare(req.body.password, password)) {
 				user.token = uuid.v4();
 				setAuthCookie(res, user.token);
-				return res.status(200).send(user);
+				return res.status(200).send(data);
 			}
 		}
 
@@ -56,8 +57,10 @@ apiRouter.post("/auth/signup", async (req, res) => {
 			res.status(409).send({ msg: "Existing user" });
 		} else {
 			const user = await createUser(req.body);
-			setAuthCookie(res, user.token);
-			res.send({ email: user.email });
+			const { token, password, ...data } = user;
+
+			setAuthCookie(res, token);
+			res.status(200).send(data);
 		}
 	} catch {
 		res.sendStatus(500);
