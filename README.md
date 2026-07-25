@@ -4,9 +4,12 @@
 
 ## TODO
 
-- [ ] Add error state texts on login page
-- [ ] change drag and drop to this https://dndkit.com/react/hooks/use-droppable/
-- [ ] On message page "12 people paired you togehter"
+- [x] Add error state texts on login page
+- [x] change drag and drop to this https://dndkit.com/react/hooks/use-droppable/
+- [ ] On message page "12 people paired you together"
+- [ ] Message page: header profiles should be who you havent messeges yet of your matches.
+- [ ] Make an endpoint for coins and boosts
+- [ ]
 
 ## 📝 Specification Deliverable
 
