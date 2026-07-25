@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import styles from "./pair-mode-3.module.css";
+import { getUser } from "../../utils";
 import {
 	DndContext,
 	PointerSensor,
@@ -14,6 +15,10 @@ import {
 
 export function PairMode3() {
 	const location = useLocation();
+	const [searchParams] = useSearchParams();
+	const isMeMode = searchParams.get("mode") === "me";
+
+	const currentUser = getUser() || {};
 	const passedUser = location.state?.user;
 
 	const [draggingData, setDraggingData] = useState(null);
@@ -33,7 +38,8 @@ export function PairMode3() {
 		isBig: false,
 	};
 
-	const topUser = passedUser || defaultTopUser;
+	const topUser =
+		isMeMode && currentUser.id ? currentUser : passedUser || defaultTopUser;
 
 	const allMaleUsers = [
 		{
@@ -294,7 +300,7 @@ export function PairMode3() {
 	];
 
 	const [gridUsers, setGridUsers] = useState(
-		topUser.gender.toLowerCase() === "female"
+		(topUser.gender || "Male").toLowerCase() === "female"
 			? allMaleUsers
 			: allFemaleUsers,
 	);
@@ -350,6 +356,31 @@ export function PairMode3() {
 	}
 
 	useEffect(() => {
+		return () => {
+			if (isMeMode) {
+				const matchedUser = gridUsers[1];
+				if (matchedUser) {
+					const latestUser = getUser() || currentUser;
+					const updatedUser = {
+						...latestUser,
+						matches: latestUser.matches || [],
+					};
+					const alreadyMatched = updatedUser.matches.find(
+						(m) => m.id === matchedUser.id,
+					);
+					if (!alreadyMatched) {
+						updatedUser.matches.push(matchedUser);
+						localStorage.setItem(
+							"user",
+							JSON.stringify(updatedUser),
+						);
+					}
+				}
+			}
+		};
+	}, [isMeMode, gridUsers, currentUser]);
+
+	useEffect(() => {
 		document.title = `Pair | Proxy Dating`;
 	}, []);
 
@@ -371,12 +402,12 @@ export function PairMode3() {
 						draggable={false}
 					>
 						<img
-							src={`/pfp-${topUser.gender.toLowerCase()}.png`}
+							src={`/pfp-${(topUser.gender || "male").toLowerCase()}.png`}
 							alt={`${topUser.firstName} ${topUser.lastName}`}
 							draggable={false}
 						/>
 						<h3>
-							{`${topUser.firstName} ${topUser.lastName}`.toUpperCase()}
+							{`${topUser.firstName || ""} ${topUser.lastName || ""}`.toUpperCase()}
 						</h3>
 					</Link>
 				</section>
