@@ -19,6 +19,7 @@
 .header {
 	display: flex;
 	align-items: center;
+	justify-content: start;
 	box-sizing: border-box;
 	overflow-x: auto;
 	overflow-y: hidden;
@@ -97,7 +98,6 @@
 	align-items: center;
 }
 
-/* 1st child is Name, 2nd is Time */
 .subsubrow > :nth-child(1) {
 	margin-right: auto;
 	font-weight: 650;

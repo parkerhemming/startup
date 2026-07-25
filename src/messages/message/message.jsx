@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./message.module.css";
 import { toProperCase, updateCoins } from "../../utils";
 
 export function Message() {
 	const location = useLocation();
+	const navigate = useNavigate();
 	const user = location.state?.user || {};
 
 	const [messages, setMessages] = useState(user.messages || []);
@@ -15,9 +16,28 @@ export function Message() {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 	}, [messages]);
 
-	const handleSend = (e) => {
+	const handleUnmatch = async (e) => {
+		e.preventDefault();
+		updateCoins(-10);
+
+		try {
+			const res = await fetch(`/api/match/${user.id}`, {
+				method: "DELETE",
+			});
+			if (res.ok) {
+				const updatedUser = await res.json();
+				localStorage.setItem("user", JSON.stringify(updatedUser));
+				navigate("/messages");
+			}
+		} catch (err) {
+			console.error("Error unmatching:", err);
+		}
+	};
+
+	const handleSend = async (e) => {
 		e.preventDefault();
 		if (!inputText.trim()) return;
+
 		const newMessage = {
 			sender: "Me",
 			text: inputText,
@@ -26,8 +46,24 @@ export function Message() {
 				minute: "2-digit",
 			}),
 		};
+
 		setMessages((prev) => [...prev, newMessage]);
 		setInputText("");
+
+		try {
+			const res = await fetch("/api/match/message", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ matchId: user.id, message: newMessage }),
+			});
+
+			if (res.ok) {
+				const updatedUser = await res.json();
+				localStorage.setItem("user", JSON.stringify(updatedUser));
+			}
+		} catch (err) {
+			console.error("Failed to save message:", err);
+		}
 	};
 
 	useEffect(() => {
@@ -64,16 +100,12 @@ export function Message() {
 					<h2>{displayName}</h2>
 				</Link>
 
-				<Link
-					className={styles.unmatchBtn}
-					onClick={() => updateCoins(-10)}
-					to="/messages"
-				>
+				<button className={styles.unmatchBtn} onClick={handleUnmatch}>
 					<span>Unmatch</span>
 					<span className={styles.cost}>
 						-10 <i className="fa-solid fa-coins"></i>
 					</span>
-				</Link>
+				</button>
 			</header>
 
 			<main className={styles.main}>
