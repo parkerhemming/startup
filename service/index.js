@@ -1210,15 +1210,21 @@ const verifyAuth = async (req, res, next) => {
 
 apiRouter.post("/match/message", verifyAuth, async (req, res) => {
 	const { matchId, message } = req.body;
-	const match = req.user.matches.find((m) => m.id === matchId);
+	const matchIndex = req.user.matches.findIndex((m) => m.id === matchId);
 
-	if (match) {
+	if (matchIndex !== -1) {
+		const match = req.user.matches[matchIndex];
+
 		match.messages.push(message);
 		match.text = message.text;
 		match.time = message.time;
 
-		const { password, ...updatedUser } = req.user;
-		res.status(200).send(updatedUser);
+		req.user.matches.splice(matchIndex, 1);
+		req.user.matches.unshift(match);
+
+		const { password, ...user } = req.user;
+
+		res.status(200).send(user);
 	} else {
 		res.status(404).send({ msg: "Match not found" });
 	}
@@ -1228,8 +1234,8 @@ apiRouter.delete("/match/:id", verifyAuth, async (req, res) => {
 	const matchId = parseInt(req.params.id);
 	req.user.matches = req.user.matches.filter((m) => m.id !== matchId);
 
-	const { password, ...updatedUser } = req.user;
-	res.status(200).send(updatedUser);
+	const { password, ...user } = req.user;
+	res.status(200).send(user);
 });
 
 apiRouter.get("/joke", verifyAuth, async (req, res) => {
