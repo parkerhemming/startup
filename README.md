@@ -9,7 +9,7 @@
 - [ ] On message page "12 people paired you together"
 - [ ] Message page: header profiles should be who you havent messeges yet of your matches.
 - [ ] Make an endpoint for coins and boosts
-- [ ]
+- [ ] Store images in s3 and some sort of key or id in mongodb for images.
 
 ## 📝 Specification Deliverable
 
