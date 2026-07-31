@@ -1,13 +1,10 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./notifications.module.css";
-import { getUser } from "../utils";
 
-export function Notifications() {
+export function Notifications({ setUser, user }) {
 	const navigate = useNavigate();
-
-	const currentUser = getUser() || {};
-	const notificationsData = currentUser.notifications || [];
+	const notificationsData = user.notifications || [];
 
 	useEffect(() => {
 		document.title = `${notificationsData.length} Notifications | Proxy Dating`;
@@ -16,7 +13,7 @@ export function Notifications() {
 	const handleNotificationClick = (note) => {
 		if (note.link) {
 			if (note.link === "/message" && note.state) {
-				const matchStillExists = currentUser.matches?.find(
+				const matchStillExists = user.matches?.find(
 					(m) => m.id === note.state.id,
 				);
 

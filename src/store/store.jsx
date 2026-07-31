@@ -1,19 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./store.module.css";
-import {
-	getUser,
-	getCoins,
-	getBoost,
-	updateBoost,
-	updateCoins,
-} from "../utils";
+import { increment } from "../utils";
 
-export function Store() {
+export function Store({ setUser, user }) {
 	const navigate = useNavigate();
-	const [coins, setCoins] = useState(getCoins());
-	const [boost, setBoost] = useState(getBoost());
-	const user = getUser();
 
 	const [joke, setJoke] = useState({
 		setup: "Loading joke...",
@@ -44,14 +35,27 @@ export function Store() {
 		fetchJoke();
 	}, []);
 
+	if (!user) {
+		return (
+			<main className={styles.main}>
+				<h2>Loading store...</h2>
+			</main>
+		);
+	}
+
 	return (
 		<main className={styles.main}>
 			<section className={`${styles.section} ${styles.dashboardSummary}`}>
 				<div className={styles.statsRow}>
 					<div className={styles.statBox}>
 						<h3>My Balance</h3>
-						<h2 style={{ color: coins < 0 ? "red" : "inherit" }}>
-							{coins ?? 0} <i className="fa-solid fa-coins"></i>
+						<h2
+							style={{
+								color: user.coins < 0 ? "red" : "inherit",
+							}}
+						>
+							{user.coins ?? 0}{" "}
+							<i className="fa-solid fa-coins"></i>
 						</h2>
 					</div>
 					<div className={styles.statBox}>
@@ -84,17 +88,16 @@ export function Store() {
 					<div className={styles.textWrap}>
 						<h2>Profile Boost</h2>
 						<p>
-							Your profile will be shown to others {boost ?? 0}{" "}
-							more times.
+							Your profile will be shown to others{" "}
+							{user.boost ?? 0} more times.
 						</p>
 					</div>
 					<button
-						disabled={coins < 15}
+						disabled={user.coins < 15}
 						className="btn"
 						onClick={() => {
-							updateBoost(1);
-							setCoins(getCoins());
-							setBoost(getBoost());
+							increment("coins", -15, setUser);
+							increment("boost", 1, setUser);
 						}}
 					>
 						<span>15</span>
@@ -111,11 +114,14 @@ export function Store() {
 						<p>Choose your own match.</p>
 					</div>
 					<Link
-						disabled={coins < 30}
-						draggable={false}
 						className="btn"
 						to={"/pair-mode-3?mode=me"}
 						state={{ user }}
+						style={
+							user.coins < 30
+								? { pointerEvents: "none", opacity: 0.5 }
+								: {}
+						}
 					>
 						{" "}
 						<span>30</span>

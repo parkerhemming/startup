@@ -12,126 +12,45 @@ import {
 	pointerWithin,
 } from "@dnd-kit/core";
 
-export function PairMode2() {
+export function PairMode2({ setUser, setCurrentPairs }) {
 	const [draggingData, setDraggingData] = useState(null);
+	const [maleUsers, setMaleUsers] = useState([]);
+	const [femaleUsers, setFemaleUsers] = useState([]);
 
-	const [maleUsers, setMaleUsers] = useState([
-		{
-			id: "m1",
-			firstName: "Michael",
-			lastName: "Smith",
-			birthday: "1990-04-12",
-			gender: "Male",
-			bio: "Just a regular guy enjoying life.",
-			interests: "Sports, Grilling, Music",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "m2",
-			firstName: "Chris",
-			lastName: "Evans",
-			birthday: "1981-06-13",
-			gender: "Male",
-			bio: "Just a guy who loves movies.",
-			interests: "Acting, Fitness, Dogs",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "m3",
-			firstName: "David",
-			lastName: "Jones",
-			birthday: "1995-03-21",
-			gender: "Male",
-			bio: "Always looking for the next adventure.",
-			interests: "Camping, Photography",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "m4",
-			firstName: "Daniel",
-			lastName: "Brown",
-			birthday: "1998-11-05",
-			gender: "Male",
-			bio: "Coffee enthusiast and coder.",
-			interests: "Programming, Coffee, Sci-Fi",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-	]);
+	useEffect(() => {
+		async function fetchProfiles() {
+			try {
+				const [maleRes, femaleRes] = await Promise.all([
+					fetch("/api/profiles?gender=Male&limit=4"),
+					fetch("/api/profiles?gender=Female&limit=4"),
+				]);
 
-	const [femaleUsers, setFemaleUsers] = useState([
-		{
-			id: "f1",
-			firstName: "Sarah",
-			lastName: "Adams",
-			birthday: "1993-02-14",
-			gender: "Female",
-			bio: "Coffee lover and weekend hiker.",
-			interests: "Hiking, Coffee, Reading",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "f2",
-			firstName: "Jessica",
-			lastName: "Miller",
-			birthday: "1991-08-25",
-			gender: "Female",
-			bio: "Design enthusiast and plant mom.",
-			interests: "Plants, Art, Design",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: true,
-		},
-		{
-			id: "f3",
-			firstName: "Emily",
-			lastName: "Davis",
-			birthday: "1996-11-03",
-			gender: "Female",
-			bio: "Always down for live music and tacos.",
-			interests: "Concerts, Tacos, Yoga",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "f4",
-			firstName: "Ashley",
-			lastName: "Clark",
-			birthday: "1994-05-19",
-			gender: "Female",
-			bio: "Aspiring writer and foodie.",
-			interests: "Writing, Baking, Travel",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-	]);
+				if (maleRes.ok && femaleRes.ok) {
+					const males = await maleRes.json();
+					const females = await femaleRes.json();
+					setMaleUsers(males);
+					setFemaleUsers(females);
+				}
+			} catch (error) {
+				console.error(error);
+			}
+		}
+
+		fetchProfiles();
+	}, []);
+
+	useEffect(() => {
+		const pairs = [];
+		const rowCount = Math.min(4, maleUsers.length, femaleUsers.length);
+		for (let i = 0; i < rowCount; i++) {
+			if (maleUsers[i] && femaleUsers[i]) {
+				pairs.push([maleUsers[i], femaleUsers[i]]);
+			}
+		}
+		if (setCurrentPairs) {
+			setCurrentPairs(pairs);
+		}
+	}, [maleUsers, femaleUsers, setCurrentPairs]);
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
@@ -193,6 +112,9 @@ export function PairMode2() {
 		document.title = `Pair | Proxy Dating`;
 	}, []);
 
+	const rowCount = Math.min(4, maleUsers.length, femaleUsers.length);
+	const rows = Array.from({ length: rowCount }, (_, i) => i);
+
 	return (
 		<DndContext
 			sensors={sensors}
@@ -204,7 +126,7 @@ export function PairMode2() {
 				{draggingData && <div className={styles.overlay}></div>}
 
 				<section className={styles.containerSection}>
-					{[0, 1, 2, 3].map((i) => (
+					{rows.map((i) => (
 						<div className={styles.row} key={i}>
 							<ProfileSquare
 								user={maleUsers[i]}
@@ -237,7 +159,7 @@ export function PairMode2() {
 						}}
 					>
 						<img
-							src={`/pfp-${draggingData.user.gender.toLowerCase()}.png`}
+							src={`/pfp-${draggingData.user.gender?.toLowerCase() || "male"}.png`}
 							alt={`${draggingData.user.firstName} ${draggingData.user.lastName}`}
 							draggable={false}
 						/>
@@ -297,7 +219,7 @@ function ProfileSquare({ user, gender, draggingData }) {
 			{...attributes}
 		>
 			<img
-				src={`/pfp-${user.gender.toLowerCase()}.png`}
+				src={`/pfp-${user.gender?.toLowerCase() || "male"}.png`}
 				alt={`${user.firstName} ${user.lastName}`}
 				draggable={false}
 			/>

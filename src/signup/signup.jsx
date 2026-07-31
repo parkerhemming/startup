@@ -35,7 +35,7 @@ export function Signup({ setUser }) {
 		if (response?.status === 200) {
 			const data = await response.json();
 			setUser(data);
-			localStorage.setItem("user", JSON.stringify(data));
+			localStorage.setItem("token", data.token);
 			navigate("/pair-mode-1");
 		} else {
 			setShowError(true);

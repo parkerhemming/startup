@@ -1,32 +1,36 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./message.module.css";
-import { toProperCase, updateCoins } from "../../utils";
+import { increment, toProperCase } from "../../utils";
 
-export function Message() {
+export function Message({ setUser, user: loggedInUser }) {
 	const location = useLocation();
 	const navigate = useNavigate();
-	const user = location.state?.user || {};
 
-	const [messages, setMessages] = useState(user.messages || []);
+	const matchUser = location.state?.user || {};
+	const currentMatch =
+		loggedInUser?.matches?.find((m) => m.id === matchUser.id) || matchUser;
+
+	const displayMessages = currentMatch.messages || [];
+
 	const [inputText, setInputText] = useState("");
 	const messagesEndRef = useRef(null);
 
 	useEffect(() => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, [messages]);
+	}, [displayMessages]);
 
 	const handleUnmatch = async (e) => {
 		e.preventDefault();
-		updateCoins(-10);
+		await increment("coins", -10, setUser);
 
 		try {
-			const res = await fetch(`/api/match/${user.id}`, {
+			const res = await fetch(`/api/match/${currentMatch.id}`, {
 				method: "DELETE",
 			});
 			if (res.ok) {
 				const updatedUser = await res.json();
-				localStorage.setItem("user", JSON.stringify(updatedUser));
+				setUser(updatedUser);
 				navigate("/messages");
 			}
 		} catch (err) {
@@ -47,19 +51,21 @@ export function Message() {
 			}),
 		};
 
-		setMessages((prev) => [...prev, newMessage]);
 		setInputText("");
 
 		try {
-			const res = await fetch("/api/match/message", {
+			const res = await fetch("/api/message", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ matchId: user.id, message: newMessage }),
+				body: JSON.stringify({
+					matchId: currentMatch.id,
+					message: newMessage,
+				}),
 			});
 
 			if (res.ok) {
 				const updatedUser = await res.json();
-				localStorage.setItem("user", JSON.stringify(updatedUser));
+				setUser(updatedUser);
 			}
 		} catch (err) {
 			console.error("Failed to save message:", err);
@@ -67,17 +73,20 @@ export function Message() {
 	};
 
 	useEffect(() => {
-		if (user.firstName) {
-			document.title = `Message ${toProperCase(user.firstName)} | Proxy Dating`;
+		if (currentMatch.firstName) {
+			document.title = `Message ${toProperCase(currentMatch.firstName)} | Proxy Dating`;
 		}
-	}, [user.firstName]);
+	}, [currentMatch.firstName]);
 
 	const profilePic =
-		user.image ||
-		(user.gender
-			? `/pfp-${user.gender.toLowerCase()}.png`
+		currentMatch.image ||
+		(currentMatch.gender
+			? `/pfp-${currentMatch.gender.toLowerCase()}.png`
 			: "/pfp-female.png");
-	const displayName = user.firstName ? user.firstName.toUpperCase() : "USER";
+
+	const displayName = currentMatch.firstName
+		? currentMatch.firstName.toUpperCase()
+		: "USER";
 
 	return (
 		<div className={styles.container}>
@@ -88,7 +97,7 @@ export function Message() {
 
 				<Link
 					to="/profile-view"
-					state={{ user }}
+					state={{ user: currentMatch }}
 					className={styles.profileLink}
 				>
 					<img
@@ -96,6 +105,7 @@ export function Message() {
 						width="42"
 						height="42"
 						alt={displayName}
+						draggable={false}
 					/>
 					<h2>{displayName}</h2>
 				</Link>
@@ -109,7 +119,7 @@ export function Message() {
 			</header>
 
 			<main className={styles.main}>
-				{messages.map((msg, index) => (
+				{displayMessages.map((msg, index) => (
 					<div
 						key={index}
 						className={`${styles.row} ${

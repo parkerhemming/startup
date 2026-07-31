@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import styles from "./messages.module.css";
-import { getUser } from "../utils";
 
-export function Messages() {
-	const currentUser = getUser() || {};
-	const conversations = currentUser.matches || [];
+export function Messages({ setUser, user }) {
+	const conversations = [...(user?.matches || [])].sort(
+		(a, b) => (b.timestamp || 0) - (a.timestamp || 0),
+	);
 
 	useEffect(() => {
 		document.title = "Messages | Proxy Dating";
@@ -14,16 +14,16 @@ export function Messages() {
 	return (
 		<div className={styles.messagesContainer}>
 			<header className={styles.header}>
-				{conversations.map((user) => (
+				{conversations.map((matchUser) => (
 					<Link
-						key={`story-${user.id}`}
+						key={`story-${matchUser.id}`}
 						to={`/message`}
-						state={{ user }}
+						state={{ user: matchUser }}
 						draggable={false}
 					>
 						<img
-							src={`/pfp-${user.gender.toLowerCase()}.png`}
-							alt={`${user.firstName} profile`}
+							src={`/pfp-${matchUser.gender?.toLowerCase() || "male"}.png`}
+							alt={`${matchUser.firstName} profile`}
 							draggable={false}
 						/>
 					</Link>
@@ -31,29 +31,36 @@ export function Messages() {
 			</header>
 
 			<main className={styles.main}>
-				{conversations.map((user) => (
-					<Link
-						key={`msg-${user.id}`}
-						className={styles.row}
-						to={`/message`}
-						state={{ user }}
-						draggable={false}
-					>
-						<img
-							src={`/pfp-${user.gender.toLowerCase()}.png`}
-							alt={`${user.firstName} profile`}
+				{conversations.map((matchUser) => {
+					const latestText = matchUser.text || "Tap to say hi!";
+					const latestTime = matchUser.time || "Just now";
+
+					return (
+						<Link
+							key={`msg-${matchUser.id}`}
+							className={styles.row}
+							to={`/message`}
+							state={{ user: matchUser }}
 							draggable={false}
-						/>
-						<div className={styles.subrow}>
-							<div className={styles.subsubrow}>
-								<h2>{user.firstName.toUpperCase()}</h2>
-								<h2>{user.time}</h2>
-								<i className="fa-solid fa-angle-right"></i>
+						>
+							<img
+								src={`/pfp-${matchUser.gender?.toLowerCase() || "male"}.png`}
+								alt={`${matchUser.firstName} profile`}
+								draggable={false}
+							/>
+							<div className={styles.subrow}>
+								<div className={styles.subsubrow}>
+									<h2>
+										{matchUser.firstName?.toUpperCase()}
+									</h2>
+									<h2>{latestTime}</h2>
+									<i className="fa-solid fa-angle-right"></i>
+								</div>
+								<h3>{latestText}</h3>
 							</div>
-							<h3>{user.text}</h3>
-						</div>
-					</Link>
-				))}
+						</Link>
+					);
+				})}
 			</main>
 		</div>
 	);

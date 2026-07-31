@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./app.css";
 import "../global.css";
-import { getCoins, updateCoins } from "./utils";
+import { increment } from "./utils";
 
 import {
 	NavLink,
@@ -24,40 +24,26 @@ import { Notifications } from "./notifications/notifications.jsx";
 import { ProfileView } from "./profile-view/profile-view.jsx";
 
 export default function App() {
-	const [user, setUser] = useState(() => {
-		try {
-			const saved = localStorage.getItem("user");
-			if (!saved || saved === "[object Object]") return null;
-			return JSON.parse(saved);
-		} catch (e) {
-			return null;
-		}
-	});
+	const token = localStorage.getItem("token");
+	const [user, setUser] = useState(null);
+	const [currentPairs, setCurrentPairs] = useState([]);
+
+	useEffect(() => {
+		fetch("/api/getUser")
+			.then((res) => {
+				if (res.ok) {
+					return res.json();
+				}
+				throw new Error("Not logged in");
+			})
+			.then(setUser)
+			.catch(() => navigate("/login"));
+	}, []);
+
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [searchParams] = useSearchParams();
 	const mode = searchParams.get("mode");
-
-	const publicRoutes = ["/login", "/signup"];
-	const hideGlobalHeaderRoutes = [
-		"/messages",
-		"/message",
-		"/notifications",
-		"/profile-view",
-	];
-	const hideGlobalFooterRoutes = [
-		"/message",
-		"/notifications",
-		"/profile-view",
-	];
-
-	useEffect(() => {
-		if (!user && !publicRoutes.includes(location.pathname)) {
-			navigate("/login");
-		} else if (location.pathname === "/") {
-			navigate("/pair-mode-1");
-		}
-	}, [user, navigate, location.pathname]);
 
 	const nextModeMap = {
 		"/pair-mode-1": "/pair-mode-2",
@@ -65,13 +51,15 @@ export default function App() {
 		"/pair-mode-3": "/pair-mode-1",
 	};
 
-	const showGlobalHeader =
-		!hideGlobalHeaderRoutes.includes(location.pathname) &&
-		!publicRoutes.includes(location.pathname);
+	const showHeader =
+		!["/messages", "/message", "/notifications", "/profile-view"].includes(
+			location.pathname,
+		) && !["/login", "/signup"].includes(location.pathname);
 
-	const showGlobalFooter =
-		!hideGlobalFooterRoutes.includes(location.pathname) &&
-		!publicRoutes.includes(location.pathname);
+	const showFooter =
+		!["/message", "/notifications", "/profile-view"].includes(
+			location.pathname,
+		) && !["/login", "/signup"].includes(location.pathname);
 
 	async function handleLogout() {
 		await fetch("/api/auth/logout", {
@@ -79,13 +67,13 @@ export default function App() {
 		});
 
 		setUser("");
-		localStorage.removeItem("user");
+		localStorage.removeItem("token");
 		navigate("/login");
 	}
 
 	return (
 		<div className="body">
-			{showGlobalHeader && (
+			{showHeader && (
 				<header>
 					{user && (
 						<button className="btn" onClick={handleLogout}>
@@ -114,18 +102,58 @@ export default function App() {
 			<Routes>
 				<Route path="/login" element={<Login setUser={setUser} />} />
 				<Route path="/signup" element={<Signup setUser={setUser} />} />
-				<Route path="/pair-mode-1" element={<PairMode1 />} />
-				<Route path="/pair-mode-2" element={<PairMode2 />} />
-				<Route path="/pair-mode-3" element={<PairMode3 />} />
-				<Route path="/messages" element={<Messages />} />
-				<Route path="/message" element={<Message />} />
-				<Route path="/store" element={<Store />} />
-				<Route path="/notifications" element={<Notifications />} />
-				<Route path="/profile-view" element={<ProfileView />} />
+				<Route
+					path="/pair-mode-1"
+					element={
+						<PairMode1
+							setUser={setUser}
+							setCurrentPairs={setCurrentPairs}
+						/>
+					}
+				/>
+				<Route
+					path="/pair-mode-2"
+					element={
+						<PairMode2
+							setUser={setUser}
+							setCurrentPairs={setCurrentPairs}
+						/>
+					}
+				/>
+				<Route
+					path="/pair-mode-3"
+					element={
+						<PairMode3
+							setUser={setUser}
+							user={user}
+							setCurrentPairs={setCurrentPairs}
+						/>
+					}
+				/>
+				<Route
+					path="/messages"
+					element={<Messages setUser={setUser} user={user} />}
+				/>
+				<Route
+					path="/message"
+					element={<Message setUser={setUser} user={user} />}
+				/>
+				<Route
+					path="/store"
+					element={<Store setUser={setUser} user={user} />}
+				/>
+				<Route
+					path="/notifications"
+					element={<Notifications user={user} />}
+				/>
+				<Route
+					path="/profile-view"
+					element={<ProfileView setUser={setUser} user={user} />}
+				/>
 				<Route path="*" element={<NotFound />} />
 			</Routes>
 
-			{user && showGlobalFooter && (
+			{user && showFooter && (
 				<footer>
 					<NavLink to="/pair-mode-1">
 						<i className="fa-solid fa-home"></i>
@@ -138,20 +166,58 @@ export default function App() {
 					{location.pathname.includes("pair-mode") && (
 						<NavLink
 							className="btn"
-							onClick={() => {
-								if (mode === "me" && getCoins() >= 30) {
-									updateCoins(-30);
-								} else {
-									updateCoins(5);
+							onClick={async (e) => {
+								e.preventDefault();
+
+								if (mode === "me" && user.coins >= 30) {
+									await increment("coins", -30, setUser);
+								} else if (mode !== "me") {
+									await increment("coins", 5, setUser);
 								}
+
+								if (currentPairs.length > 0) {
+									try {
+										const res = await fetch(
+											"/api/match/pair",
+											{
+												method: "POST",
+												headers: {
+													"Content-Type":
+														"application/json",
+												},
+												body: JSON.stringify({
+													pairs: currentPairs,
+												}),
+											},
+										);
+										if (res.ok) {
+											const updatedUser =
+												await res.json();
+											setUser(updatedUser);
+										}
+									} catch (err) {
+										console.error(err);
+									}
+								}
+
+								const targetPath =
+									mode === "me" && user.coins >= 30
+										? "/store"
+										: nextModeMap[location.pathname] ||
+											"/pair-mode-1";
+
+								navigate(
+									targetPath +
+										(mode === "me" ? "?mode=me" : ""),
+								);
 							}}
 							to={
-								mode === "me" && getCoins() >= 30
+								mode === "me" && user.coins >= 30
 									? "/store"
 									: nextModeMap[location.pathname]
 							}
 						>
-							{mode === "me" && getCoins() >= 30 ? (
+							{mode === "me" && user.coins >= 30 ? (
 								<>
 									<span>Match Me</span>
 									<span style={{ color: "red" }}>-30</span>

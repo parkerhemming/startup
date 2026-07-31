@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import styles from "./pair-mode-3.module.css";
-import { getUser } from "../../utils";
 import {
 	DndContext,
 	PointerSensor,
@@ -13,297 +12,79 @@ import {
 	pointerWithin,
 } from "@dnd-kit/core";
 
-export function PairMode3() {
+export function PairMode3({ setUser, user, setCurrentPairs }) {
 	const location = useLocation();
 	const [searchParams] = useSearchParams();
 	const isMeMode = searchParams.get("mode") === "me";
-
-	const currentUser = getUser() || {};
 	const passedUser = location.state?.user;
 
 	const [draggingData, setDraggingData] = useState(null);
 
-	const defaultTopUser = {
-		id: "m1",
-		firstName: "Michael",
-		lastName: "Smith",
-		birthday: "1990-04-12",
-		gender: "Male",
-		bio: "Just a regular guy enjoying life.",
-		interests: "Sports, Grilling, Music",
-		pfp1: {},
-		pfp2: {},
-		pfp3: {},
-		pfp4: {},
-		isBig: false,
-	};
+	const loggedInGender = user?.gender;
+	const targetGridGender = loggedInGender
+		? loggedInGender.toLowerCase() === "female"
+			? "Male"
+			: "Female"
+		: null;
 
-	const topUser =
-		isMeMode && currentUser.id ? currentUser : passedUser || defaultTopUser;
+	const [topUser, setTopUser] = useState(passedUser || null);
+	const [gridUsers, setGridUsers] = useState([]);
 
-	const allMaleUsers = [
-		{
-			id: "m1",
-			firstName: "Michael",
-			lastName: "Smith",
-			birthday: "1990-04-12",
-			gender: "Male",
-			bio: "Just a regular guy enjoying life.",
-			interests: "Sports, Grilling, Music",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "m2",
-			firstName: "Chris",
-			lastName: "Evans",
-			birthday: "1981-06-13",
-			gender: "Male",
-			bio: "Just a guy who loves movies.",
-			interests: "Acting, Fitness, Dogs",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "m3",
-			firstName: "David",
-			lastName: "Jones",
-			birthday: "1995-03-21",
-			gender: "Male",
-			bio: "Always looking for the next adventure.",
-			interests: "Camping, Photography",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "m4",
-			firstName: "Daniel",
-			lastName: "Brown",
-			birthday: "1998-11-05",
-			gender: "Male",
-			bio: "Coffee enthusiast and coder.",
-			interests: "Programming, Coffee, Sci-Fi",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "m5",
-			firstName: "James",
-			lastName: "Wilson",
-			birthday: "1992-07-30",
-			gender: "Male",
-			bio: "Outdoor enthusiast.",
-			interests: "Hiking, Biking, Outdoors",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "m6",
-			firstName: "Matthew",
-			lastName: "Taylor",
-			birthday: "1994-09-14",
-			gender: "Male",
-			bio: "Musician and foodie.",
-			interests: "Guitar, Cooking, Live Music",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "m7",
-			firstName: "Joshua",
-			lastName: "Anderson",
-			birthday: "1997-02-19",
-			gender: "Male",
-			bio: "Tech lover.",
-			interests: "Gadgets, AI, Gaming",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "m8",
-			firstName: "Andrew",
-			lastName: "Thomas",
-			birthday: "1991-12-05",
-			gender: "Male",
-			bio: "Fitness and health.",
-			interests: "Gym, Nutrition, Wellness",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "m9",
-			firstName: "Kevin",
-			lastName: "Jackson",
-			birthday: "1996-08-22",
-			gender: "Male",
-			bio: "Bookworm.",
-			interests: "Reading, History, Writing",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-	];
+	useEffect(() => {
+		if (isMeMode && user?.id) {
+			setTopUser(user);
+		}
+	}, [isMeMode, user]);
 
-	const allFemaleUsers = [
-		{
-			id: "f1",
-			firstName: "Sarah",
-			lastName: "Adams",
-			birthday: "1993-02-14",
-			gender: "Female",
-			bio: "Coffee lover and weekend hiker.",
-			interests: "Hiking, Coffee, Reading",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "f2",
-			firstName: "Jessica",
-			lastName: "Miller",
-			birthday: "1991-08-25",
-			gender: "Female",
-			bio: "Design enthusiast and plant mom.",
-			interests: "Plants, Art, Design",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: true,
-		},
-		{
-			id: "f3",
-			firstName: "Emily",
-			lastName: "Davis",
-			birthday: "1996-11-03",
-			gender: "Female",
-			bio: "Always down for live music and tacos.",
-			interests: "Concerts, Tacos, Yoga",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "f4",
-			firstName: "Ashley",
-			lastName: "Clark",
-			birthday: "1994-05-19",
-			gender: "Female",
-			bio: "Aspiring writer and foodie.",
-			interests: "Writing, Baking, Travel",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "f5",
-			firstName: "Brittany",
-			lastName: "Lewis",
-			birthday: "1998-01-30",
-			gender: "Female",
-			bio: "Fitness fanatic and beach lover.",
-			interests: "Fitness, Beach, Running",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "f6",
-			firstName: "Amanda",
-			lastName: "Hall",
-			birthday: "1995-07-11",
-			gender: "Female",
-			bio: "Tech nerd and board game addict.",
-			interests: "Board Games, Coding, Sci-Fi",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "f7",
-			firstName: "Megan",
-			lastName: "Allen",
-			birthday: "1999-09-04",
-			gender: "Female",
-			bio: "Capturing moments through a lens.",
-			interests: "Photography, Film, Camping",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "f8",
-			firstName: "Taylor",
-			lastName: "Wright",
-			birthday: "1992-12-18",
-			gender: "Female",
-			bio: "Always planning the next big trip.",
-			interests: "Travel, Languages, History",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-		{
-			id: "f9",
-			firstName: "Rachel",
-			lastName: "Scott",
-			birthday: "1997-03-27",
-			gender: "Female",
-			bio: "Dog person and thrift store hunter.",
-			interests: "Thrifting, Dogs, Painting",
-			pfp1: {},
-			pfp2: {},
-			pfp3: {},
-			pfp4: {},
-			isBig: false,
-		},
-	];
+	useEffect(() => {
+		async function fetchGridProfiles() {
+			if (!targetGridGender) return;
+			try {
+				const response = await fetch(
+					`/api/profiles?gender=${targetGridGender}&limit=9`,
+				);
+				if (response.ok) {
+					const data = await response.json();
+					setGridUsers(data);
+				}
+			} catch (error) {
+				console.error(error);
+			}
+		}
 
-	const [gridUsers, setGridUsers] = useState(
-		(topUser.gender || "Male").toLowerCase() === "female"
-			? allMaleUsers
-			: allFemaleUsers,
-	);
+		fetchGridProfiles();
+	}, [targetGridGender]);
+
+	useEffect(() => {
+		async function fetchRandomTopUser() {
+			if (!isMeMode && !passedUser && loggedInGender) {
+				try {
+					const response = await fetch(
+						`/api/profiles?gender=${loggedInGender}&limit=20`,
+					);
+					if (response.ok) {
+						const data = await response.json();
+						if (data.length > 0) {
+							const randomUser =
+								data[Math.floor(Math.random() * data.length)];
+							setTopUser(randomUser);
+						}
+					}
+				} catch (error) {
+					console.error(error);
+				}
+			}
+		}
+
+		fetchRandomTopUser();
+	}, [isMeMode, passedUser, loggedInGender]);
+
+	useEffect(() => {
+		const bigGridUser = gridUsers.find((u, i) => i === 1);
+		if (topUser && bigGridUser && setCurrentPairs) {
+			setCurrentPairs([[topUser, bigGridUser]]);
+		}
+	}, [topUser, gridUsers, setCurrentPairs]);
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
@@ -356,31 +137,6 @@ export function PairMode3() {
 	}
 
 	useEffect(() => {
-		return () => {
-			if (isMeMode) {
-				const matchedUser = gridUsers[1];
-				if (matchedUser) {
-					const latestUser = getUser() || currentUser;
-					const updatedUser = {
-						...latestUser,
-						matches: latestUser.matches || [],
-					};
-					const alreadyMatched = updatedUser.matches.find(
-						(m) => m.id === matchedUser.id,
-					);
-					if (!alreadyMatched) {
-						updatedUser.matches.push(matchedUser);
-						localStorage.setItem(
-							"user",
-							JSON.stringify(updatedUser),
-						);
-					}
-				}
-			}
-		};
-	}, [isMeMode, gridUsers, currentUser]);
-
-	useEffect(() => {
 		document.title = `Pair | Proxy Dating`;
 	}, []);
 
@@ -395,28 +151,34 @@ export function PairMode3() {
 				{draggingData && <div className={styles.overlay}></div>}
 
 				<section className={styles.maleSection}>
-					<Link
-						to="/profile-view"
-						state={{ user: topUser }}
-						className={`${styles.square} ${styles.big}`}
-						draggable={false}
-					>
-						<img
-							src={`/pfp-${(topUser.gender || "male").toLowerCase()}.png`}
-							alt={`${topUser.firstName} ${topUser.lastName}`}
+					{topUser ? (
+						<Link
+							to="/profile-view"
+							state={{ user: topUser }}
+							className={`${styles.square} ${styles.big}`}
 							draggable={false}
-						/>
-						<h3>
-							{`${topUser.firstName || ""} ${topUser.lastName || ""}`.toUpperCase()}
-						</h3>
-					</Link>
+						>
+							<img
+								src={`/pfp-${topUser.gender ? topUser.gender.toLowerCase() : "male"}.png`}
+								alt={`${topUser.firstName} ${topUser.lastName}`}
+								draggable={false}
+							/>
+							<h3>
+								{`${topUser.firstName || ""} ${topUser.lastName || ""}`.toUpperCase()}
+							</h3>
+						</Link>
+					) : (
+						<div className={`${styles.square} ${styles.big}`}>
+							<h3>LOADING...</h3>
+						</div>
+					)}
 				</section>
 
 				<section className={styles.gridSection}>
-					{gridUsers.map((user, index) => (
+					{gridUsers.map((gridUser, index) => (
 						<ProfileSquare
-							key={user.id}
-							user={user}
+							key={gridUser.id}
+							user={gridUser}
 							isBig={index === 1}
 							draggingData={draggingData}
 						/>
@@ -439,7 +201,7 @@ export function PairMode3() {
 						}}
 					>
 						<img
-							src={`/pfp-${draggingData.user.gender.toLowerCase()}.png`}
+							src={`/pfp-${draggingData.user.gender?.toLowerCase() || "male"}.png`}
 							alt={`${draggingData.user.firstName} ${draggingData.user.lastName}`}
 							draggable={false}
 						/>
@@ -503,7 +265,7 @@ function ProfileSquare({ user, isBig, draggingData }) {
 			{...attributes}
 		>
 			<img
-				src={`/pfp-${user.gender.toLowerCase()}.png`}
+				src={`/pfp-${user.gender?.toLowerCase() || "male"}.png`}
 				alt={`${user.firstName} ${user.lastName}`}
 				draggable={false}
 			/>
