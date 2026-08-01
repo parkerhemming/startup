@@ -6,7 +6,7 @@ const s3Client = new S3Client({
 	region: "us-east-1",
 	credentials: fromIni({
 		filepath: path.join(__dirname, "aws-credentials.ini"),
-		profile: "local",
+		profile: "production",
 	}),
 });
 
