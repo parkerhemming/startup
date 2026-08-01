@@ -79,7 +79,7 @@ export function Message({ setUser, user: loggedInUser }) {
 	}, [currentMatch.firstName]);
 
 	const profilePic =
-		currentMatch.image ||
+		currentMatch.profilePics?.[0] ||
 		(currentMatch.gender
 			? `/pfp-${currentMatch.gender.toLowerCase()}.png`
 			: "/pfp-female.png");

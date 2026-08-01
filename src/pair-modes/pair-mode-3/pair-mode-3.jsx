@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation, useSearchParams } from "react-router-dom";
+import {
+	Link,
+	useLocation,
+	useSearchParams,
+	useNavigationType,
+} from "react-router-dom";
 import styles from "./pair-mode-3.module.css";
 import {
 	DndContext,
@@ -14,6 +19,7 @@ import {
 
 export function PairMode3({ setUser, user, setCurrentPairs }) {
 	const location = useLocation();
+	const navType = useNavigationType();
 	const [searchParams] = useSearchParams();
 	const isMeMode = searchParams.get("mode") === "me";
 	const passedUser = location.state?.user;
@@ -40,6 +46,14 @@ export function PairMode3({ setUser, user, setCurrentPairs }) {
 		async function fetchGridProfiles() {
 			if (!targetGridGender) return;
 			try {
+				if (navType === "POP") {
+					const cachedGrid = sessionStorage.getItem("pairMode3_grid");
+					if (cachedGrid) {
+						setGridUsers(JSON.parse(cachedGrid));
+						return;
+					}
+				}
+
 				const response = await fetch(
 					`/api/profiles?gender=${targetGridGender}&limit=9`,
 				);
@@ -53,12 +67,21 @@ export function PairMode3({ setUser, user, setCurrentPairs }) {
 		}
 
 		fetchGridProfiles();
-	}, [targetGridGender]);
+	}, [targetGridGender, navType]);
 
 	useEffect(() => {
 		async function fetchRandomTopUser() {
 			if (!isMeMode && !passedUser && loggedInGender) {
 				try {
+					if (navType === "POP") {
+						const cachedTop =
+							sessionStorage.getItem("pairMode3_top");
+						if (cachedTop) {
+							setTopUser(JSON.parse(cachedTop));
+							return;
+						}
+					}
+
 					const response = await fetch(
 						`/api/profiles?gender=${loggedInGender}&limit=20`,
 					);
@@ -77,7 +100,19 @@ export function PairMode3({ setUser, user, setCurrentPairs }) {
 		}
 
 		fetchRandomTopUser();
-	}, [isMeMode, passedUser, loggedInGender]);
+	}, [isMeMode, passedUser, loggedInGender, navType]);
+
+	useEffect(() => {
+		if (gridUsers.length > 0) {
+			sessionStorage.setItem("pairMode3_grid", JSON.stringify(gridUsers));
+		}
+	}, [gridUsers]);
+
+	useEffect(() => {
+		if (topUser) {
+			sessionStorage.setItem("pairMode3_top", JSON.stringify(topUser));
+		}
+	}, [topUser]);
 
 	useEffect(() => {
 		const bigGridUser = gridUsers.find((u, i) => i === 1);
@@ -159,7 +194,10 @@ export function PairMode3({ setUser, user, setCurrentPairs }) {
 							draggable={false}
 						>
 							<img
-								src={`/pfp-${topUser.gender ? topUser.gender.toLowerCase() : "male"}.png`}
+								src={
+									topUser.profilePics?.[0] ||
+									`/pfp-${topUser.gender ? topUser.gender.toLowerCase() : "male"}.png`
+								}
 								alt={`${topUser.firstName} ${topUser.lastName}`}
 								draggable={false}
 							/>
@@ -201,7 +239,10 @@ export function PairMode3({ setUser, user, setCurrentPairs }) {
 						}}
 					>
 						<img
-							src={`/pfp-${draggingData.user.gender?.toLowerCase() || "male"}.png`}
+							src={
+								draggingData.user?.profilePics?.[0] ||
+								`/pfp-${draggingData.user.gender?.toLowerCase() || "male"}.png`
+							}
 							alt={`${draggingData.user.firstName} ${draggingData.user.lastName}`}
 							draggable={false}
 						/>
@@ -265,7 +306,10 @@ function ProfileSquare({ user, isBig, draggingData }) {
 			{...attributes}
 		>
 			<img
-				src={`/pfp-${user.gender?.toLowerCase() || "male"}.png`}
+				src={
+					user?.profilePics?.[0] ||
+					`/pfp-${user.gender?.toLowerCase() || "male"}.png`
+				}
 				alt={`${user.firstName} ${user.lastName}`}
 				draggable={false}
 			/>

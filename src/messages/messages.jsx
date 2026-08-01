@@ -22,7 +22,10 @@ export function Messages({ setUser, user }) {
 						draggable={false}
 					>
 						<img
-							src={`/pfp-${matchUser.gender?.toLowerCase() || "male"}.png`}
+							src={
+								matchUser.profilePics?.[0] ||
+								`/pfp-${matchUser.gender?.toLowerCase() || "male"}.png`
+							}
 							alt={`${matchUser.firstName} profile`}
 							draggable={false}
 						/>
@@ -44,7 +47,10 @@ export function Messages({ setUser, user }) {
 							draggable={false}
 						>
 							<img
-								src={`/pfp-${matchUser.gender?.toLowerCase() || "male"}.png`}
+								src={
+									matchUser.profilePics?.[0] ||
+									`/pfp-${matchUser.gender?.toLowerCase() || "male"}.png`
+								}
 								alt={`${matchUser.firstName} profile`}
 								draggable={false}
 							/>

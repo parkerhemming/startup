@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigationType } from "react-router-dom";
 import styles from "./pair-mode-1.module.css";
 import {
 	DndContext,
@@ -13,6 +13,7 @@ import {
 } from "@dnd-kit/core";
 
 export function PairMode1({ setUser, setCurrentPairs }) {
+	const navType = useNavigationType();
 	const [draggingData, setDraggingData] = useState(null);
 	const [maleUsers, setMaleUsers] = useState([]);
 	const [femaleUsers, setFemaleUsers] = useState([]);
@@ -20,6 +21,18 @@ export function PairMode1({ setUser, setCurrentPairs }) {
 	useEffect(() => {
 		async function fetchProfiles() {
 			try {
+				if (navType === "POP") {
+					const cachedMales =
+						sessionStorage.getItem("pairMode1_males");
+					const cachedFemales =
+						sessionStorage.getItem("pairMode1_females");
+					if (cachedMales && cachedFemales) {
+						setMaleUsers(JSON.parse(cachedMales));
+						setFemaleUsers(JSON.parse(cachedFemales));
+						return;
+					}
+				}
+
 				const [maleRes, femaleRes] = await Promise.all([
 					fetch("/api/profiles?gender=Male&limit=9"),
 					fetch("/api/profiles?gender=Female&limit=9"),
@@ -33,7 +46,6 @@ export function PairMode1({ setUser, setCurrentPairs }) {
 						...u,
 						isBig: index === 5,
 					}));
-
 					const mappedFemales = females.map((u, index) => ({
 						...u,
 						isBig: index === 1,
@@ -48,11 +60,30 @@ export function PairMode1({ setUser, setCurrentPairs }) {
 		}
 
 		fetchProfiles();
-	}, []);
+	}, [navType]);
+
+	useEffect(() => {
+		if (maleUsers.length > 0) {
+			sessionStorage.setItem(
+				"pairMode1_males",
+				JSON.stringify(maleUsers),
+			);
+		}
+	}, [maleUsers]);
+
+	useEffect(() => {
+		if (femaleUsers.length > 0) {
+			sessionStorage.setItem(
+				"pairMode1_females",
+				JSON.stringify(femaleUsers),
+			);
+		}
+	}, [femaleUsers]);
 
 	useEffect(() => {
 		const bigMale = maleUsers.find((u) => u.isBig);
 		const bigFemale = femaleUsers.find((u) => u.isBig);
+
 		if (bigMale && bigFemale && setCurrentPairs) {
 			setCurrentPairs([[bigMale, bigFemale]]);
 		}
@@ -152,12 +183,14 @@ export function PairMode1({ setUser, setCurrentPairs }) {
 					))}
 				</section>
 			</main>
-
 			<DragOverlay dropAnimation={null}>
 				{draggingData ? (
 					<div className={styles.square}>
 						<img
-							src={`/pfp-${draggingData.user?.gender?.toLowerCase() || "male"}.png`}
+							src={
+								draggingData.user?.profilePics?.[0] ||
+								`/pfp-${draggingData.user?.gender?.toLowerCase() || "male"}.png`
+							}
 							alt={`${draggingData.user?.firstName} ${draggingData.user?.lastName}`}
 							draggable={false}
 						/>
@@ -216,7 +249,10 @@ function ProfileSquare({ user, gender, draggingData }) {
 			{...attributes}
 		>
 			<img
-				src={`/pfp-${user.gender?.toLowerCase() || "male"}.png`}
+				src={
+					user.profilePics?.[0] ||
+					`/pfp-${user.gender?.toLowerCase() || "male"}.png`
+				}
 				alt={`${user.firstName} ${user.lastName}`}
 				draggable={false}
 			/>

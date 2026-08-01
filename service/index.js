@@ -4,9 +4,14 @@ const bcrypt = require("bcryptjs");
 const uuid = require("uuid");
 const app = express();
 const DB = require("./database.js");
+const multer = require("multer");
+const { PutObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
+const { s3Client } = require("./s3-config.js");
+const sharp = require("sharp");
 
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
 const apiRouter = express.Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(express.json());
 app.use(cookieParser());
@@ -18,12 +23,36 @@ apiRouter.post("/auth/login", async (req, res) => {
 		const user = await findUser("email", req.body.email);
 
 		if (user) {
-			const { password, ...data } = user;
-			if (await bcrypt.compare(req.body.password, password)) {
+			if (await bcrypt.compare(req.body.password, user.password)) {
 				user.token = uuid.v4();
+				user.notifications = user.notifications || [];
+				try {
+					const jokeRes = await fetch(
+						"https://official-joke-api.appspot.com/random_joke",
+					);
+					if (jokeRes.ok) {
+						const joke = await jokeRes.json();
+						user.notifications.unshift({
+							id: uuid.v4(),
+							text: `Joke of the day: ${joke.setup} ${joke.punchline}`,
+							icon: "fa-face-laugh-squint",
+							time: new Date().toLocaleTimeString([], {
+								hour: "2-digit",
+								minute: "2-digit",
+							}),
+						});
+					}
+				} catch (e) {
+					console.error("Failed to fetch joke on login");
+				}
+
 				await DB.updateUser(user);
 				setAuthCookie(res, user.token);
-				return res.status(200).send(data);
+
+				const populatedUser = await populateUserMatches(user);
+				const { password, ...safeUser } = populatedUser;
+
+				return res.status(200).send(safeUser);
 			}
 		}
 		res.status(401).send({ msg: "Invalid email or password" });
@@ -46,46 +75,112 @@ apiRouter.delete("/auth/logout", async (req, res) => {
 	}
 });
 
-apiRouter.post("/auth/signup", async (req, res) => {
-	const {
-		firstName,
-		lastName,
-		birthday,
-		gender,
-		email,
-		password,
-		bio,
-		interests,
-	} = req.body;
+apiRouter.post(
+	"/auth/signup",
+	upload.array("profilePics", 4),
+	async (req, res) => {
+		const {
+			firstName,
+			lastName,
+			birthday,
+			gender,
+			email,
+			password,
+			bio,
+			interests,
+		} = req.body;
 
-	if (
-		!firstName ||
-		!lastName ||
-		!birthday ||
-		!gender ||
-		!email ||
-		!password ||
-		!bio ||
-		!interests
-	) {
-		return res.status(400).send({ msg: "All fields are required" });
-	}
-
-	try {
-		if (await findUser("email", req.body.email)) {
-			res.status(409).send({ msg: "Existing user" });
-		} else {
-			const user = await createUser(req.body);
-
-			const { token, password, ...data } = user;
-			setAuthCookie(res, user.token);
-			res.status(200).send(data);
+		if (
+			!firstName ||
+			!lastName ||
+			!birthday ||
+			!gender ||
+			!email ||
+			!password ||
+			!bio ||
+			!interests
+		) {
+			return res.status(400).send({ msg: "All fields are required" });
 		}
-	} catch (error) {
-		console.error(error);
-		res.status(500).send({ msg: "Server error" });
-	}
-});
+
+		if (!req.files || req.files.length !== 4) {
+			return res
+				.status(400)
+				.send({ msg: "Exactly 4 profile pictures are required." });
+		}
+
+		try {
+			if (await findUser("email", email)) {
+				return res.status(409).send({ msg: "Existing user" });
+			}
+
+			const bucketName = "proxy-dating";
+			let uploadedImageUrls = [];
+
+			const uploadPromises = req.files.map(async (file) => {
+				const optimizedBuffer = await sharp(file.buffer)
+					.rotate()
+					.resize({ width: 600, height: 800, fit: "cover" })
+					.webp({ quality: 80 })
+					.toBuffer();
+
+				const uniqueName =
+					uuid.v4() +
+					"-" +
+					file.originalname.split(".")[0].replace(/\s+/g, "-");
+				const key = `profile-pictures/${uniqueName}.webp`;
+				await s3Client.send(
+					new PutObjectCommand({
+						Bucket: bucketName,
+						Key: key,
+						Body: optimizedBuffer,
+						ContentType: "image/webp",
+					}),
+				);
+
+				return `https://${bucketName}.s3.amazonaws.com/${key}`;
+			});
+
+			uploadedImageUrls = await Promise.all(uploadPromises);
+
+			const user = await createUser({
+				...req.body,
+				profilePics: uploadedImageUrls,
+			});
+			try {
+				const jokeRes = await fetch(
+					"https://official-joke-api.appspot.com/random_joke",
+				);
+				if (jokeRes.ok) {
+					const joke = await jokeRes.json();
+					user.notifications = user.notifications || [];
+					user.notifications.unshift({
+						id: uuid.v4(),
+						text: `Joke of the day: ${joke.setup} ${joke.punchline}`,
+						icon: "fa-face-laugh-squint",
+						time: new Date().toLocaleTimeString([], {
+							hour: "2-digit",
+							minute: "2-digit",
+						}),
+					});
+					await DB.updateUser(user);
+				}
+			} catch (e) {
+				console.error("Failed to fetch joke on signup");
+			}
+
+			setAuthCookie(res, user.token);
+
+			const populatedUser = await populateUserMatches(user);
+			const { password: pwd, ...safeUser } = populatedUser;
+
+			res.status(200).send(safeUser);
+		} catch (error) {
+			console.error(error);
+			res.status(500).send({ msg: "Server error" });
+		}
+	},
+);
 
 const verifyAuth = async (req, res, next) => {
 	const user = await findUser("token", req.cookies["token"]);
@@ -97,24 +192,75 @@ const verifyAuth = async (req, res, next) => {
 	}
 };
 
-apiRouter.put("/updateProfile", verifyAuth, async (req, res) => {
-	try {
-		const { firstName, lastName, bio, interests } = req.body;
+apiRouter.put(
+	"/updateProfile",
+	verifyAuth,
+	upload.fields([
+		{ name: "pic_0", maxCount: 1 },
+		{ name: "pic_1", maxCount: 1 },
+		{ name: "pic_2", maxCount: 1 },
+		{ name: "pic_3", maxCount: 1 },
+	]),
+	async (req, res) => {
+		try {
+			const { firstName, lastName, bio, interests, birthday } = req.body;
 
-		if (firstName !== undefined) req.user.firstName = firstName;
-		if (lastName !== undefined) req.user.lastName = lastName;
-		if (bio !== undefined) req.user.bio = bio;
-		if (interests !== undefined) req.user.interests = interests;
+			if (firstName !== undefined) req.user.firstName = firstName;
+			if (lastName !== undefined) req.user.lastName = lastName;
+			if (bio !== undefined) req.user.bio = bio;
+			if (interests !== undefined) req.user.interests = interests;
+			if (birthday !== undefined) req.user.birthday = birthday;
 
-		await DB.updateUser(req.user);
+			let updatedPics = [...(req.user.profilePics || [])];
+			const bucketName = "proxy-dating";
 
-		const { password, ...user } = req.user;
-		res.status(200).send(user);
-	} catch (error) {
-		console.error("Error updating profile:", error);
-		res.status(500).send({ msg: "Server error updating profile" });
-	}
-});
+			for (let i = 0; i < 4; i++) {
+				const fieldName = `pic_${i}`;
+				if (req.files && req.files[fieldName]) {
+					const file = req.files[fieldName][0];
+
+					if (updatedPics[i]) {
+						await deleteFromS3(updatedPics[i]);
+					}
+
+					const optimizedBuffer = await sharp(file.buffer)
+						.rotate()
+						.resize({ width: 600, height: 800, fit: "cover" })
+						.webp({ quality: 80 })
+						.toBuffer();
+
+					const uniqueName =
+						uuid.v4() +
+						"-" +
+						file.originalname.split(".")[0].replace(/\s+/g, "-");
+					const key = `profile-pictures/${uniqueName}.webp`;
+
+					await s3Client.send(
+						new PutObjectCommand({
+							Bucket: bucketName,
+							Key: key,
+							Body: optimizedBuffer,
+							ContentType: "image/webp",
+						}),
+					);
+
+					updatedPics[i] =
+						`https://${bucketName}.s3.amazonaws.com/${key}`;
+				}
+			}
+
+			req.user.profilePics = updatedPics;
+			await DB.updateUser(req.user);
+
+			const populatedUser = await populateUserMatches(req.user);
+			const { password, ...safeUser } = populatedUser;
+			res.status(200).send(safeUser);
+		} catch (error) {
+			console.error("Error updating profile:", error);
+			res.status(500).send({ msg: "Server error updating profile" });
+		}
+	},
+);
 
 apiRouter.post("/message", verifyAuth, async (req, res) => {
 	const { matchId, message } = req.body;
@@ -122,9 +268,15 @@ apiRouter.post("/message", verifyAuth, async (req, res) => {
 	const now = Date.now();
 
 	try {
+		let activeMatchmakers = [];
+
 		const matchIndex = req.user.matches.findIndex((m) => m.id === matchId);
 		if (matchIndex !== -1) {
 			const match = req.user.matches[matchIndex];
+
+			activeMatchmakers =
+				match.matchmakers || (match.pairedBy ? [match.pairedBy] : []);
+
 			match.messages = match.messages || [];
 			match.messages.push(message);
 			match.text = message.text;
@@ -163,8 +315,17 @@ apiRouter.post("/message", verifyAuth, async (req, res) => {
 			}
 		}
 
-		const { password, ...user } = req.user;
-		res.status(200).send(user);
+		for (const mmId of activeMatchmakers) {
+			const matchmaker = await DB.getUserById(mmId);
+			if (matchmaker) {
+				matchmaker.coins = (matchmaker.coins || 0) + 1;
+				await DB.updateUser(matchmaker);
+			}
+		}
+
+		const populatedUser = await populateUserMatches(req.user);
+		const { password, ...safeUser } = populatedUser;
+		res.status(200).send(safeUser);
 	} catch (error) {
 		console.error("Error sending message:", error);
 		res.status(500).send({ msg: "Server error sending message" });
@@ -175,46 +336,154 @@ apiRouter.post("/match/pair", verifyAuth, async (req, res) => {
 	try {
 		const { pairs } = req.body;
 		const now = Date.now();
+		const matchmaker = req.user;
+		const matchmakerId = matchmaker._id.toString();
+		const timeStr = new Date().toLocaleTimeString([], {
+			hour: "2-digit",
+			minute: "2-digit",
+		});
+
+		let proxyPairsCreated = 0;
+		let matchMeCreated = 0;
 
 		for (const pair of pairs) {
 			if (!pair || pair.length !== 2) continue;
 
-			const userA = pair[0];
-			const userB = pair[1];
+			const reqA = pair[0];
+			const reqB = pair[1];
 
-			const idA = userA.id || userA._id;
-			const idB = userB.id || userB._id;
+			const idA = reqA.id || reqA._id;
+			const idB = reqB.id || reqB._id;
 
 			if (!idA || !idB) continue;
 
-			const matchForA = {
-				id: idB.toString(),
-				firstName: userB.firstName,
-				lastName: userB.lastName,
-				gender: userB.gender,
-				messages: [],
-				text: "",
-				time: "",
-				timestamp: now,
-			};
+			const isMatchMe =
+				idA.toString() === matchmakerId ||
+				idB.toString() === matchmakerId;
 
-			const matchForB = {
-				id: idA.toString(),
-				firstName: userA.firstName,
-				lastName: userA.lastName,
-				gender: userA.gender,
-				messages: [],
-				text: "",
-				time: "",
-				timestamp: now,
-			};
+			const userA = await DB.getUserById(idA);
+			const userB = await DB.getUserById(idB);
 
-			await DB.addMatch(idA, matchForA);
-			await DB.addMatch(idB, matchForB);
+			if (!userA || !userB) continue;
+
+			userA.notifications = userA.notifications || [];
+			userB.notifications = userB.notifications || [];
+			userA.matches = userA.matches || [];
+			userB.matches = userB.matches || [];
+
+			const aMatchIndex = userA.matches.findIndex(
+				(m) => m.id === idB.toString(),
+			);
+			const bMatchIndex = userB.matches.findIndex(
+				(m) => m.id === idA.toString(),
+			);
+
+			if (aMatchIndex !== -1 && bMatchIndex !== -1) {
+				if (!isMatchMe) {
+					const aMatch = userA.matches[aMatchIndex];
+					const bMatch = userB.matches[bMatchIndex];
+
+					aMatch.matchmakers =
+						aMatch.matchmakers ||
+						(aMatch.pairedBy ? [aMatch.pairedBy] : []);
+					bMatch.matchmakers =
+						bMatch.matchmakers ||
+						(bMatch.pairedBy ? [bMatch.pairedBy] : []);
+
+					if (!aMatch.matchmakers.includes(matchmakerId)) {
+						aMatch.matchmakers.push(matchmakerId);
+						bMatch.matchmakers.push(matchmakerId);
+
+						userA.notifications.unshift({
+							id: uuid.v4(),
+							text: `${matchmaker.firstName} thinks you and ${userB.firstName} are a good match too!`,
+							icon: "fa-heart",
+							time: timeStr,
+						});
+						userB.notifications.unshift({
+							id: uuid.v4(),
+							text: `${matchmaker.firstName} thinks you and ${userA.firstName} are a good match too!`,
+							icon: "fa-heart",
+							time: timeStr,
+						});
+
+						proxyPairsCreated++;
+						await DB.updateUser(userA);
+						await DB.updateUser(userB);
+					}
+				}
+			} else {
+				const matchmakersArr = isMatchMe ? [] : [matchmakerId];
+
+				userA.matches.unshift({
+					id: idB.toString(),
+					matchmakers: matchmakersArr,
+					messages: [],
+					text: "",
+					time: "",
+					timestamp: now,
+				});
+
+				userB.matches.unshift({
+					id: idA.toString(),
+					matchmakers: matchmakersArr,
+					messages: [],
+					text: "",
+					time: "",
+					timestamp: now,
+				});
+
+				if (!isMatchMe) {
+					userA.notifications.unshift({
+						id: uuid.v4(),
+						text: `${matchmaker.firstName} paired you with ${userB.firstName}, message them!`,
+						link: "/message",
+						state: { id: idB.toString() },
+						icon: "fa-comment",
+						time: timeStr,
+					});
+
+					userB.notifications.unshift({
+						id: uuid.v4(),
+						text: `${matchmaker.firstName} paired you with ${userA.firstName}, message them!`,
+						link: "/message",
+						state: { id: idA.toString() },
+						icon: "fa-comment",
+						time: timeStr,
+					});
+
+					proxyPairsCreated++;
+				} else {
+					matchMeCreated++;
+				}
+
+				await DB.updateUser(userA);
+				await DB.updateUser(userB);
+			}
+		}
+
+		if (proxyPairsCreated > 0 || matchMeCreated > 0) {
+			const freshUser = await DB.getUserById(matchmakerId);
+
+			if (proxyPairsCreated > 0) {
+				freshUser.coins =
+					(freshUser.coins || 0) + proxyPairsCreated * 5;
+				freshUser.activePairs =
+					(freshUser.activePairs || 0) + proxyPairsCreated;
+			}
+
+			if (matchMeCreated > 0) {
+				freshUser.coins = (freshUser.coins || 0) - matchMeCreated * 30;
+			}
+
+			await DB.updateUser(freshUser);
 		}
 
 		const updatedUser = await DB.getUserByToken(req.user.token);
-		res.status(200).send(updatedUser);
+		const populatedUser = await populateUserMatches(updatedUser);
+		const { password, ...safeUser } = populatedUser;
+
+		res.status(200).send(safeUser);
 	} catch (error) {
 		console.error("Error pairing:", error);
 		res.status(500).send({ msg: "Server error while pairing" });
@@ -225,12 +494,50 @@ apiRouter.delete("/match/:id", verifyAuth, async (req, res) => {
 	try {
 		const matchId = req.params.id;
 		const myId = req.user._id.toString();
+		const timeStr = new Date().toLocaleTimeString([], {
+			hour: "2-digit",
+			minute: "2-digit",
+		});
+
+		const matchIndex = req.user.matches.findIndex((m) => m.id === matchId);
+		if (matchIndex !== -1) {
+			const match = req.user.matches[matchIndex];
+
+			const matchmakers =
+				match.matchmakers || (match.pairedBy ? [match.pairedBy] : []);
+			const userB = await DB.getUserById(matchId);
+
+			for (const mmId of matchmakers) {
+				const matchmaker = await DB.getUserById(mmId);
+				if (matchmaker) {
+					matchmaker.coins = (matchmaker.coins || 0) - 10;
+					matchmaker.activePairs = Math.max(
+						0,
+						(matchmaker.activePairs || 0) - 1,
+					);
+
+					matchmaker.notifications = matchmaker.notifications || [];
+					matchmaker.notifications.unshift({
+						id: uuid.v4(),
+						text: `${req.user.firstName} and ${userB?.firstName || "a user"} unmatched!`,
+						action: "-10",
+						icon: "fa-coins",
+						time: timeStr,
+					});
+
+					await DB.updateUser(matchmaker);
+				}
+			}
+		}
 
 		await DB.removeMatch(myId, matchId);
 		await DB.removeMatch(matchId, myId);
 
 		const updatedUser = await DB.getUserByToken(req.user.token);
-		res.status(200).send(updatedUser);
+		const populatedUser = await populateUserMatches(updatedUser);
+		const { password, ...safeUser } = populatedUser;
+
+		res.status(200).send(safeUser);
 	} catch (error) {
 		console.error("Error unmatching:", error);
 		res.status(500).send({ msg: "Server error while unmatching" });
@@ -238,26 +545,40 @@ apiRouter.delete("/match/:id", verifyAuth, async (req, res) => {
 });
 
 apiRouter.get("/getUser", verifyAuth, async (req, res) => {
-	res.status(200).send(req.user);
+	const populatedUser = await populateUserMatches(req.user);
+	const { password, ...safeUser } = populatedUser;
+	res.status(200).send(safeUser);
 });
 
 apiRouter.post("/increment", verifyAuth, async (req, res) => {
 	await DB.incrementField(req.user.token, req.body.field, req.body.increment);
+
 	const user = await DB.getUserByToken(req.user.token);
-	res.status(200).send(user);
+	const populatedUser = await populateUserMatches(user);
+	const { password, ...safeUser } = populatedUser;
+
+	res.status(200).send(safeUser);
 });
 
 apiRouter.get("/profiles", verifyAuth, async (req, res) => {
 	try {
 		const targetGender = req.query.gender || "Female";
-		const limitCount = req.query.limit || 9;
-		const profiles = await DB.getProfilesByGender(
+		const limitCount = parseInt(req.query.limit, 10) || 9;
+
+		let profiles = await DB.getProfilesByGender(
 			targetGender,
 			req.user.email,
-			limitCount,
+			100,
 		);
 
-		const safeProfiles = profiles.map((profile) => {
+		profiles = profiles.sort(() => 0.5 - Math.random());
+		profiles.sort(
+			(a, b) => (a.matches?.length || 0) - (b.matches?.length || 0),
+		);
+
+		const selectedProfiles = profiles.slice(0, limitCount);
+
+		const safeProfiles = selectedProfiles.map((profile) => {
 			const { password, token, _id, ...safeData } = profile;
 			return { id: _id.toString(), ...safeData };
 		});
@@ -315,6 +636,7 @@ async function createUser(data) {
 		notifications: [],
 		coins: 0,
 		boost: 0,
+		activePairs: 0,
 		token: uuid.v4(),
 	};
 
@@ -326,10 +648,61 @@ async function createUser(data) {
 function setAuthCookie(res, authToken) {
 	res.cookie("token", authToken, {
 		maxAge: 1000 * 60 * 60 * 24 * 365,
-		secure: true,
+		secure: false,
 		httpOnly: true,
 		sameSite: "strict",
 	});
+}
+
+async function populateUserMatches(user) {
+	if (!user || !user.matches) return user;
+
+	const populatedMatches = await Promise.all(
+		user.matches.map(async (match) => {
+			const matchUser = await DB.getUserById(match.id);
+
+			if (matchUser) {
+				return {
+					...match,
+					firstName: matchUser.firstName,
+					lastName: matchUser.lastName,
+					gender: matchUser.gender,
+					bio: matchUser.bio,
+					interests: matchUser.interests,
+					profilePics: matchUser.profilePics || [],
+				};
+			} else {
+				return {
+					...match,
+					firstName: "Deleted User",
+					lastName: "",
+					gender: "Other",
+					bio: "This account no longer exists.",
+					interests: "",
+					profilePics: [],
+				};
+			}
+		}),
+	);
+
+	return { ...user, matches: populatedMatches };
+}
+
+async function deleteFromS3(url) {
+	if (!url || !url.includes("amazonaws.com")) return;
+	try {
+		const key = decodeURIComponent(url.split(".amazonaws.com/")[1]);
+		if (key) {
+			await s3Client.send(
+				new DeleteObjectCommand({
+					Bucket: "proxy-dating",
+					Key: key,
+				}),
+			);
+		}
+	} catch (err) {
+		console.error("Failed to delete old image from S3:", err);
+	}
 }
 
 const httpService = app.listen(port, () => {

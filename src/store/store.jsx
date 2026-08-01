@@ -7,8 +7,8 @@ export function Store({ setUser, user }) {
 	const navigate = useNavigate();
 
 	const [joke, setJoke] = useState({
-		setup: "Loading joke...",
-		punchline: "",
+		setup: "Need a laugh?",
+		punchline: "Buy a random dad joke!",
 	});
 	const [loadingJoke, setLoadingJoke] = useState(false);
 
@@ -30,9 +30,15 @@ export function Store({ setUser, user }) {
 		}
 	};
 
+	const handleBuyJoke = async () => {
+		if (user.coins >= 1) {
+			await increment("coins", -1, setUser);
+			await fetchJoke();
+		}
+	};
+
 	useEffect(() => {
 		document.title = "Store | Proxy Dating";
-		fetchJoke();
 	}, []);
 
 	if (!user) {
@@ -61,7 +67,8 @@ export function Store({ setUser, user }) {
 					<div className={styles.statBox}>
 						<h3>Active Pairs</h3>
 						<h2>
-							14 <i className="fa-solid fa-user-group"></i>
+							{user.activePairs ?? 0}{" "}
+							<i className="fa-solid fa-user-group"></i>
 						</h2>
 					</div>
 				</div>
@@ -81,29 +88,29 @@ export function Store({ setUser, user }) {
 					<p>Spend coins to upgrade your matchmaking experience.</p>
 				</div>
 
-				<div className={styles.storeItem}>
-					<div className={styles.iconWrap}>
-						<i className="fa-solid fa-eye"></i>
-					</div>
-					<div className={styles.textWrap}>
-						<h2>Profile Boost</h2>
-						<p>
-							Your profile will be shown to others{" "}
-							{user.boost ?? 0} more times.
-						</p>
-					</div>
-					<button
-						disabled={user.coins < 15}
-						className="btn"
-						onClick={() => {
-							increment("coins", -15, setUser);
-							increment("boost", 1, setUser);
-						}}
-					>
-						<span>15</span>
-						<i className="fa-solid fa-coins"></i>
-					</button>
-				</div>
+				{/* <div className={styles.storeItem}>
+                    <div className={styles.iconWrap}>
+                        <i className="fa-solid fa-eye"></i>
+                    </div>
+                    <div className={styles.textWrap}>
+                        <h2>Profile Boost</h2>
+                        <p>
+                            Your profile will be shown to others{" "}
+                            {user.boost ?? 0} more times.
+                        </p>
+                    </div>
+                    <button
+                        disabled={user.coins < 15}
+                        className="btn"
+                        onClick={() => {
+                            increment("coins", -15, setUser);
+                            increment("boost", 1, setUser);
+                        }}
+                    >
+                        <span>15</span>
+                        <i className="fa-solid fa-coins"></i>
+                    </button>
+                </div> */}
 
 				<div className={styles.storeItem}>
 					<div className={styles.iconWrap}>
@@ -127,6 +134,28 @@ export function Store({ setUser, user }) {
 						<span>30</span>
 						<i className="fa-solid fa-coins"></i>
 					</Link>
+				</div>
+
+				<div className={styles.storeItem}>
+					<div className={styles.iconWrap}>
+						<i className="fa-solid fa-face-laugh-squint"></i>
+					</div>
+					<div className={styles.textWrap}>
+						<h2>Random Dad Joke</h2>
+						<p style={{ marginTop: "4px" }}>
+							{loadingJoke
+								? "Fetching joke..."
+								: `${joke.setup} ${joke.punchline}`}
+						</p>
+					</div>
+					<button
+						className="btn"
+						onClick={handleBuyJoke}
+						disabled={loadingJoke || user.coins < 1}
+					>
+						<span>1</span>
+						<i className="fa-solid fa-coins"></i>
+					</button>
 				</div>
 			</section>
 
@@ -159,34 +188,6 @@ export function Store({ setUser, user }) {
 							-10 <i className="fa-solid fa-coins"></i>
 						</div>
 					</div>
-				</div>
-			</section>
-
-			<section className={styles.section}>
-				<div className={styles.sectionHeader}>
-					<h1>JOKE BREAK</h1>
-					<p>Powered by a third-party Joke API</p>
-				</div>
-
-				<div className={styles.storeItem}>
-					<div className={styles.iconWrap}>
-						<i className="fa-solid fa-face-laugh-squint"></i>
-					</div>
-					<div className={styles.textWrap}>
-						<h2>Random Dad Joke</h2>
-						<p style={{ marginTop: "4px" }}>
-							{loadingJoke
-								? "Fetching joke..."
-								: `${joke.setup} ${joke.punchline}`}
-						</p>
-					</div>
-					<button
-						className="btn"
-						onClick={fetchJoke}
-						disabled={loadingJoke}
-					>
-						<span>New Joke</span>
-					</button>
 				</div>
 			</section>
 		</main>

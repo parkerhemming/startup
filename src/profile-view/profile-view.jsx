@@ -24,7 +24,13 @@ export function ProfileView({ user, setUser }) {
 		lastName: activeProfile?.lastName || "",
 		bio: activeProfile?.bio || "",
 		interests: activeProfile?.interests || "",
+		birthday: activeProfile?.birthday || "",
 	});
+
+	const [newFiles, setNewFiles] = useState({});
+	const [previewPics, setPreviewPics] = useState(
+		activeProfile?.profilePics ? [...activeProfile.profilePics] : [],
+	);
 
 	useEffect(() => {
 		if (isMyProfile && user) {
@@ -34,7 +40,9 @@ export function ProfileView({ user, setUser }) {
 				lastName: user.lastName || "",
 				bio: user.bio || "",
 				interests: user.interests || "",
+				birthday: user.birthday || "",
 			});
+			setPreviewPics(user.profilePics ? [...user.profilePics] : []);
 		}
 	}, [user, isMyProfile]);
 
@@ -45,22 +53,88 @@ export function ProfileView({ user, setUser }) {
 				: "Profile") + " | Proxy Dating";
 	}, [profileData]);
 
+	const calculateAge = (birthday) => {
+		if (!birthday) return "";
+		const birthDate = new Date(birthday);
+		const today = new Date();
+		let age = today.getFullYear() - birthDate.getFullYear();
+		const m = today.getMonth() - birthDate.getMonth();
+		if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+			age--;
+		}
+		return age;
+	};
+
+	const handleImageChange = (index, e) => {
+		const file = e.target.files[0];
+		if (!file) return;
+
+		setNewFiles((prev) => ({ ...prev, [index]: file }));
+
+		const objectUrl = URL.createObjectURL(file);
+		const newPreviews = [...previewPics];
+		newPreviews[index] = objectUrl;
+		setPreviewPics(newPreviews);
+	};
+
 	const handleSave = async () => {
 		try {
+			const submitData = new FormData();
+			submitData.append("firstName", formData.firstName);
+			submitData.append("lastName", formData.lastName);
+			submitData.append("bio", formData.bio);
+			submitData.append("interests", formData.interests);
+			submitData.append("birthday", formData.birthday);
+
+			Object.keys(newFiles).forEach((index) => {
+				submitData.append(`pic_${index}`, newFiles[index]);
+			});
+
 			const res = await fetch("/api/updateProfile", {
 				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(formData),
+				body: submitData,
 			});
+
 			if (res.ok) {
 				const updatedUser = await res.json();
 				setUser(updatedUser);
 				setProfileData(updatedUser);
 				setIsEditing(false);
+				setNewFiles({});
 			}
 		} catch (err) {
 			console.error(err);
 		}
+	};
+
+	const renderImageSlot = (index) => {
+		const src =
+			previewPics[index] ||
+			`/pfp-${profileData?.gender?.toLowerCase() || "male"}.png`;
+		return (
+			<div key={index} className={styles.imageContainer}>
+				<img
+					src={src}
+					alt={`Profile ${index + 1}`}
+					className={styles.image}
+				/>
+
+				{isEditing && isMyProfile && (
+					<label
+						className={styles.imageUploadLabel}
+						title="Change Picture"
+					>
+						<i className="fa-solid fa-camera"></i>
+						<input
+							type="file"
+							accept="image/png, image/jpeg, image/webp"
+							onChange={(e) => handleImageChange(index, e)}
+							style={{ display: "none" }}
+						/>
+					</label>
+				)}
+			</div>
+		);
 	};
 
 	return (
@@ -86,44 +160,12 @@ export function ProfileView({ user, setUser }) {
 			<main className={styles.main}>
 				<section className={styles.imageSection}>
 					<div className={styles.row}>
-						<img
-							src={`/pfp-${
-								profileData
-									? profileData.gender?.toLowerCase()
-									: "male"
-							}.png`}
-							alt="Profile 1"
-							className={styles.image}
-						/>
-						<img
-							src={`/pfp-${
-								profileData
-									? profileData.gender?.toLowerCase()
-									: "male"
-							}.png`}
-							alt="Profile 2"
-							className={styles.image}
-						/>
+						{renderImageSlot(0)}
+						{renderImageSlot(1)}
 					</div>
 					<div className={styles.row}>
-						<img
-							src={`/pfp-${
-								profileData
-									? profileData.gender?.toLowerCase()
-									: "male"
-							}.png`}
-							alt="Profile 3"
-							className={styles.image}
-						/>
-						<img
-							src={`/pfp-${
-								profileData
-									? profileData.gender?.toLowerCase()
-									: "male"
-							}.png`}
-							alt="Profile 4"
-							className={styles.image}
-						/>
+						{renderImageSlot(2)}
+						{renderImageSlot(3)}
 					</div>
 				</section>
 
@@ -156,6 +198,21 @@ export function ProfileView({ user, setUser }) {
 									className={styles.editInput}
 								/>
 							</div>
+
+							<label className={styles.editLabel}>Birthday</label>
+							<input
+								type="date"
+								value={formData.birthday}
+								onChange={(e) =>
+									setFormData({
+										...formData,
+										birthday: e.target.value,
+									})
+								}
+								className={styles.editInput}
+							/>
+
+							<label className={styles.editLabel}>Bio</label>
 							<textarea
 								value={formData.bio}
 								onChange={(e) =>
@@ -167,6 +224,10 @@ export function ProfileView({ user, setUser }) {
 								placeholder="Bio"
 								className={styles.editTextarea}
 							/>
+
+							<label className={styles.editLabel}>
+								Interests
+							</label>
 							<input
 								type="text"
 								value={formData.interests}
@@ -184,7 +245,7 @@ export function ProfileView({ user, setUser }) {
 						<>
 							<h2 className={styles.name}>
 								{profileData
-									? `${profileData.firstName} ${profileData.lastName}`
+									? `${profileData.firstName} ${profileData.lastName}, ${calculateAge(profileData.birthday)}`
 									: "Name"}
 							</h2>
 							<p className={styles.bio}>

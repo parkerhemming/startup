@@ -4,7 +4,8 @@ import styles from "./notifications.module.css";
 
 export function Notifications({ setUser, user }) {
 	const navigate = useNavigate();
-	const notificationsData = user.notifications || [];
+
+	const notificationsData = user?.notifications || [];
 
 	useEffect(() => {
 		document.title = `${notificationsData.length} Notifications | Proxy Dating`;
@@ -13,7 +14,7 @@ export function Notifications({ setUser, user }) {
 	const handleNotificationClick = (note) => {
 		if (note.link) {
 			if (note.link === "/message" && note.state) {
-				const matchStillExists = user.matches?.find(
+				const matchStillExists = user?.matches?.find(
 					(m) => m.id === note.state.id,
 				);
 
@@ -27,6 +28,16 @@ export function Notifications({ setUser, user }) {
 			}
 		}
 	};
+
+	if (!user) {
+		return (
+			<main className={styles.main}>
+				<h2 style={{ marginTop: "50px", color: "#555" }}>
+					Loading notifications...
+				</h2>
+			</main>
+		);
+	}
 
 	return (
 		<>
