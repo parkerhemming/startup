@@ -11,6 +11,7 @@
 - [x] Make an endpoint for coins and boosts
 - [x] Store images in s3 and some sort of key or id in mongodb for images.
 - [ ] Loading state
+- [ ] "Active Pairs" on store page needs to be / 2 most likely.
 
 ## 📝 Specification Deliverable
 
