@@ -8,8 +8,9 @@
 - [x] change drag and drop to this https://dndkit.com/react/hooks/use-droppable/
 - [ ] On message page "12 people paired you together"
 - [ ] Message page: header profiles should be who you havent messeges yet of your matches.
-- [ ] Make an endpoint for coins and boosts
-- [ ] Store images in s3 and some sort of key or id in mongodb for images.
+- [x] Make an endpoint for coins and boosts
+- [x] Store images in s3 and some sort of key or id in mongodb for images.
+- [ ] Loading state
 
 ## 📝 Specification Deliverable
 
@@ -77,6 +78,14 @@
 [x] Third-Party API Proxy (GET /api/joke): Integrated a backend endpoint that fetches fresh external data from the Official Joke API to supply dynamic content to the frontend interface.
 
 ---
+
+## 📝 Startup DB
+
+- [x] **Database Integration:** Connected the application to MongoDB Atlas for persistent storage of user profiles, authentication data, coin balances, and match relationships.
+- [x] **Data Models & Collections:** Configured schemas and queries to handle persistent user documents, secure password hashes, and relational match/notification tracking.
+- [x] **User Authentication & Authorization:** Implemented backend endpoints for secure user registration (`POST /api/auth/signup`), login (`POST /api/auth/login`), and logout (`DELETE /api/auth/logout`) utilizing bcrypt hashing and token-based session cookies.
+- [x] **Cloud Storage & File Uploads:** Integrated AWS S3 and Multer middleware to upload, optimize, and serve profile pictures, along with cleanup routines to delete old assets.
+- [x] **Protected Endpoints & Route Guards:** Restricted core matchmaking, messaging, and profile-updating backend APIs to authenticated sessions only.
 
 ---
 
