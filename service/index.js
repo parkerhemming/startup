@@ -8,6 +8,7 @@ const multer = require("multer");
 const { PutObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const { s3Client } = require("./s3-config.js");
 const sharp = require("sharp");
+const { peerProxy } = require("./peerProxy.js");
 
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
 const apiRouter = express.Router();
@@ -25,26 +26,6 @@ apiRouter.post("/auth/login", async (req, res) => {
 		if (user) {
 			if (await bcrypt.compare(req.body.password, user.password)) {
 				user.token = uuid.v4();
-				user.notifications = user.notifications || [];
-				try {
-					const jokeRes = await fetch(
-						"https://official-joke-api.appspot.com/random_joke",
-					);
-					if (jokeRes.ok) {
-						const joke = await jokeRes.json();
-						user.notifications.unshift({
-							id: uuid.v4(),
-							text: `Joke of the day: ${joke.setup} ${joke.punchline}`,
-							icon: "fa-face-laugh-squint",
-							time: new Date().toLocaleTimeString([], {
-								hour: "2-digit",
-								minute: "2-digit",
-							}),
-						});
-					}
-				} catch (e) {
-					console.error("Failed to fetch joke on login");
-				}
 
 				await DB.updateUser(user);
 				setAuthCookie(res, user.token);
@@ -147,27 +128,6 @@ apiRouter.post(
 				...req.body,
 				profilePics: uploadedImageUrls,
 			});
-			try {
-				const jokeRes = await fetch(
-					"https://official-joke-api.appspot.com/random_joke",
-				);
-				if (jokeRes.ok) {
-					const joke = await jokeRes.json();
-					user.notifications = user.notifications || [];
-					user.notifications.unshift({
-						id: uuid.v4(),
-						text: `Joke of the day: ${joke.setup} ${joke.punchline}`,
-						icon: "fa-face-laugh-squint",
-						time: new Date().toLocaleTimeString([], {
-							hour: "2-digit",
-							minute: "2-digit",
-						}),
-					});
-					await DB.updateUser(user);
-				}
-			} catch (e) {
-				console.error("Failed to fetch joke on signup");
-			}
 
 			setAuthCookie(res, user.token);
 
@@ -648,7 +608,7 @@ async function createUser(data) {
 function setAuthCookie(res, authToken) {
 	res.cookie("token", authToken, {
 		maxAge: 1000 * 60 * 60 * 24 * 365,
-		secure: true,
+		secure: false,
 		httpOnly: true,
 		sameSite: "strict",
 	});
@@ -708,3 +668,5 @@ async function deleteFromS3(url) {
 const httpService = app.listen(port, () => {
 	console.log(`Listening on port ${port}`);
 });
+
+peerProxy(httpService);

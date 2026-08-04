@@ -180,7 +180,7 @@
 	position: absolute;
 	bottom: 10px;
 	right: 10px;
-	background-color: rgba(0, 0, 0, 0.6);
+	background-color: rgba(255, 255, 255, 0.6);
 	color: white;
 	border-radius: 50%;
 	width: 38px;
@@ -196,7 +196,8 @@
 }
 
 .imageUploadLabel:hover {
-	background-color: rgba(0, 0, 0, 0.9);
+	background-color: rgba(255, 255, 255, 0.9);
+
 	transform: scale(1.1);
 }
 
@@ -207,4 +208,8 @@
 	margin-top: 5px;
 	margin-bottom: -8px;
 	margin-left: 5px;
+}
+
+input:disabled {
+	color: rgb(182, 182, 182);
 }

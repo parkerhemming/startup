@@ -174,6 +174,7 @@ export function ProfileView({ user, setUser }) {
 						<div className={styles.editFormContainer}>
 							<div className={styles.editNameRow}>
 								<input
+									disabled
 									type="text"
 									value={formData.firstName}
 									onChange={(e) =>
@@ -186,6 +187,7 @@ export function ProfileView({ user, setUser }) {
 									className={styles.editInput}
 								/>
 								<input
+									disabled
 									type="text"
 									value={formData.lastName}
 									onChange={(e) =>
@@ -202,6 +204,7 @@ export function ProfileView({ user, setUser }) {
 							<label className={styles.editLabel}>Birthday</label>
 							<input
 								type="date"
+								disabled
 								value={formData.birthday}
 								onChange={(e) =>
 									setFormData({
