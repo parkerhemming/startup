@@ -8,7 +8,7 @@ const multer = require("multer");
 const { PutObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const { s3Client } = require("./s3-config.js");
 const sharp = require("sharp");
-const { peerProxy } = require("./peerProxy.js");
+const { peerProxy, notifyUser } = require("./peerProxy.js");
 
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
 const apiRouter = express.Router();
@@ -272,6 +272,13 @@ apiRouter.post("/message", verifyAuth, async (req, res) => {
 				recipient.matches.unshift(recMatch);
 
 				await DB.updateUser(recipient);
+				notifyUser(matchId, "NEW_MESSAGE", {
+					matchId: myId,
+					message: recipientMessage,
+					text: message.text,
+					time: message.time,
+					timestamp: now,
+				});
 			}
 		}
 
@@ -280,6 +287,10 @@ apiRouter.post("/message", verifyAuth, async (req, res) => {
 			if (matchmaker) {
 				matchmaker.coins = (matchmaker.coins || 0) + 1;
 				await DB.updateUser(matchmaker);
+
+				notifyUser(mmId, "COIN_UPDATE", {
+					coins: matchmaker.coins,
+				});
 			}
 		}
 
@@ -419,6 +430,9 @@ apiRouter.post("/match/pair", verifyAuth, async (req, res) => {
 
 				await DB.updateUser(userA);
 				await DB.updateUser(userB);
+
+				notifyUser(idA.toString(), "SYNC_USER", {});
+				notifyUser(idB.toString(), "SYNC_USER", {});
 			}
 		}
 
@@ -486,6 +500,11 @@ apiRouter.delete("/match/:id", verifyAuth, async (req, res) => {
 					});
 
 					await DB.updateUser(matchmaker);
+					notifyUser(mmId, "COIN_UPDATE", {
+						coins: matchmaker.coins,
+						activePairs: matchmaker.activePairs,
+						newNotification: matchmaker.notifications[0],
+					});
 				}
 			}
 		}

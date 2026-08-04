@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./app.css";
 import "../global.css";
 import { increment } from "./utils";
@@ -28,6 +28,128 @@ export default function App() {
 	const [user, setUser] = useState(null);
 	const [currentPairs, setCurrentPairs] = useState([]);
 
+	const navigate = useNavigate();
+	const location = useLocation();
+	const [searchParams] = useSearchParams();
+	const mode = searchParams.get("mode");
+
+	const userId = user?._id || user?.id;
+	const notifsCount = user?.notifications?.length || 0;
+	const [seenNotifsCount, setSeenNotifsCount] = useState(0);
+
+	useEffect(() => {
+		if (userId) {
+			const savedCount = parseInt(
+				localStorage.getItem(`seenNotifs_${userId}`) || "0",
+				10,
+			);
+			setSeenNotifsCount(savedCount);
+		}
+	}, [userId]);
+
+	useEffect(() => {
+		if (location.pathname === "/notifications" && userId) {
+			setSeenNotifsCount(notifsCount);
+			localStorage.setItem(
+				`seenNotifs_${userId}`,
+				notifsCount.toString(),
+			);
+		}
+	}, [location.pathname, notifsCount, userId]);
+
+	const hasUnreadNotifs = notifsCount > seenNotifsCount;
+
+	const [unreadMatches, setUnreadMatches] = useState(new Set());
+
+	const currentPathRef = useRef(location.pathname);
+	const currentMatchRef = useRef(location.state?.user?.id);
+
+	useEffect(() => {
+		currentPathRef.current = location.pathname;
+		currentMatchRef.current = location.state?.user?.id;
+	}, [location]);
+
+	useEffect(() => {
+		const userId = user?._id || user?.id;
+		if (!userId) return;
+
+		const protocol = window.location.protocol === "http:" ? "ws" : "wss";
+		const port =
+			window.location.port === "5173" ? "4000" : window.location.port;
+		const host = port
+			? `${window.location.hostname}:${port}`
+			: window.location.hostname;
+
+		const ws = new WebSocket(`${protocol}://${host}`);
+
+		ws.onopen = () => {
+			ws.send(
+				JSON.stringify({ type: "auth", userId: userId.toString() }),
+			);
+		};
+
+		ws.onmessage = async (event) => {
+			const { type, payload } = JSON.parse(event.data);
+
+			if (type === "NEW_MESSAGE") {
+				setUser((prev) => {
+					const updatedMatches = [...prev.matches];
+					const matchIndex = updatedMatches.findIndex(
+						(m) => m.id === payload.matchId,
+					);
+
+					if (matchIndex !== -1) {
+						const updatedMatch = { ...updatedMatches[matchIndex] };
+
+						updatedMatch.messages = [
+							...(updatedMatch.messages || []),
+							payload.message,
+						];
+
+						updatedMatch.text = payload.text;
+						updatedMatch.time = payload.time;
+						updatedMatch.timestamp = payload.timestamp;
+
+						updatedMatches.splice(matchIndex, 1);
+						updatedMatches.unshift(updatedMatch);
+					}
+					return { ...prev, matches: updatedMatches };
+				});
+
+				const isLookingAtThisMatch =
+					currentPathRef.current === "/message" &&
+					currentMatchRef.current === payload.matchId;
+
+				if (!isLookingAtThisMatch) {
+					setUnreadMatches((prev) =>
+						new Set(prev).add(payload.matchId),
+					);
+				}
+			} else if (type === "COIN_UPDATE") {
+				setUser((prev) => {
+					const updatedUser = { ...prev, coins: payload.coins };
+
+					if (payload.activePairs !== undefined) {
+						updatedUser.activePairs = payload.activePairs;
+					}
+
+					if (payload.newNotification) {
+						updatedUser.notifications = [
+							payload.newNotification,
+							...prev.notifications,
+						];
+					}
+					return updatedUser;
+				});
+			} else if (type === "SYNC_USER") {
+				const res = await fetch("/api/getUser");
+				if (res.ok) setUser(await res.json());
+			}
+		};
+
+		return () => ws.close();
+	}, [user?._id, user?.id]);
+
 	useEffect(() => {
 		fetch("/api/getUser")
 			.then((res) => {
@@ -39,11 +161,6 @@ export default function App() {
 			.then(setUser)
 			.catch(() => navigate("/login"));
 	}, []);
-
-	const navigate = useNavigate();
-	const location = useLocation();
-	const [searchParams] = useSearchParams();
-	const mode = searchParams.get("mode");
 
 	const nextModeMap = {
 		"/pair-mode-1": "/pair-mode-2",
@@ -91,8 +208,11 @@ export default function App() {
 					</Link>
 
 					{user && (
-						<Link to="/notifications" className="noti-wrapper">
-							<div className="circle"></div>
+						<Link
+							to="/notifications"
+							className={hasUnreadNotifs ? "noti-wrapper" : ""}
+						>
+							{hasUnreadNotifs && <div className="circle"></div>}
 							<i className="fa-solid fa-bell"></i>
 						</Link>
 					)}
@@ -132,11 +252,23 @@ export default function App() {
 				/>
 				<Route
 					path="/messages"
-					element={<Messages setUser={setUser} user={user} />}
+					element={
+						<Messages
+							setUser={setUser}
+							user={user}
+							unreadMatches={unreadMatches}
+						/>
+					}
 				/>
 				<Route
 					path="/message"
-					element={<Message setUser={setUser} user={user} />}
+					element={
+						<Message
+							setUser={setUser}
+							user={user}
+							setUnreadMatches={setUnreadMatches}
+						/>
+					}
 				/>
 				<Route
 					path="/store"
@@ -159,7 +291,13 @@ export default function App() {
 						<i className="fa-solid fa-home"></i>
 					</NavLink>
 
-					<NavLink to="/messages">
+					<NavLink
+						to="/messages"
+						className={unreadMatches.size > 0 ? "noti-wrapper" : ""}
+					>
+						{unreadMatches.size > 0 && (
+							<div className="circle"></div>
+						)}
 						<i className="fa-solid fa-message"></i>
 					</NavLink>
 

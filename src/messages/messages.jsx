@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import styles from "./messages.module.css";
 
-export function Messages({ setUser, user }) {
+export function Messages({ setUser, user, unreadMatches }) {
 	const conversations = [...(user?.matches || [])].sort(
 		(a, b) => (b.timestamp || 0) - (a.timestamp || 0),
 	);
@@ -46,6 +46,9 @@ export function Messages({ setUser, user }) {
 							state={{ user: matchUser }}
 							draggable={false}
 						>
+							{unreadMatches?.has(matchUser.id) && (
+								<div className={styles.unreadCircle}></div>
+							)}
 							<img
 								src={
 									matchUser.profilePics?.[0] ||
@@ -54,6 +57,7 @@ export function Messages({ setUser, user }) {
 								alt={`${matchUser.firstName} profile`}
 								draggable={false}
 							/>
+
 							<div className={styles.subrow}>
 								<div className={styles.subsubrow}>
 									<h2>

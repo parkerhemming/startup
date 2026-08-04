@@ -86,3 +86,22 @@ input {
 	text-align: center;
 	font-size: 12px;
 }
+
+footer .noti-wrapper {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+footer .noti-wrapper .circle {
+	position: absolute;
+	top: -2px;
+	right: -6px;
+	width: 10px;
+	height: 10px;
+	background-color: #ff3b30;
+	border-radius: 50%;
+	border: 2px solid #fff;
+	z-index: 10;
+}

@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./message.module.css";
 import { increment, toProperCase } from "../../utils";
 
-export function Message({ setUser, user: loggedInUser }) {
+export function Message({ setUser, user: loggedInUser, setUnreadMatches }) {
 	const location = useLocation();
 	const navigate = useNavigate();
 
@@ -87,6 +87,16 @@ export function Message({ setUser, user: loggedInUser }) {
 	const displayName = currentMatch.firstName
 		? currentMatch.firstName.toUpperCase()
 		: "USER";
+
+	useEffect(() => {
+		if (setUnreadMatches) {
+			setUnreadMatches((prev) => {
+				const newSet = new Set(prev);
+				newSet.delete(currentMatch.id);
+				return newSet;
+			});
+		}
+	}, [currentMatch.id, setUnreadMatches]);
 
 	return (
 		<div className={styles.container}>

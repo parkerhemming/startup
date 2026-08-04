@@ -1,36 +1,57 @@
 const { WebSocketServer, WebSocket } = require("ws");
 
+const connections = new Map();
+
 function peerProxy(httpServer) {
-	// Create a websocket object
 	const socketServer = new WebSocketServer({ server: httpServer });
 
 	socketServer.on("connection", (socket) => {
 		socket.isAlive = true;
 
-		// Forward messages to everyone except the sender
-		socket.on("message", function message(data) {
-			socketServer.clients.forEach((client) => {
-				if (client !== socket && client.readyState === WebSocket.OPEN) {
-					client.send(data);
-				}
-			});
+		socket.on("error", (err) => {
+			console.log("WebSocket connection dropped:", err.message);
 		});
 
-		// Respond to pong messages by marking the connection alive
+		socket.on("message", function message(data) {
+			try {
+				const parsed = JSON.parse(data);
+
+				if (parsed.type === "auth" && parsed.userId) {
+					socket.userId = parsed.userId;
+					connections.set(parsed.userId, socket);
+				}
+			} catch (err) {
+				console.error("WebSocket message error:", err);
+			}
+		});
+
 		socket.on("pong", () => {
 			socket.isAlive = true;
 		});
+
+		socket.on("close", () => {
+			if (socket.userId) {
+				if (connections.get(socket.userId) === socket) {
+					connections.delete(socket.userId);
+				}
+			}
+		});
 	});
 
-	// Periodically send out a ping message to make sure clients are alive
 	setInterval(() => {
 		socketServer.clients.forEach(function each(client) {
 			if (client.isAlive === false) return client.terminate();
-
 			client.isAlive = false;
 			client.ping();
 		});
 	}, 10000);
 }
 
-module.exports = { peerProxy };
+function notifyUser(userId, type, payload) {
+	const socket = connections.get(userId.toString());
+	if (socket && socket.readyState === WebSocket.OPEN) {
+		socket.send(JSON.stringify({ type, payload }));
+	}
+}
+
+module.exports = { peerProxy, notifyUser };

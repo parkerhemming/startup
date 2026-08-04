@@ -56,6 +56,7 @@
 }
 
 .row {
+	position: relative;
 	display: flex;
 	box-sizing: border-box;
 	align-items: center;
@@ -66,14 +67,11 @@
 	text-decoration: none;
 	color: inherit;
 	transition: background-color 0.2s;
+	border-bottom: 1px solid rgb(235, 235, 235);
 }
 
 .row:hover {
 	background-color: #f9f9f9;
-}
-
-.row:not(:last-child) {
-	border-bottom: 1px solid rgb(235, 235, 235);
 }
 
 .row > img {
@@ -129,4 +127,16 @@
 	font-weight: 400;
 	margin: 0;
 	line-height: 1.4;
+}
+
+.unreadCircle {
+	position: absolute;
+	top: 18px;
+	left: 78px;
+	width: 12px;
+	height: 12px;
+	background-color: #007bff;
+	border-radius: 50%;
+	border: 2px solid #fff;
+	z-index: 10;
 }
