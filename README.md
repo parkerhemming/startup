@@ -91,7 +91,15 @@
 
 ---
 
----
+## 📝 Startup WebSocket Deliverable
+
+- [x] **Backend listens for WebSocket connection:** Created a `peerProxy.js` file that attaches a `WebSocketServer` to the Express HTTP server. It listens for incoming connections and upgrades the HTTP requests to WebSocket connections.
+- [x] **Frontend makes WebSocket connection:** The React frontend (inside `App.jsx`) establishes a persistent WebSocket connection to the server as soon as a user logs in, maintaining a live link for real-time updates.
+- [x] **Data sent over WebSocket connection:**
+    - **Client to Server:** The frontend sends an initial `auth` message containing the `userId` to securely map the connection.
+    - **Server to Client:** The backend uses a highly targeted `notifyUser` function with a `Map` object to send specific, stringified JSON events (like `NEW_MESSAGE`, `COIN_UPDATE`, and `SYNC_USER`) _only_ to the intended recipients, rather than broadcasting sensitive data globally.
+- [x] **WebSocket data displayed in the application interface:** The frontend listens for `ws.onmessage` events. When it receives a payload (e.g., a new message or a matchmaker coin reward), it dynamically updates the React state (`setUser`), instantly displaying live push notifications, chat messages, and updated coin balances without requiring the user to refresh the page.
+- [x] **Fully functional:** The application is fully live. All mock data has been removed. Users can securely match, unmatch, and message each other in real-time, with matchmakers receiving live active-pair and coin updates immediately when their matched couples interact or break up.
 
 ---
 
