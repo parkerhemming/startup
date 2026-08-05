@@ -29,6 +29,20 @@ export function Notifications({ setUser, user }) {
 		}
 	};
 
+	const handleClearAll = async () => {
+		try {
+			const res = await fetch("/api/notifications", {
+				method: "DELETE",
+			});
+			if (res.ok) {
+				const updatedUser = await res.json();
+				setUser(updatedUser);
+			}
+		} catch (err) {
+			console.error("Failed to clear notifications:", err);
+		}
+	};
+
 	if (!user) {
 		return (
 			<main className={styles.main}>
@@ -42,6 +56,14 @@ export function Notifications({ setUser, user }) {
 	return (
 		<>
 			<header className={styles.header}>
+				{notificationsData.length > 0 && (
+					<button
+						onClick={handleClearAll}
+						className={styles.clearBtn}
+					>
+						Clear All
+					</button>
+				)}
 				<button
 					onClick={() => navigate(-1)}
 					className={styles.closeBtn}
@@ -52,36 +74,44 @@ export function Notifications({ setUser, user }) {
 
 			<main className={styles.main}>
 				<section className={styles.section}>
-					{notificationsData.map((note) => (
-						<div key={note.id} className={styles.row}>
-							<h2>
-								{note.text}{" "}
-								<span>
-									{note.link ? (
-										<button
-											onClick={() =>
-												handleNotificationClick(note)
-											}
-											className={styles.linkBtn}
-											title="Go to Match"
-										>
-											<i
-												className={`fa-solid ${note.icon}`}
-											></i>
-										</button>
-									) : (
-										<>
-											{note.action}
-											<i
-												className={`fa-solid ${note.icon}`}
-											></i>
-										</>
-									)}
-								</span>
-							</h2>
-							<h3>{note.time}</h3>
+					{notificationsData.length === 0 ? (
+						<div>
+							<h3>No notifications yet</h3>
 						</div>
-					))}
+					) : (
+						notificationsData.map((note) => (
+							<div key={note.id} className={styles.row}>
+								<h2>
+									{note.text}{" "}
+									<span>
+										{note.link ? (
+											<button
+												onClick={() =>
+													handleNotificationClick(
+														note,
+													)
+												}
+												className={styles.linkBtn}
+												title="Go to Match"
+											>
+												<i
+													className={`fa-solid ${note.icon}`}
+												></i>
+											</button>
+										) : (
+											<>
+												{note.action}
+												<i
+													className={`fa-solid ${note.icon}`}
+												></i>
+											</>
+										)}
+									</span>
+								</h2>
+								<h3>{note.time}</h3>
+							</div>
+						))
+					)}
 				</section>
 			</main>
 		</>

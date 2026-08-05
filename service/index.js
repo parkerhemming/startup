@@ -381,6 +381,9 @@ apiRouter.post("/match/pair", verifyAuth, async (req, res) => {
 						proxyPairsCreated++;
 						await DB.updateUser(userA);
 						await DB.updateUser(userB);
+
+						notifyUser(idA.toString(), "SYNC_USER", {});
+						notifyUser(idB.toString(), "SYNC_USER", {});
 					}
 				}
 			} else {
@@ -464,61 +467,33 @@ apiRouter.post("/match/pair", verifyAuth, async (req, res) => {
 	}
 });
 
-apiRouter.delete("/match/:id", verifyAuth, async (req, res) => {
+apiRouter.delete("/match/:matchId", verifyAuth, async (req, res) => {
 	try {
-		const matchId = req.params.id;
-		const myId = req.user._id.toString();
-		const timeStr = new Date().toLocaleTimeString([], {
-			hour: "2-digit",
-			minute: "2-digit",
-		});
+		const matchId = req.params.matchId;
+		const userId = req.user.id || req.user._id;
+		const match = req.user.matches?.find((m) => m.id === matchId);
+		const otherUserId = match ? match.id : null;
+		req.user.matches = req.user.matches.filter((m) => m.id !== matchId);
+		await DB.updateUser(req.user);
 
-		const matchIndex = req.user.matches.findIndex((m) => m.id === matchId);
-		if (matchIndex !== -1) {
-			const match = req.user.matches[matchIndex];
+		if (otherUserId) {
+			const otherUser = await DB.getUserById(otherUserId);
+			if (otherUser && otherUser.matches) {
+				otherUser.matches = otherUser.matches.filter(
+					(m) => m.id !== userId.toString(),
+				);
+				await DB.updateUser(otherUser);
 
-			const matchmakers =
-				match.matchmakers || (match.pairedBy ? [match.pairedBy] : []);
-			const userB = await DB.getUserById(matchId);
-
-			for (const mmId of matchmakers) {
-				const matchmaker = await DB.getUserById(mmId);
-				if (matchmaker) {
-					matchmaker.coins = (matchmaker.coins || 0) - 10;
-					matchmaker.activePairs = Math.max(
-						0,
-						(matchmaker.activePairs || 0) - 1,
-					);
-
-					matchmaker.notifications = matchmaker.notifications || [];
-					matchmaker.notifications.unshift({
-						id: uuid.v4(),
-						text: `${req.user.firstName} and ${userB?.firstName || "a user"} unmatched!`,
-						action: "-10",
-						icon: "fa-coins",
-						time: timeStr,
-					});
-
-					await DB.updateUser(matchmaker);
-					notifyUser(mmId, "COIN_UPDATE", {
-						coins: matchmaker.coins,
-						activePairs: matchmaker.activePairs,
-						newNotification: matchmaker.notifications[0],
-					});
-				}
+				notifyUser(otherUserId.toString(), "SYNC_USER", {});
 			}
 		}
 
-		await DB.removeMatch(myId, matchId);
-		await DB.removeMatch(matchId, myId);
-
-		const updatedUser = await DB.getUserByToken(req.user.token);
-		const populatedUser = await populateUserMatches(updatedUser);
+		const populatedUser = await populateUserMatches(req.user);
 		const { password, ...safeUser } = populatedUser;
 
 		res.status(200).send(safeUser);
 	} catch (error) {
-		console.error("Error unmatching:", error);
+		console.error("Error deleting match:", error);
 		res.status(500).send({ msg: "Server error while unmatching" });
 	}
 });
@@ -632,6 +607,23 @@ function setAuthCookie(res, authToken) {
 		sameSite: "strict",
 	});
 }
+
+apiRouter.delete("/notifications", verifyAuth, async (req, res) => {
+	try {
+		req.user.notifications = [];
+		await DB.updateUser(req.user);
+
+		const populatedUser = await populateUserMatches(req.user);
+		const { password, ...safeUser } = populatedUser;
+
+		res.status(200).send(safeUser);
+	} catch (error) {
+		console.error("Error clearing notifications:", error);
+		res.status(500).send({
+			msg: "Server error while clearing notifications",
+		});
+	}
+});
 
 async function populateUserMatches(user) {
 	if (!user || !user.matches) return user;

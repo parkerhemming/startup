@@ -27,6 +27,7 @@ export default function App() {
 	const token = localStorage.getItem("token");
 	const [user, setUser] = useState(null);
 	const [currentPairs, setCurrentPairs] = useState([]);
+	const [isPairing, setIsPairing] = useState(false);
 
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -219,71 +220,86 @@ export default function App() {
 				</header>
 			)}
 
-			<Routes>
-				<Route path="/login" element={<Login setUser={setUser} />} />
-				<Route path="/signup" element={<Signup setUser={setUser} />} />
-				<Route
-					path="/pair-mode-1"
-					element={
-						<PairMode1
-							setUser={setUser}
-							setCurrentPairs={setCurrentPairs}
-						/>
-					}
-				/>
-				<Route
-					path="/pair-mode-2"
-					element={
-						<PairMode2
-							setUser={setUser}
-							setCurrentPairs={setCurrentPairs}
-						/>
-					}
-				/>
-				<Route
-					path="/pair-mode-3"
-					element={
-						<PairMode3
-							setUser={setUser}
-							user={user}
-							setCurrentPairs={setCurrentPairs}
-						/>
-					}
-				/>
-				<Route
-					path="/messages"
-					element={
-						<Messages
-							setUser={setUser}
-							user={user}
-							unreadMatches={unreadMatches}
-						/>
-					}
-				/>
-				<Route
-					path="/message"
-					element={
-						<Message
-							setUser={setUser}
-							user={user}
-							setUnreadMatches={setUnreadMatches}
-						/>
-					}
-				/>
-				<Route
-					path="/store"
-					element={<Store setUser={setUser} user={user} />}
-				/>
-				<Route
-					path="/notifications"
-					element={<Notifications user={user} />}
-				/>
-				<Route
-					path="/profile-view"
-					element={<ProfileView setUser={setUser} user={user} />}
-				/>
-				<Route path="*" element={<NotFound />} />
-			</Routes>
+			{isPairing ? (
+				<main className="pairingContainer">
+					<div className="pairingSpinner"></div>
+					<h3 className="pairingText">Pairing...</h3>
+				</main>
+			) : (
+				<Routes>
+					<Route
+						path="/login"
+						element={<Login setUser={setUser} />}
+					/>
+					<Route
+						path="/signup"
+						element={<Signup setUser={setUser} />}
+					/>
+					<Route
+						path="/pair-mode-1"
+						element={
+							<PairMode1
+								setUser={setUser}
+								setCurrentPairs={setCurrentPairs}
+							/>
+						}
+					/>
+					<Route
+						path="/pair-mode-2"
+						element={
+							<PairMode2
+								setUser={setUser}
+								setCurrentPairs={setCurrentPairs}
+							/>
+						}
+					/>
+					<Route
+						path="/pair-mode-3"
+						element={
+							<PairMode3
+								setUser={setUser}
+								user={user}
+								setCurrentPairs={setCurrentPairs}
+							/>
+						}
+					/>
+					<Route
+						path="/messages"
+						element={
+							<Messages
+								setUser={setUser}
+								user={user}
+								unreadMatches={unreadMatches}
+							/>
+						}
+					/>
+					<Route
+						path="/message"
+						element={
+							<Message
+								setUser={setUser}
+								user={user}
+								setUnreadMatches={setUnreadMatches}
+							/>
+						}
+					/>
+					<Route
+						path="/store"
+						element={<Store setUser={setUser} user={user} />}
+					/>
+					<Route
+						path="/notifications"
+						element={
+							<Notifications setUser={setUser} user={user} />
+						}
+					/>
+					<Route
+						path="/profile-view"
+						element={<ProfileView setUser={setUser} user={user} />}
+					/>
+					<Route path="*" element={<NotFound />} />
+				</Routes>
+			)}
 
 			{user && showFooter && (
 				<footer>
@@ -306,6 +322,7 @@ export default function App() {
 							className="btn"
 							onClick={async (e) => {
 								e.preventDefault();
+								setIsPairing(true);
 
 								if (mode === "me" && user.coins >= 30) {
 									await increment("coins", -30, setUser);
@@ -348,6 +365,8 @@ export default function App() {
 									targetPath +
 										(mode === "me" ? "?mode=me" : ""),
 								);
+
+								setIsPairing(false);
 							}}
 							to={
 								mode === "me" && user.coins >= 30

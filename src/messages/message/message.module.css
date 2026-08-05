@@ -192,3 +192,45 @@
 	background-color: #333;
 	transform: scale(1.05);
 }
+
+.profileLink {
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	color: inherit;
+	overflow: visible;
+}
+
+.avatarWrapper {
+	display: inline-flex;
+	overflow: visible;
+}
+
+.avatarWrapper img {
+	border-radius: 50%;
+	object-fit: cover;
+	border: 1px solid #eaeaea;
+}
+
+.pairedBubble {
+	position: absolute;
+	bottom: -30px;
+	left: 50%;
+	transform: translateX(-50%);
+
+	background-color: #e2e2e2;
+	color: #fff;
+	font-size: 10px;
+	font-weight: 600;
+	padding: 5px 8px;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	white-space: nowrap;
+	z-index: 20;
+}
+
+.pairedBubble i {
+	font-size: 9px;
+	color: #ffb703;
+}

@@ -36,6 +36,9 @@ export function PairMode3({ setUser, user, setCurrentPairs }) {
 	const [topUser, setTopUser] = useState(passedUser || null);
 	const [gridUsers, setGridUsers] = useState([]);
 
+	const [isLoadingGrid, setIsLoadingGrid] = useState(true);
+	const [isLoadingTop, setIsLoadingTop] = useState(!isMeMode && !passedUser);
+
 	useEffect(() => {
 		if (isMeMode && user?.id) {
 			setTopUser(user);
@@ -50,6 +53,7 @@ export function PairMode3({ setUser, user, setCurrentPairs }) {
 					const cachedGrid = sessionStorage.getItem("pairMode3_grid");
 					if (cachedGrid) {
 						setGridUsers(JSON.parse(cachedGrid));
+						setIsLoadingGrid(false);
 						return;
 					}
 				}
@@ -63,6 +67,8 @@ export function PairMode3({ setUser, user, setCurrentPairs }) {
 				}
 			} catch (error) {
 				console.error(error);
+			} finally {
+				setIsLoadingGrid(false);
 			}
 		}
 
@@ -78,6 +84,7 @@ export function PairMode3({ setUser, user, setCurrentPairs }) {
 							sessionStorage.getItem("pairMode3_top");
 						if (cachedTop) {
 							setTopUser(JSON.parse(cachedTop));
+							setIsLoadingTop(false);
 							return;
 						}
 					}
@@ -95,7 +102,11 @@ export function PairMode3({ setUser, user, setCurrentPairs }) {
 					}
 				} catch (error) {
 					console.error(error);
+				} finally {
+					setIsLoadingTop(false);
 				}
+			} else {
+				setIsLoadingTop(false);
 			}
 		}
 
@@ -174,6 +185,32 @@ export function PairMode3({ setUser, user, setCurrentPairs }) {
 	useEffect(() => {
 		document.title = `Pair | Proxy Dating`;
 	}, []);
+
+	if (isLoadingGrid || isLoadingTop) {
+		return (
+			<main className="centerState" style={{ flexDirection: "column" }}>
+				<div className="loadingCircle"></div>
+				<h3 style={{ color: "#777" }}>Finding Matches...</h3>
+			</main>
+		);
+	}
+
+	if (gridUsers.length < 9 || !topUser) {
+		return (
+			<main className="centerState" style={{ flexDirection: "column" }}>
+				<i
+					className="fa-solid fa-user-astronaut"
+					style={{ fontSize: "48px", color: "#ccc" }}
+				></i>
+				<h2 style={{ color: "#777", margin: "10px 0 5px 0" }}>
+					Out of Profiles
+				</h2>
+				<p style={{ color: "#aaa", fontSize: "14px" }}>
+					We need more people to join before you can pair again!
+				</p>
+			</main>
+		);
+	}
 
 	return (
 		<DndContext

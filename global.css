@@ -105,3 +105,28 @@ footer .noti-wrapper .circle {
 	border: 2px solid #fff;
 	z-index: 10;
 }
+
+.loadingCircle {
+	width: 28px;
+	height: 28px;
+	border: 3px solid #eeeeee;
+	border-top-color: #111111;
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+}
+
+.centerState {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	text-align: center;
+	padding: 30px;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}

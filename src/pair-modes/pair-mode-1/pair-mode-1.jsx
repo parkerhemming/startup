@@ -17,6 +17,7 @@ export function PairMode1({ setUser, setCurrentPairs }) {
 	const [draggingData, setDraggingData] = useState(null);
 	const [maleUsers, setMaleUsers] = useState([]);
 	const [femaleUsers, setFemaleUsers] = useState([]);
+	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
 		async function fetchProfiles() {
@@ -29,6 +30,7 @@ export function PairMode1({ setUser, setCurrentPairs }) {
 					if (cachedMales && cachedFemales) {
 						setMaleUsers(JSON.parse(cachedMales));
 						setFemaleUsers(JSON.parse(cachedFemales));
+						setIsLoading(false);
 						return;
 					}
 				}
@@ -56,6 +58,8 @@ export function PairMode1({ setUser, setCurrentPairs }) {
 				}
 			} catch (error) {
 				console.error(error);
+			} finally {
+				setIsLoading(false);
 			}
 		}
 
@@ -150,6 +154,32 @@ export function PairMode1({ setUser, setCurrentPairs }) {
 	useEffect(() => {
 		document.title = `Pair | Proxy Dating`;
 	}, []);
+
+	if (isLoading) {
+		return (
+			<main className="centerState" style={{ flexDirection: "column" }}>
+				<div className="loadingCircle"></div>
+				<h3 style={{ color: "#777" }}>Finding Matches...</h3>
+			</main>
+		);
+	}
+
+	if (maleUsers.length < 9 || femaleUsers.length < 9) {
+		return (
+			<main className="centerState" style={{ flexDirection: "column" }}>
+				<i
+					className="fa-solid fa-user-astronaut"
+					style={{ fontSize: "48px", color: "#ccc" }}
+				></i>
+				<h2 style={{ color: "#777", margin: "10px 0 5px 0" }}>
+					Out of Profiles
+				</h2>
+				<p style={{ color: "#aaa", fontSize: "14px" }}>
+					We need more people to join before you can pair again!
+				</p>
+			</main>
+		);
+	}
 
 	return (
 		<DndContext

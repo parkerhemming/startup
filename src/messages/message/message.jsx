@@ -13,6 +13,9 @@ export function Message({ setUser, user: loggedInUser, setUnreadMatches }) {
 
 	const displayMessages = currentMatch.messages || [];
 
+	const matchmakersCount =
+		currentMatch.matchmakers?.length || (currentMatch.pairedBy ? 1 : 0);
+
 	const [inputText, setInputText] = useState("");
 	const messagesEndRef = useRef(null);
 
@@ -78,6 +81,18 @@ export function Message({ setUser, user: loggedInUser, setUnreadMatches }) {
 		}
 	}, [currentMatch.firstName]);
 
+	useEffect(() => {
+		if (!loggedInUser || !currentMatch?.id) return;
+
+		const matchStillExists = loggedInUser.matches?.some(
+			(m) => m.id === currentMatch.id,
+		);
+
+		if (!matchStillExists) {
+			navigate("/messages", { replace: true });
+		}
+	}, [loggedInUser, currentMatch?.id, navigate]);
+
 	const profilePic =
 		currentMatch.profilePics?.[0] ||
 		(currentMatch.gender
@@ -110,13 +125,15 @@ export function Message({ setUser, user: loggedInUser, setUnreadMatches }) {
 					state={{ user: currentMatch }}
 					className={styles.profileLink}
 				>
-					<img
-						src={profilePic}
-						width="42"
-						height="42"
-						alt={displayName}
-						draggable={false}
-					/>
+					<div className={styles.avatarWrapper}>
+						<img
+							src={profilePic}
+							width="42"
+							height="42"
+							alt={displayName}
+							draggable={false}
+						/>
+					</div>
 					<h2>{displayName}</h2>
 				</Link>
 
@@ -126,6 +143,16 @@ export function Message({ setUser, user: loggedInUser, setUnreadMatches }) {
 						-10 <i className="fa-solid fa-coins"></i>
 					</span>
 				</button>
+
+				{matchmakersCount > 0 && (
+					<div className={styles.pairedBubble}>
+						<span>
+							{matchmakersCount === 1
+								? "1 person paired you together"
+								: `${matchmakersCount} people paired you together`}
+						</span>
+					</div>
+				)}
 			</header>
 
 			<main className={styles.main}>
