@@ -72,14 +72,6 @@ export function Store({ setUser, user }) {
 						</h2>
 					</div>
 				</div>
-				<div className={styles.summaryNote}>
-					<p>
-						<i className="fa-solid fa-circle-info"></i>
-						Active Pairs are couples you have matched together. You
-						earn passive income (+1 coin) every time they message,
-						but you take a hit (-10 coins) if they unmatch!
-					</p>
-				</div>
 			</section>
 
 			<section className={styles.section}>
@@ -87,30 +79,6 @@ export function Store({ setUser, user }) {
 					<h1>STORE</h1>
 					<p>Spend coins to upgrade your matchmaking experience.</p>
 				</div>
-
-				{/* <div className={styles.storeItem}>
-                    <div className={styles.iconWrap}>
-                        <i className="fa-solid fa-eye"></i>
-                    </div>
-                    <div className={styles.textWrap}>
-                        <h2>Profile Boost</h2>
-                        <p>
-                            Your profile will be shown to others{" "}
-                            {user.boost ?? 0} more times.
-                        </p>
-                    </div>
-                    <button
-                        disabled={user.coins < 15}
-                        className="btn"
-                        onClick={() => {
-                            increment("coins", -15, setUser);
-                            increment("boost", 1, setUser);
-                        }}
-                    >
-                        <span>15</span>
-                        <i className="fa-solid fa-coins"></i>
-                    </button>
-                </div> */}
 
 				<div className={styles.storeItem}>
 					<div className={styles.iconWrap}>
@@ -162,6 +130,76 @@ export function Store({ setUser, user }) {
 			<section className={styles.section}>
 				<div className={styles.sectionHeader}>
 					<h1>GUIDE</h1>
+					<p>The concept of Proxy Dating</p>
+				</div>
+
+				<div className={styles.conceptCard}>
+					<div className={styles.conceptStep}>
+						<div className={styles.conceptIcon}>
+							<i className="fa-solid fa-people-arrows"></i>
+						</div>
+						<div className={styles.conceptText}>
+							<h3>Play Matchmaker</h3>
+							<p>
+								Instead of swiping on dates for yourself, you
+								browse grids of other single users and
+								drag-and-drop compatible profiles together to
+								create matches.
+							</p>
+						</div>
+					</div>
+
+					<div className={styles.conceptStep}>
+						<div className={styles.conceptIcon}>
+							<i className="fa-solid fa-chart-line"></i>
+						</div>
+						<div className={styles.conceptText}>
+							<h3>Build Passive Income</h3>
+							<p>
+								Every successful couple you create becomes an{" "}
+								<strong>Active Pair</strong>. Whenever they chat
+								with other, you collect passive coins. The
+								better your matches, the more coins you make!
+							</p>
+						</div>
+					</div>
+
+					<div className={styles.conceptStep}>
+						<div className={styles.conceptIcon}>
+							<i className="fa-solid fa-shield-halved"></i>
+						</div>
+						<div className={styles.conceptText}>
+							<h3>Quality Over Quantity</h3>
+							<p>
+								Choose wisely! If a couple you match hits it
+								off, you rake in steady coins. But if they hate
+								each other and unmatch, you take a coin penalty.
+								Match smart to keep your balance growing.
+							</p>
+						</div>
+					</div>
+
+					<div className={styles.conceptStep}>
+						<div className={styles.conceptIcon}>
+							<i className="fa-solid fa-heart"></i>
+						</div>
+						<div className={styles.conceptText}>
+							<h3>Get Your Own Dates</h3>
+							<p>
+								While you are out pairing others, your profile
+								is actively shown on other matchmakers' boards.
+								When a matchmaker pairs you with someone else,
+								you get notified and a new chat opens up—that is
+								how you find your own dates!
+							</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section className={styles.section}>
+				<div className={styles.sectionHeader}>
+					<h1>ECONOMY</h1>
 					<p>How the dynamic coin economy works</p>
 				</div>
 

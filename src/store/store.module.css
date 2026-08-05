@@ -209,3 +209,61 @@
 	font-weight: 500;
 	color: #888;
 }
+
+.conceptCard {
+	background-color: rgba(244, 244, 244, 0.622);
+	border-radius: 20px;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	border: 1px solid #eaeaea;
+}
+
+.conceptStep {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 15px;
+}
+
+.conceptIcon {
+	width: 40px;
+	height: 40px;
+	border-radius: 12px;
+	background-color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	border: 1px solid #eaeaea;
+}
+
+.conceptIcon i {
+	font-size: 16px;
+	color: #333;
+}
+
+.conceptText {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.conceptText h3 {
+	font-size: 15px;
+	font-weight: 700;
+	color: #111;
+}
+
+.conceptText p {
+	font-size: 13px;
+	line-height: 1.5;
+	color: #666;
+	margin: 0;
+}
+
+.conceptText strong {
+	color: #111;
+	font-weight: 600;
+}
