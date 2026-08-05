@@ -6,12 +6,13 @@
 
 - [x] Add error state texts on login page
 - [x] change drag and drop to this https://dndkit.com/react/hooks/use-droppable/
-- [ ] On message page "12 people paired you together"
-- [ ] Message page: header profiles should be who you havent messeges yet of your matches.
+- [x] On message page "12 people paired you together"
+- [nvm] Message page: header profiles should be who you havent messeges yet of your matches.
 - [x] Make an endpoint for coins and boosts
 - [x] Store images in s3 and some sort of key or id in mongodb for images.
-- [ ] Loading state
-- [ ] "Active Pairs" on store page needs to be / 2 most likely.
+- [x] Loading state
+- [nopelol] "Active Pairs" on store page needs to be / 2 most likely.
+- [] Match me mode shouldnt show current matches.
 
 ## 📝 Specification Deliverable
 
