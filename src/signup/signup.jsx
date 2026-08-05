@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import styles from "./signup.module.css";
 import { Link, useNavigate } from "react-router-dom";
+import { HobbyPicker } from "../shared.jsx";
 
 export function Signup({ setUser }) {
 	const [showError, setShowError] = useState(false);
-	const [errorMsg, setErrorMsg] = useState(
-		"Signup failed, please try again.",
-	);
+	const [errorMsg, setErrorMsg] = useState("Signup failed, please try again.");
+	const [hobbies, setHobbies] = useState("");
 	const navigate = useNavigate();
 
 	const [showDatePicker, setShowDatePicker] = useState(false);
@@ -32,6 +32,13 @@ export function Signup({ setUser }) {
 		event.preventDefault();
 		const form = event.target;
 		const formData = new FormData(form);
+
+		if (hobbies.split(",").filter(Boolean).length < 3) {
+			setErrorMsg("Pick at least 3 hobbies.");
+			setShowError(true);
+			setTimeout(() => setShowError(false), 3000);
+			return;
+		}
 
 		if (!formattedDate) {
 			setErrorMsg("Please complete your birthday selection.");
@@ -74,7 +81,7 @@ export function Signup({ setUser }) {
 		uploadData.append("email", formData.get("email"));
 		uploadData.append("password", formData.get("password"));
 		uploadData.append("bio", formData.get("bio"));
-		uploadData.append("interests", formData.get("interests"));
+		uploadData.append("interests", hobbies);
 		uploadData.append("profilePics", pfp1);
 		uploadData.append("profilePics", pfp2);
 		uploadData.append("profilePics", pfp3);
@@ -303,14 +310,8 @@ export function Signup({ setUser }) {
 							/>
 							<label htmlFor="bio">Bio</label>
 							<input id="bio" name="bio" type="text" required />
-							<label htmlFor="interests">Interests</label>
-							<input
-								id="interests"
-								name="interests"
-								type="text"
-								placeholder="e.g. Hiking, Movies"
-								required
-							/>
+							<label>Hobbies (pick at least 3)</label>
+							<HobbyPicker value={hobbies} onChange={setHobbies} />
 							<label>Photos (All 4 Required)</label>
 							<div className={styles.fileUploads}>
 								<input

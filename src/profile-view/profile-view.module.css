@@ -213,3 +213,6 @@
 input:disabled {
 	color: rgb(182, 182, 182);
 }
+.imageContainer :global(.imageWrap) { width: 100%; height: 100%; display: block; }
+.imageContainer img { width: 100%; height: 100%; object-fit: cover; }
+.online { color: #20c05c; font-weight: 800; margin: 0 0 6px; }

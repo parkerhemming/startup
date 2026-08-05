@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./app.css";
 import "../global.css";
-import { increment } from "./utils";
-
 import {
 	NavLink,
 	Link,
@@ -27,6 +25,7 @@ export default function App() {
 	const token = localStorage.getItem("token");
 	const [user, setUser] = useState(null);
 	const [currentPairs, setCurrentPairs] = useState([]);
+	const [profileCount, setProfileCount] = useState(9);
 
 	useEffect(() => {
 		fetch("/api/getUser")
@@ -38,6 +37,7 @@ export default function App() {
 			})
 			.then(setUser)
 			.catch(() => navigate("/login"));
+		fetch("/api/profile-count").then((res) => res.ok && res.json()).then((data) => data && setProfileCount(data.count));
 	}, []);
 
 	const navigate = useNavigate();
@@ -92,8 +92,7 @@ export default function App() {
 
 					{user && (
 						<Link to="/notifications" className="noti-wrapper">
-							<div className="circle"></div>
-							<i className="fa-solid fa-bell"></i>
+							<span className="iconCircle"><span className="noticeDot"></span><i className="fa-solid fa-bell"></i></span>
 						</Link>
 					)}
 				</header>
@@ -105,29 +104,19 @@ export default function App() {
 				<Route
 					path="/pair-mode-1"
 					element={
-						<PairMode1
-							setUser={setUser}
-							setCurrentPairs={setCurrentPairs}
-						/>
+						<PairMode1 profileCount={profileCount} setCurrentPairs={setCurrentPairs} />
 					}
 				/>
 				<Route
 					path="/pair-mode-2"
 					element={
-						<PairMode2
-							setUser={setUser}
-							setCurrentPairs={setCurrentPairs}
-						/>
+						<PairMode2 profileCount={profileCount} setCurrentPairs={setCurrentPairs} />
 					}
 				/>
 				<Route
 					path="/pair-mode-3"
 					element={
-						<PairMode3
-							setUser={setUser}
-							user={user}
-							setCurrentPairs={setCurrentPairs}
-						/>
+						<PairMode3 profileCount={profileCount} user={user} setCurrentPairs={setCurrentPairs} />
 					}
 				/>
 				<Route
@@ -155,13 +144,9 @@ export default function App() {
 
 			{user && showFooter && (
 				<footer>
-					<NavLink to="/pair-mode-1">
-						<i className="fa-solid fa-home"></i>
-					</NavLink>
+					<NavLink to="/pair-mode-1" className="iconCircle"><i className="fa-solid fa-home"></i></NavLink>
 
-					<NavLink to="/messages">
-						<i className="fa-solid fa-message"></i>
-					</NavLink>
+					<NavLink to="/messages" className="iconCircle"><i className="fa-solid fa-message"></i></NavLink>
 
 					{location.pathname.includes("pair-mode") && (
 						<NavLink
@@ -169,35 +154,13 @@ export default function App() {
 							onClick={async (e) => {
 								e.preventDefault();
 
-								if (mode === "me" && user.coins >= 30) {
-									await increment("coins", -30, setUser);
-								} else if (mode !== "me") {
-									await increment("coins", 5, setUser);
-								}
-
 								if (currentPairs.length > 0) {
-									try {
-										const res = await fetch(
-											"/api/match/pair",
-											{
-												method: "POST",
-												headers: {
-													"Content-Type":
-														"application/json",
-												},
-												body: JSON.stringify({
-													pairs: currentPairs,
-												}),
-											},
-										);
-										if (res.ok) {
-											const updatedUser =
-												await res.json();
-											setUser(updatedUser);
-										}
-									} catch (err) {
-										console.error(err);
-									}
+									const res = await fetch("/api/match/pair", {
+										method: "POST",
+										headers: { "Content-Type": "application/json" },
+										body: JSON.stringify({ pairs: currentPairs }),
+									});
+									if (res.ok) setUser(await res.json());
 								}
 
 								const targetPath =
@@ -233,12 +196,8 @@ export default function App() {
 						</NavLink>
 					)}
 
-					<NavLink to="/store">
-						<i className="fa-solid fa-store"></i>
-					</NavLink>
-					<NavLink to={`/profile-view`} state={{ user }}>
-						<i className="fa-solid fa-circle-user"></i>
-					</NavLink>
+					<NavLink to="/store" className="iconCircle"><i className="fa-solid fa-store"></i></NavLink>
+					<NavLink to={`/profile-view`} state={{ user }} className="iconCircle"><i className="fa-solid fa-circle-user"></i></NavLink>
 				</footer>
 			)}
 		</div>

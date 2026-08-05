@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./profile-view.module.css";
+import { HobbyPicker, SmartImage } from "../shared.jsx";
+import { ageFromBirthday } from "../utils";
 
 export function ProfileView({ user, setUser }) {
 	const navigate = useNavigate();
@@ -53,18 +55,6 @@ export function ProfileView({ user, setUser }) {
 				: "Profile") + " | Proxy Dating";
 	}, [profileData]);
 
-	const calculateAge = (birthday) => {
-		if (!birthday) return "";
-		const birthDate = new Date(birthday);
-		const today = new Date();
-		let age = today.getFullYear() - birthDate.getFullYear();
-		const m = today.getMonth() - birthDate.getMonth();
-		if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-			age--;
-		}
-		return age;
-	};
-
 	const handleImageChange = (index, e) => {
 		const file = e.target.files[0];
 		if (!file) return;
@@ -113,11 +103,7 @@ export function ProfileView({ user, setUser }) {
 			`/pfp-${profileData?.gender?.toLowerCase() || "male"}.png`;
 		return (
 			<div key={index} className={styles.imageContainer}>
-				<img
-					src={src}
-					alt={`Profile ${index + 1}`}
-					className={styles.image}
-				/>
+				<SmartImage user={{ ...profileData, profilePics: previewPics }} index={index} alt={`Profile ${index + 1}`} className={styles.image} />
 
 				{isEditing && isMyProfile && (
 					<label
@@ -172,48 +158,8 @@ export function ProfileView({ user, setUser }) {
 				<section className={styles.infoSection}>
 					{isEditing ? (
 						<div className={styles.editFormContainer}>
-							<div className={styles.editNameRow}>
-								<input
-									disabled
-									type="text"
-									value={formData.firstName}
-									onChange={(e) =>
-										setFormData({
-											...formData,
-											firstName: e.target.value,
-										})
-									}
-									placeholder="First Name"
-									className={styles.editInput}
-								/>
-								<input
-									disabled
-									type="text"
-									value={formData.lastName}
-									onChange={(e) =>
-										setFormData({
-											...formData,
-											lastName: e.target.value,
-										})
-									}
-									placeholder="Last Name"
-									className={styles.editInput}
-								/>
-							</div>
-
-							<label className={styles.editLabel}>Birthday</label>
-							<input
-								type="date"
-								disabled
-								value={formData.birthday}
-								onChange={(e) =>
-									setFormData({
-										...formData,
-										birthday: e.target.value,
-									})
-								}
-								className={styles.editInput}
-							/>
+							{!isMyProfile && profileData?.online && <p className={styles.online}>Online</p>}
+							<h2 className={styles.name}>{profileData ? `${profileData.firstName} ${profileData.lastName}, ${ageFromBirthday(profileData.birthday)}` : "Name"}</h2>
 
 							<label className={styles.editLabel}>Bio</label>
 							<textarea
@@ -228,27 +174,15 @@ export function ProfileView({ user, setUser }) {
 								className={styles.editTextarea}
 							/>
 
-							<label className={styles.editLabel}>
-								Interests
-							</label>
-							<input
-								type="text"
-								value={formData.interests}
-								onChange={(e) =>
-									setFormData({
-										...formData,
-										interests: e.target.value,
-									})
-								}
-								placeholder="Interests"
-								className={styles.editInput}
-							/>
+							<label className={styles.editLabel}>Hobbies</label>
+							<HobbyPicker value={formData.interests} onChange={(interests) => setFormData({ ...formData, interests })} />
 						</div>
 					) : (
 						<>
+							{!isMyProfile && profileData?.online && <p className={styles.online}>Online</p>}
 							<h2 className={styles.name}>
 								{profileData
-									? `${profileData.firstName} ${profileData.lastName}, ${calculateAge(profileData.birthday)}`
+									? `${profileData.firstName} ${profileData.lastName}, ${ageFromBirthday(profileData.birthday)}`
 									: "Name"}
 							</h2>
 							<p className={styles.bio}>
@@ -257,7 +191,7 @@ export function ProfileView({ user, setUser }) {
 							<h3 className={styles.tags}>
 								{profileData
 									? profileData.interests
-									: "Interests"}
+									: "Hobbies"}
 							</h3>
 						</>
 					)}

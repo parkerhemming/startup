@@ -30,6 +30,8 @@ apiRouter.post("/auth/login", async (req, res) => {
 				await DB.updateUser(user);
 				setAuthCookie(res, user.token);
 
+				user.online = true;
+				await DB.updateUser(user);
 				const populatedUser = await populateUserMatches(user);
 				const { password, ...safeUser } = populatedUser;
 
@@ -49,6 +51,7 @@ apiRouter.delete("/auth/logout", async (req, res) => {
 		if (user) {
 			await DB.updateUserRemoveAuth(user);
 		}
+		if (user) { user.online = false; await DB.updateUser(user); }
 		res.clearCookie("token");
 		res.status(204).end();
 	} catch {
@@ -238,7 +241,8 @@ apiRouter.post("/message", verifyAuth, async (req, res) => {
 				match.matchmakers || (match.pairedBy ? [match.pairedBy] : []);
 
 			match.messages = match.messages || [];
-			match.messages.push(message);
+			message.read = false;
+			match.messages.push({ ...message, read: true });
 			match.text = message.text;
 			match.time = message.time;
 			match.timestamp = now;
@@ -263,6 +267,7 @@ apiRouter.post("/message", verifyAuth, async (req, res) => {
 					sender: req.user.firstName,
 				};
 
+				recMatch.read = false;
 				recMatch.messages.push(recipientMessage);
 				recMatch.text = message.text;
 				recMatch.time = message.time;
@@ -279,6 +284,8 @@ apiRouter.post("/message", verifyAuth, async (req, res) => {
 			const matchmaker = await DB.getUserById(mmId);
 			if (matchmaker) {
 				matchmaker.coins = (matchmaker.coins || 0) + 1;
+				matchmaker.coinLedger = matchmaker.coinLedger || [];
+				matchmaker.coinLedger.unshift({ id: uuid.v4(), amount: 1, text: `Message from ${req.user.firstName} and ${recipient?.firstName || "a match"}`, time: new Date().toLocaleString() });
 				await DB.updateUser(matchmaker);
 			}
 		}
@@ -428,12 +435,16 @@ apiRouter.post("/match/pair", verifyAuth, async (req, res) => {
 			if (proxyPairsCreated > 0) {
 				freshUser.coins =
 					(freshUser.coins || 0) + proxyPairsCreated * 5;
+				freshUser.coinLedger = freshUser.coinLedger || [];
+				freshUser.coinLedger.unshift({ id: uuid.v4(), amount: proxyPairsCreated * 5, text: "Paired people", time: new Date().toLocaleString() });
 				freshUser.activePairs =
 					(freshUser.activePairs || 0) + proxyPairsCreated;
 			}
 
 			if (matchMeCreated > 0) {
 				freshUser.coins = (freshUser.coins || 0) - matchMeCreated * 30;
+				freshUser.coinLedger = freshUser.coinLedger || [];
+				freshUser.coinLedger.unshift({ id: uuid.v4(), amount: -matchMeCreated * 30, text: "Match Me", time: new Date().toLocaleString() });
 			}
 
 			await DB.updateUser(freshUser);
@@ -471,6 +482,8 @@ apiRouter.delete("/match/:id", verifyAuth, async (req, res) => {
 				const matchmaker = await DB.getUserById(mmId);
 				if (matchmaker) {
 					matchmaker.coins = (matchmaker.coins || 0) - 10;
+					matchmaker.coinLedger = matchmaker.coinLedger || [];
+					matchmaker.coinLedger.unshift({ id: uuid.v4(), amount: -10, text: `${req.user.firstName} and ${userB?.firstName || "a user"} unmatched`, time: new Date().toLocaleString() });
 					matchmaker.activePairs = Math.max(
 						0,
 						(matchmaker.activePairs || 0) - 1,
@@ -512,12 +525,28 @@ apiRouter.get("/getUser", verifyAuth, async (req, res) => {
 
 apiRouter.post("/increment", verifyAuth, async (req, res) => {
 	await DB.incrementField(req.user.token, req.body.field, req.body.increment);
+	if (req.body.field === "coins") {
+		req.user.coinLedger = req.user.coinLedger || [];
+		req.user.coinLedger.unshift({ id: uuid.v4(), amount: req.body.increment, text: req.body.text || "Coin update", time: new Date().toLocaleString() });
+		await DB.updateUser(req.user);
+	}
 
 	const user = await DB.getUserByToken(req.user.token);
 	const populatedUser = await populateUserMatches(user);
 	const { password, ...safeUser } = populatedUser;
 
 	res.status(200).send(safeUser);
+});
+
+apiRouter.get("/profile-count", verifyAuth, async (req, res) => {
+	res.status(200).send({ count: await DB.countProfiles(req.user.email) });
+});
+
+apiRouter.post("/read/:id", verifyAuth, async (req, res) => {
+	const match = req.user.matches?.find((m) => m.id === req.params.id);
+	if (match) match.read = true;
+	await DB.updateUser(req.user);
+	res.status(200).send({ ok: true });
 });
 
 apiRouter.get("/profiles", verifyAuth, async (req, res) => {
@@ -528,15 +557,10 @@ apiRouter.get("/profiles", verifyAuth, async (req, res) => {
 		let profiles = await DB.getProfilesByGender(
 			targetGender,
 			req.user.email,
-			100,
+			limitCount,
 		);
 
-		profiles = profiles.sort(() => 0.5 - Math.random());
-		profiles.sort(
-			(a, b) => (a.matches?.length || 0) - (b.matches?.length || 0),
-		);
-
-		const selectedProfiles = profiles.slice(0, limitCount);
+		const selectedProfiles = profiles;
 
 		const safeProfiles = selectedProfiles.map((profile) => {
 			const { password, token, _id, ...safeData } = profile;
@@ -617,9 +641,10 @@ function setAuthCookie(res, authToken) {
 async function populateUserMatches(user) {
 	if (!user || !user.matches) return user;
 
-	const populatedMatches = await Promise.all(
-		user.matches.map(async (match) => {
-			const matchUser = await DB.getUserById(match.id);
+	const users = await DB.getUsersByIds(user.matches.map((match) => match.id));
+	const userMap = new Map(users.map((u) => [u._id.toString(), u]));
+	const populatedMatches = user.matches.map((match) => {
+			const matchUser = userMap.get(match.id);
 
 			if (matchUser) {
 				return {
@@ -630,6 +655,7 @@ async function populateUserMatches(user) {
 					bio: matchUser.bio,
 					interests: matchUser.interests,
 					profilePics: matchUser.profilePics || [],
+					online: !!matchUser.online,
 				};
 			} else {
 				return {
@@ -642,8 +668,7 @@ async function populateUserMatches(user) {
 					profilePics: [],
 				};
 			}
-		}),
-	);
+		});
 
 	return { ...user, matches: populatedMatches };
 }

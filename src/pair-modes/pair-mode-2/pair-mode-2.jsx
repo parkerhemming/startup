@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigationType } from "react-router-dom";
+import { Loading } from "../../shared.jsx";
 import styles from "./pair-mode-2.module.css";
 import {
 	DndContext,
@@ -12,7 +13,7 @@ import {
 	pointerWithin,
 } from "@dnd-kit/core";
 
-export function PairMode2({ setUser, setCurrentPairs }) {
+export function PairMode2({ profileCount, setCurrentPairs }) {
 	const navType = useNavigationType();
 	const [draggingData, setDraggingData] = useState(null);
 	const [maleUsers, setMaleUsers] = useState([]);
@@ -93,14 +94,7 @@ export function PairMode2({ setUser, setCurrentPairs }) {
 
 	function handleDragStart(event) {
 		const { active } = event;
-		const rect = active.rect.current?.initial;
-
-		setDraggingData({
-			user: active.data.current.user,
-			gender: active.data.current.gender,
-			width: rect?.width,
-			height: rect?.height,
-		});
+		setDraggingData(active.data.current);
 	}
 
 	function handleDragEnd(event) {
@@ -146,6 +140,9 @@ export function PairMode2({ setUser, setCurrentPairs }) {
 	const rowCount = Math.min(4, maleUsers.length, femaleUsers.length);
 	const rows = Array.from({ length: rowCount }, (_, i) => i);
 
+
+	if (profileCount < 8) return <main className="centerState"><h2>You paired everyone nearby.</h2><p>There are no more profiles to pair in your area right now. Check back soon.</p></main>;
+
 	return (
 		<DndContext
 			sensors={sensors}
@@ -178,16 +175,7 @@ export function PairMode2({ setUser, setCurrentPairs }) {
 				{draggingData ? (
 					<div
 						className={styles.square}
-						style={{
-							width: draggingData.width
-								? `${draggingData.width}px`
-								: "120px",
-							height: draggingData.height
-								? `${draggingData.height}px`
-								: "120px",
-							margin: 0,
-							opacity: 0.9,
-						}}
+
 					>
 						<img
 							src={

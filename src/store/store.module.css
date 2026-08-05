@@ -209,3 +209,8 @@
 	font-weight: 500;
 	color: #888;
 }
+.ledgerRow { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid #eaeaea; background: #f7f7f7; border-radius: 14px; }
+.ledgerRow strong { min-width: 42px; color: #111; }
+.ledgerRow span { flex: 1; font-size: 14px; }
+.ledgerRow small { color: #888; font-size: 12px; }
+.emptyText { color: #888; font-size: 14px; }

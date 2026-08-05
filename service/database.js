@@ -26,14 +26,16 @@ function getUserByToken(token) {
 	return collection.findOne({ token: token });
 }
 
+function cleanId(id) {
+	return ObjectId.isValid(id) ? new ObjectId(id) : id;
+}
+
 function getUserById(id) {
-	let queryId;
-	try {
-		queryId = new ObjectId(id);
-	} catch (e) {
-		queryId = id;
-	}
-	return collection.findOne({ _id: queryId });
+	return collection.findOne({ _id: cleanId(id) });
+}
+
+function getUsersByIds(ids) {
+	return collection.find({ _id: { $in: ids.filter(ObjectId.isValid).map((id) => new ObjectId(id)) } }).toArray();
 }
 
 async function addUser(user) {
@@ -42,7 +44,7 @@ async function addUser(user) {
 
 async function updateUser(user) {
 	const { _id, ...updateData } = user;
-	await collection.updateOne({ email: user.email }, { $set: updateData });
+	await collection.updateOne({ _id: cleanId(_id) }, { $set: updateData });
 }
 
 async function updateUserRemoveAuth(user) {
@@ -54,15 +56,11 @@ async function incrementField(token, field, increment) {
 }
 
 async function getProfilesByGender(gender, currentUserEmail, limitCount) {
-	const limit = parseInt(limitCount, 10) || 9;
-	const cursor = collection
-		.find({
-			gender: { $regex: new RegExp(`^${gender}$`, "i") },
-			email: { $ne: currentUserEmail },
-		})
-		.limit(limit);
+	return collection.find({ gender: { $regex: new RegExp(`^${gender}$`, "i") }, email: { $ne: currentUserEmail } }).sort({ "matches.length": 1 }).limit(parseInt(limitCount, 10) || 9).toArray();
+}
 
-	return cursor.toArray();
+function countProfiles(currentUserEmail) {
+	return collection.countDocuments({ email: { $ne: currentUserEmail } });
 }
 
 async function addMatch(userId, matchObj) {
@@ -102,11 +100,13 @@ module.exports = {
 	getUserByEmail,
 	getUserByToken,
 	getUserById,
+	getUsersByIds,
 	addUser,
 	updateUser,
 	updateUserRemoveAuth,
 	incrementField,
 	getProfilesByGender,
+	countProfiles,
 	addMatch,
 	removeMatch,
 };

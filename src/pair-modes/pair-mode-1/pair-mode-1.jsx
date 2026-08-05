@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigationType } from "react-router-dom";
+import { Loading } from "../../shared.jsx";
 import styles from "./pair-mode-1.module.css";
 import {
 	DndContext,
@@ -12,7 +13,7 @@ import {
 	pointerWithin,
 } from "@dnd-kit/core";
 
-export function PairMode1({ setUser, setCurrentPairs }) {
+export function PairMode1({ profileCount, setCurrentPairs }) {
 	const navType = useNavigationType();
 	const [draggingData, setDraggingData] = useState(null);
 	const [maleUsers, setMaleUsers] = useState([]);
@@ -150,6 +151,9 @@ export function PairMode1({ setUser, setCurrentPairs }) {
 	useEffect(() => {
 		document.title = `Pair | Proxy Dating`;
 	}, []);
+
+
+	if (profileCount < 8) return <main className="centerState"><h2>You paired everyone nearby.</h2><p>There are no more profiles to pair in your area right now. Check back soon.</p></main>;
 
 	return (
 		<DndContext

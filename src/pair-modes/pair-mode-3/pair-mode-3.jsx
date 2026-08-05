@@ -5,6 +5,7 @@ import {
 	useSearchParams,
 	useNavigationType,
 } from "react-router-dom";
+import { Loading } from "../../shared.jsx";
 import styles from "./pair-mode-3.module.css";
 import {
 	DndContext,
@@ -17,7 +18,7 @@ import {
 	pointerWithin,
 } from "@dnd-kit/core";
 
-export function PairMode3({ setUser, user, setCurrentPairs }) {
+export function PairMode3({ profileCount, user, setCurrentPairs }) {
 	const location = useLocation();
 	const navType = useNavigationType();
 	const [searchParams] = useSearchParams();
@@ -131,13 +132,7 @@ export function PairMode3({ setUser, user, setCurrentPairs }) {
 
 	function handleDragStart(event) {
 		const { active } = event;
-		const rect = active.rect.current?.initial;
-
-		setDraggingData({
-			user: active.data.current.user,
-			width: rect?.width,
-			height: rect?.height,
-		});
+		setDraggingData(active.data.current);
 	}
 
 	function handleDragEnd(event) {
@@ -175,6 +170,9 @@ export function PairMode3({ setUser, user, setCurrentPairs }) {
 		document.title = `Pair | Proxy Dating`;
 	}, []);
 
+
+	if (profileCount < 8) return <main className="centerState"><h2>You paired everyone nearby.</h2><p>There are no more profiles to pair in your area right now. Check back soon.</p></main>;
+
 	return (
 		<DndContext
 			sensors={sensors}
@@ -207,7 +205,7 @@ export function PairMode3({ setUser, user, setCurrentPairs }) {
 						</Link>
 					) : (
 						<div className={`${styles.square} ${styles.big}`}>
-							<h3>LOADING...</h3>
+							<Loading text="Loading profiles" />
 						</div>
 					)}
 				</section>
@@ -225,19 +223,7 @@ export function PairMode3({ setUser, user, setCurrentPairs }) {
 			</main>
 			<DragOverlay dropAnimation={null}>
 				{draggingData ? (
-					<div
-						className={styles.square}
-						style={{
-							width: draggingData.width
-								? `${draggingData.width}px`
-								: "110px",
-							height: draggingData.height
-								? `${draggingData.height}px`
-								: "110px",
-							margin: 0,
-							opacity: 0.9,
-						}}
-					>
+					<div className={styles.square}>
 						<img
 							src={
 								draggingData.user?.profilePics?.[0] ||

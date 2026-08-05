@@ -192,3 +192,11 @@
 	background-color: #333;
 	transform: scale(1.05);
 }
+.profileLink :global(.iconCircle) { width: 42px; height: 42px; }
+.profileLink :global(.imageWrap) { position: absolute; inset: 0; border-radius: 50%; }
+.profileLink img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.pairNote { align-self: center; margin: 0; padding: 8px 12px; border-radius: 999px; background: #f4f4f4; color: #777; font-size: 12px; font-weight: 700; }
+.row { flex-direction: column; gap: 4px; align-items: flex-start; }
+.me { align-items: flex-end; }
+.row small { font-size: 11px; color: #999; margin-inline: 8px; }
+.typing { color: #999 !important; font-style: italic; }

@@ -11,6 +11,7 @@ export function Store({ setUser, user }) {
 		punchline: "Buy a random dad joke!",
 	});
 	const [loadingJoke, setLoadingJoke] = useState(false);
+	const [claimedDaily, setClaimedDaily] = useState(localStorage.getItem("dailyReward") === new Date().toDateString());
 
 	const fetchJoke = async () => {
 		setLoadingJoke(true);
@@ -32,7 +33,7 @@ export function Store({ setUser, user }) {
 
 	const handleBuyJoke = async () => {
 		if (user.coins >= 1) {
-			await increment("coins", -1, setUser);
+			await increment("coins", -1, setUser, "Random Dad Joke");
 			await fetchJoke();
 		}
 	};
@@ -41,12 +42,12 @@ export function Store({ setUser, user }) {
 		document.title = "Store | Proxy Dating";
 	}, []);
 
-	if (!user) {
-		return (
-			<main className={styles.main}>
-				<h2>Loading store...</h2>
-			</main>
-		);
+	if (!user) return <main className={styles.main}><div className="centerState"><div className="loadingCircle"></div><span>Loading store</span></div></main>;
+
+	function claimDailyReward() {
+		localStorage.setItem("dailyReward", new Date().toDateString());
+		setClaimedDaily(true);
+		increment("coins", 10, setUser, "Daily reward");
 	}
 
 	return (
@@ -113,6 +114,12 @@ export function Store({ setUser, user }) {
                 </div> */}
 
 				<div className={styles.storeItem}>
+					<div className={styles.iconWrap}><i className="fa-solid fa-gift"></i></div>
+					<div className={styles.textWrap}><h2>Daily Reward</h2><p>Claim 10 free coins once per day.</p></div>
+					<button className="btn" onClick={claimDailyReward} disabled={claimedDaily}>+10 <i className="fa-solid fa-coins"></i></button>
+				</div>
+
+				<div className={styles.storeItem}>
 					<div className={styles.iconWrap}>
 						<i className="fa-solid fa-hand-pointer"></i>
 					</div>
@@ -157,6 +164,12 @@ export function Store({ setUser, user }) {
 						<i className="fa-solid fa-coins"></i>
 					</button>
 				</div>
+			</section>
+
+			<section className={styles.section}>
+				<div className={styles.sectionHeader}><h1>COIN HISTORY</h1><p>Recent coin transactions</p></div>
+				{(user.coinLedger || []).slice(0, 10).map((entry) => <div className={styles.ledgerRow} key={entry.id}><strong>{entry.amount > 0 ? "+" : ""}{entry.amount}</strong><span>{entry.text}</span><small>{entry.time}</small></div>)}
+				{!(user.coinLedger || []).length && <p className={styles.emptyText}>No coin history yet.</p>}
 			</section>
 
 			<section className={styles.section}>
