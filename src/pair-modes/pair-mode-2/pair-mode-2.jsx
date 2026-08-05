@@ -20,6 +20,8 @@ export function PairMode2({ setUser, setCurrentPairs, setIsPairDisabled }) {
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
+		let isMounted = true;
+
 		async function fetchProfiles() {
 			try {
 				if (navType === "POP") {
@@ -28,9 +30,11 @@ export function PairMode2({ setUser, setCurrentPairs, setIsPairDisabled }) {
 					const cachedFemales =
 						sessionStorage.getItem("pairMode2_females");
 					if (cachedMales && cachedFemales) {
-						setMaleUsers(JSON.parse(cachedMales));
-						setFemaleUsers(JSON.parse(cachedFemales));
-						setIsLoading(false);
+						if (isMounted) {
+							setMaleUsers(JSON.parse(cachedMales));
+							setFemaleUsers(JSON.parse(cachedFemales));
+							setIsLoading(false);
+						}
 						return;
 					}
 				}
@@ -43,17 +47,25 @@ export function PairMode2({ setUser, setCurrentPairs, setIsPairDisabled }) {
 				if (maleRes.ok && femaleRes.ok) {
 					const males = await maleRes.json();
 					const females = await femaleRes.json();
-					setMaleUsers(males);
-					setFemaleUsers(females);
+					if (isMounted) {
+						setMaleUsers(males);
+						setFemaleUsers(females);
+					}
 				}
 			} catch (error) {
 				console.error(error);
 			} finally {
-				setIsLoading(false);
+				if (isMounted) {
+					setIsLoading(false);
+				}
 			}
 		}
 
 		fetchProfiles();
+
+		return () => {
+			isMounted = false;
+		};
 	}, [navType]);
 
 	useEffect(() => {

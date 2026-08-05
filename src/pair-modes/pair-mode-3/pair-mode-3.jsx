@@ -51,14 +51,18 @@ export function PairMode3({
 	}, [isMeMode, user]);
 
 	useEffect(() => {
+		let isMounted = true;
+
 		async function fetchGridProfiles() {
 			if (!targetGridGender) return;
 			try {
 				if (navType === "POP") {
 					const cachedGrid = sessionStorage.getItem("pairMode3_grid");
 					if (cachedGrid) {
-						setGridUsers(JSON.parse(cachedGrid));
-						setIsLoadingGrid(false);
+						if (isMounted) {
+							setGridUsers(JSON.parse(cachedGrid));
+							setIsLoadingGrid(false);
+						}
 						return;
 					}
 				}
@@ -68,19 +72,31 @@ export function PairMode3({
 				);
 				if (response.ok) {
 					const data = await response.json();
-					setGridUsers(data);
+					if (isMounted) {
+						setGridUsers(data);
+					}
 				}
 			} catch (error) {
 				console.error(error);
 			} finally {
-				setIsLoadingGrid(false);
+				if (isMounted) {
+					setIsLoadingGrid(false);
+				}
 			}
 		}
 
 		fetchGridProfiles();
+
+		// 🌟 CLEANUP ON UNMOUNT
+		return () => {
+			isMounted = false;
+		};
 	}, [targetGridGender, navType]);
 
+	// Top User Fetch Effect
 	useEffect(() => {
+		let isMounted = true; // 🌟 ANTI-FLICKER TRACKER
+
 		async function fetchRandomTopUser() {
 			if (!isMeMode && !passedUser && loggedInGender) {
 				try {
@@ -88,8 +104,10 @@ export function PairMode3({
 						const cachedTop =
 							sessionStorage.getItem("pairMode3_top");
 						if (cachedTop) {
-							setTopUser(JSON.parse(cachedTop));
-							setIsLoadingTop(false);
+							if (isMounted) {
+								setTopUser(JSON.parse(cachedTop));
+								setIsLoadingTop(false);
+							}
 							return;
 						}
 					}
@@ -102,20 +120,31 @@ export function PairMode3({
 						if (data.length > 0) {
 							const randomUser =
 								data[Math.floor(Math.random() * data.length)];
-							setTopUser(randomUser);
+							if (isMounted) {
+								setTopUser(randomUser);
+							}
 						}
 					}
 				} catch (error) {
 					console.error(error);
 				} finally {
-					setIsLoadingTop(false);
+					if (isMounted) {
+						setIsLoadingTop(false);
+					}
 				}
 			} else {
-				setIsLoadingTop(false);
+				if (isMounted) {
+					setIsLoadingTop(false);
+				}
 			}
 		}
 
 		fetchRandomTopUser();
+
+		// 🌟 CLEANUP ON UNMOUNT
+		return () => {
+			isMounted = false;
+		};
 	}, [isMeMode, passedUser, loggedInGender, navType]);
 
 	useEffect(() => {
