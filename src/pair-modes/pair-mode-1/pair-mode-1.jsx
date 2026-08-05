@@ -93,18 +93,6 @@ export function PairMode1({ setUser, setCurrentPairs, setIsPairDisabled }) {
 		}
 	}, [maleUsers, femaleUsers, setCurrentPairs]);
 
-	useEffect(() => {
-		document.title = `Pair | Proxy Dating`;
-	}, []);
-
-	useEffect(() => {
-		if (!isLoading && (maleUsers.length < 9 || femaleUsers.length < 9)) {
-			setIsPairDisabled(true);
-		} else {
-			setIsPairDisabled(false);
-		}
-	}, [isLoading, maleUsers.length, femaleUsers.length, setIsPairDisabled]);
-
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
 			activationConstraint: {
@@ -127,7 +115,7 @@ export function PairMode1({ setUser, setCurrentPairs, setIsPairDisabled }) {
 			const targetId = over.id;
 			const draggedGender = active.data.current?.gender;
 			const targetGender = over.data.current?.gender;
-			const targetIsBig = active.data.current?.user?.isBig;
+			const targetIsBig = over.data.current?.user?.isBig;
 
 			if (
 				draggedGender === targetGender &&
@@ -162,6 +150,20 @@ export function PairMode1({ setUser, setCurrentPairs, setIsPairDisabled }) {
 			return newArray;
 		});
 	}
+
+	useEffect(() => {
+		document.title = `Pair | Proxy Dating`;
+	}, []);
+
+	useEffect(() => {
+		if (!isLoading && (maleUsers.length < 9 || femaleUsers.length < 9)) {
+			setIsPairDisabled(true);
+		} else {
+			setIsPairDisabled(false);
+		}
+
+		return () => setIsPairDisabled(false);
+	}, [isLoading, maleUsers.length, femaleUsers.length, setIsPairDisabled]);
 
 	if (isLoading) {
 		return (
