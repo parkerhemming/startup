@@ -330,12 +330,6 @@ export default function App() {
 
 								setIsPairing(true);
 
-								if (mode === "me" && user.coins >= 30) {
-									await increment("coins", -30, setUser);
-								} else if (mode !== "me") {
-									await increment("coins", 5, setUser);
-								}
-
 								if (currentPairs.length > 0) {
 									try {
 										const res = await fetch(
@@ -393,7 +387,13 @@ export default function App() {
 							) : (
 								<>
 									<span>Pair</span>
-									<span>+5</span>
+									<span>
+										{location.pathname.includes(
+											"pair-mode-2",
+										)
+											? "+20"
+											: "+5"}
+									</span>
 								</>
 							)}
 

@@ -55,14 +55,18 @@ async function incrementField(token, field, increment) {
 
 async function getProfilesByGender(gender, currentUserEmail, limitCount) {
 	const limit = parseInt(limitCount, 10) || 9;
-	const cursor = collection
-		.find({
-			gender: { $regex: new RegExp(`^${gender}$`, "i") },
-			email: { $ne: currentUserEmail },
-		})
-		.limit(limit);
 
-	return cursor.toArray();
+	return collection
+		.aggregate([
+			{
+				$match: {
+					gender: { $regex: new RegExp(`^${gender}$`, "i") },
+					email: { $ne: currentUserEmail },
+				},
+			},
+			{ $sample: { size: limit } },
+		])
+		.toArray();
 }
 
 async function addMatch(userId, matchObj) {

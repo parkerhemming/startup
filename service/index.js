@@ -385,6 +385,34 @@ apiRouter.post("/match/pair", verifyAuth, async (req, res) => {
 						notifyUser(idA.toString(), "SYNC_USER", {});
 						notifyUser(idB.toString(), "SYNC_USER", {});
 					}
+				} else {
+					matchMeCreated++;
+
+					if (idA.toString() === matchmakerId) {
+						userB.notifications.unshift({
+							id: uuid.v4(),
+							text: `${userA.firstName} used Match Me on you! Message them!`,
+							link: "/message",
+							state: { id: idA.toString() },
+							icon: "fa-heart",
+							time: timeStr,
+						});
+					} else if (idB.toString() === matchmakerId) {
+						userA.notifications.unshift({
+							id: uuid.v4(),
+							text: `${userB.firstName} used Match Me on you! Message them!`,
+							link: "/message",
+							state: { id: idB.toString() },
+							icon: "fa-heart",
+							time: timeStr,
+						});
+					}
+
+					await DB.updateUser(userA);
+					await DB.updateUser(userB);
+
+					notifyUser(idA.toString(), "SYNC_USER", {});
+					notifyUser(idB.toString(), "SYNC_USER", {});
 				}
 			} else {
 				const matchmakersArr = isMatchMe ? [] : [matchmakerId];
@@ -429,6 +457,25 @@ apiRouter.post("/match/pair", verifyAuth, async (req, res) => {
 					proxyPairsCreated++;
 				} else {
 					matchMeCreated++;
+					if (idA.toString() === matchmakerId) {
+						userB.notifications.unshift({
+							id: uuid.v4(),
+							text: `${userA.firstName} matched directly with you! Message them!`,
+							link: "/message",
+							state: { id: idA.toString() },
+							icon: "fa-heart",
+							time: timeStr,
+						});
+					} else if (idB.toString() === matchmakerId) {
+						userA.notifications.unshift({
+							id: uuid.v4(),
+							text: `${userB.firstName} matched directly with you! Message them!`,
+							link: "/message",
+							state: { id: idB.toString() },
+							icon: "fa-heart",
+							time: timeStr,
+						});
+					}
 				}
 
 				await DB.updateUser(userA);
@@ -472,19 +519,59 @@ apiRouter.delete("/match/:matchId", verifyAuth, async (req, res) => {
 		const matchId = req.params.matchId;
 		const userId = req.user.id || req.user._id;
 		const match = req.user.matches?.find((m) => m.id === matchId);
+		const matchmakersSet = new Set(match?.matchmakers || []);
 		const otherUserId = match ? match.id : null;
+
 		req.user.matches = req.user.matches.filter((m) => m.id !== matchId);
 		await DB.updateUser(req.user);
-
 		if (otherUserId) {
 			const otherUser = await DB.getUserById(otherUserId);
 			if (otherUser && otherUser.matches) {
+				const otherMatch = otherUser.matches.find(
+					(m) => m.id === userId.toString(),
+				);
+				if (otherMatch?.matchmakers) {
+					otherMatch.matchmakers.forEach((mm) =>
+						matchmakersSet.add(mm),
+					);
+				}
+
 				otherUser.matches = otherUser.matches.filter(
 					(m) => m.id !== userId.toString(),
 				);
 				await DB.updateUser(otherUser);
 
 				notifyUser(otherUserId.toString(), "SYNC_USER", {});
+			}
+		}
+
+		const timeStr = new Date().toLocaleTimeString([], {
+			hour: "2-digit",
+			minute: "2-digit",
+		});
+
+		for (const mmId of matchmakersSet) {
+			const mm = await DB.getUserById(mmId);
+			if (mm) {
+				mm.coins = (mm.coins || 0) - 10;
+				mm.activePairs = Math.max(0, (mm.activePairs || 0) - 1);
+
+				const newNotif = {
+					id: uuid.v4(),
+					text: `Ouch! A couple you paired unmatched. You lost 10 coins and an active pair!`,
+					icon: "fa-heart-crack",
+					time: timeStr,
+				};
+
+				mm.notifications = mm.notifications || [];
+				mm.notifications.unshift(newNotif);
+
+				await DB.updateUser(mm);
+				notifyUser(mmId.toString(), "COIN_UPDATE", {
+					coins: mm.coins,
+					activePairs: mm.activePairs,
+					newNotification: newNotif,
+				});
 			}
 		}
 
