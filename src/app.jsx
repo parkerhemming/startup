@@ -28,7 +28,7 @@ export default function App() {
 	const [user, setUser] = useState(null);
 	const [currentPairs, setCurrentPairs] = useState([]);
 	const [isPairing, setIsPairing] = useState(false);
-
+	const [isPairDisabled, setIsPairDisabled] = useState(false);
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [searchParams] = useSearchParams();
@@ -241,6 +241,7 @@ export default function App() {
 							<PairMode1
 								setUser={setUser}
 								setCurrentPairs={setCurrentPairs}
+								setIsPairDisabled={setIsPairDisabled}
 							/>
 						}
 					/>
@@ -250,6 +251,7 @@ export default function App() {
 							<PairMode2
 								setUser={setUser}
 								setCurrentPairs={setCurrentPairs}
+								setIsPairDisabled={setIsPairDisabled}
 							/>
 						}
 					/>
@@ -260,6 +262,7 @@ export default function App() {
 								setUser={setUser}
 								user={user}
 								setCurrentPairs={setCurrentPairs}
+								setIsPairDisabled={setIsPairDisabled}
 							/>
 						}
 					/>
@@ -320,8 +323,11 @@ export default function App() {
 					{location.pathname.includes("pair-mode") && (
 						<NavLink
 							className="btn"
+							disabled={isPairDisabled}
 							onClick={async (e) => {
 								e.preventDefault();
+								if (isPairDisabled) return;
+
 								setIsPairing(true);
 
 								if (mode === "me" && user.coins >= 30) {
@@ -372,6 +378,11 @@ export default function App() {
 								mode === "me" && user.coins >= 30
 									? "/store"
 									: nextModeMap[location.pathname]
+							}
+							style={
+								isPairDisabled
+									? { opacity: 0.5, pointerEvents: "none" }
+									: {}
 							}
 						>
 							{mode === "me" && user.coins >= 30 ? (

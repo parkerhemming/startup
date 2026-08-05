@@ -12,7 +12,7 @@ import {
 	pointerWithin,
 } from "@dnd-kit/core";
 
-export function PairMode2({ setUser, setCurrentPairs }) {
+export function PairMode2({ setUser, setCurrentPairs, setIsPairDisabled }) {
 	const navType = useNavigationType();
 	const [draggingData, setDraggingData] = useState(null);
 	const [maleUsers, setMaleUsers] = useState([]);
@@ -149,6 +149,16 @@ export function PairMode2({ setUser, setCurrentPairs }) {
 
 	const rowCount = Math.min(4, maleUsers.length, femaleUsers.length);
 	const rows = Array.from({ length: rowCount }, (_, i) => i);
+
+	useEffect(() => {
+		if (!isLoading && (maleUsers.length < 4 || femaleUsers.length < 4)) {
+			setIsPairDisabled(true);
+		} else {
+			setIsPairDisabled(false);
+		}
+
+		return () => setIsPairDisabled(false);
+	}, [isLoading, maleUsers.length, femaleUsers.length, setIsPairDisabled]);
 
 	if (isLoading) {
 		return (

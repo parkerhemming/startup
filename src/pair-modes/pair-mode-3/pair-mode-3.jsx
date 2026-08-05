@@ -17,7 +17,12 @@ import {
 	pointerWithin,
 } from "@dnd-kit/core";
 
-export function PairMode3({ setUser, user, setCurrentPairs }) {
+export function PairMode3({
+	setUser,
+	user,
+	setCurrentPairs,
+	setIsPairDisabled,
+}) {
 	const location = useLocation();
 	const navType = useNavigationType();
 	const [searchParams] = useSearchParams();
@@ -185,6 +190,26 @@ export function PairMode3({ setUser, user, setCurrentPairs }) {
 	useEffect(() => {
 		document.title = `Pair | Proxy Dating`;
 	}, []);
+
+	useEffect(() => {
+		if (
+			!isLoadingGrid &&
+			!isLoadingTop &&
+			(gridUsers.length < 9 || !topUser)
+		) {
+			setIsPairDisabled(true);
+		} else {
+			setIsPairDisabled(false);
+		}
+
+		return () => setIsPairDisabled(false);
+	}, [
+		isLoadingGrid,
+		isLoadingTop,
+		gridUsers.length,
+		topUser,
+		setIsPairDisabled,
+	]);
 
 	if (isLoadingGrid || isLoadingTop) {
 		return (

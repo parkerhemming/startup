@@ -12,7 +12,7 @@ import {
 	pointerWithin,
 } from "@dnd-kit/core";
 
-export function PairMode1({ setUser, setCurrentPairs }) {
+export function PairMode1({ setUser, setCurrentPairs, setIsPairDisabled }) {
 	const navType = useNavigationType();
 	const [draggingData, setDraggingData] = useState(null);
 	const [maleUsers, setMaleUsers] = useState([]);
@@ -93,6 +93,18 @@ export function PairMode1({ setUser, setCurrentPairs }) {
 		}
 	}, [maleUsers, femaleUsers, setCurrentPairs]);
 
+	useEffect(() => {
+		document.title = `Pair | Proxy Dating`;
+	}, []);
+
+	useEffect(() => {
+		if (!isLoading && (maleUsers.length < 9 || femaleUsers.length < 9)) {
+			setIsPairDisabled(true);
+		} else {
+			setIsPairDisabled(false);
+		}
+	}, [isLoading, maleUsers.length, femaleUsers.length, setIsPairDisabled]);
+
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
 			activationConstraint: {
@@ -115,7 +127,7 @@ export function PairMode1({ setUser, setCurrentPairs }) {
 			const targetId = over.id;
 			const draggedGender = active.data.current?.gender;
 			const targetGender = over.data.current?.gender;
-			const targetIsBig = over.data.current?.user?.isBig;
+			const targetIsBig = active.data.current?.user?.isBig;
 
 			if (
 				draggedGender === targetGender &&
@@ -150,10 +162,6 @@ export function PairMode1({ setUser, setCurrentPairs }) {
 			return newArray;
 		});
 	}
-
-	useEffect(() => {
-		document.title = `Pair | Proxy Dating`;
-	}, []);
 
 	if (isLoading) {
 		return (
