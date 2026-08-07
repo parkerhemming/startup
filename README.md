@@ -13,6 +13,7 @@
 - [x] Loading state
 - [nopelol] "Active Pairs" on store page needs to be / 2 most likely.
 - [] Match me mode shouldnt show current matches.
+- [] Get humbled insult genereator + 2 coins.
 
 ## 📝 Specification Deliverable
 
